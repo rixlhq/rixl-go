@@ -6,8 +6,8 @@ package images
 import (
     "context"
     i2ae4187f7daee263371cb1c977df639813ab50ffa529013b7437480d1ec0158f "github.com/microsoft/kiota-abstractions-go"
-    i90c0e1ee53825fe36252e17a45e5d3b5f64ca0be4b2c3a2284950d3439c0ff4d "github.com/rixlhq/rixl-go/sdk/models/github_com_rixlhq_api_internal_errors"
-    if5fe6ebdb5303685c58216888d4b27c57bfc171364b5f0d7459d0af798f20bbf "github.com/rixlhq/rixl-go/sdk/models/pagination"
+    ib66ccb37bcbc67b29a0c2ffebc868ea23d9b75fcb0e825e9eb5c452c15a92654 "github.com/rixlhq/rixl-go/sdk/models/pagination"
+    ie2a5be6cba7e3cbff77716d868675078d6c1726dbfffa039ce2712bdf6b113f2 "github.com/rixlhq/rixl-go/sdk/models/github_com_rixlhq_api_internal_errors"
 )
 
 // ImagesRequestBuilder builds and executes requests for operations under \images
@@ -56,25 +56,25 @@ func NewImagesRequestBuilder(rawUrl string, requestAdapter i2ae4187f7daee263371c
 // returns a ErrorResponse error when the service returns a 401 status code
 // returns a ErrorResponse error when the service returns a 403 status code
 // returns a ErrorResponse error when the service returns a 500 status code
-func (m *ImagesRequestBuilder) Get(ctx context.Context, requestConfiguration *i2ae4187f7daee263371cb1c977df639813ab50ffa529013b7437480d1ec0158f.RequestConfiguration[ImagesRequestBuilderGetQueryParameters])(if5fe6ebdb5303685c58216888d4b27c57bfc171364b5f0d7459d0af798f20bbf.PaginatedResponseImageable, error) {
+func (m *ImagesRequestBuilder) Get(ctx context.Context, requestConfiguration *i2ae4187f7daee263371cb1c977df639813ab50ffa529013b7437480d1ec0158f.RequestConfiguration[ImagesRequestBuilderGetQueryParameters])(ib66ccb37bcbc67b29a0c2ffebc868ea23d9b75fcb0e825e9eb5c452c15a92654.PaginatedResponseImageable, error) {
     requestInfo, err := m.ToGetRequestInformation(ctx, requestConfiguration);
     if err != nil {
         return nil, err
     }
     errorMapping := i2ae4187f7daee263371cb1c977df639813ab50ffa529013b7437480d1ec0158f.ErrorMappings {
-        "400": i90c0e1ee53825fe36252e17a45e5d3b5f64ca0be4b2c3a2284950d3439c0ff4d.CreateErrorResponseFromDiscriminatorValue,
-        "401": i90c0e1ee53825fe36252e17a45e5d3b5f64ca0be4b2c3a2284950d3439c0ff4d.CreateErrorResponseFromDiscriminatorValue,
-        "403": i90c0e1ee53825fe36252e17a45e5d3b5f64ca0be4b2c3a2284950d3439c0ff4d.CreateErrorResponseFromDiscriminatorValue,
-        "500": i90c0e1ee53825fe36252e17a45e5d3b5f64ca0be4b2c3a2284950d3439c0ff4d.CreateErrorResponseFromDiscriminatorValue,
+        "400": ie2a5be6cba7e3cbff77716d868675078d6c1726dbfffa039ce2712bdf6b113f2.CreateErrorResponseFromDiscriminatorValue,
+        "401": ie2a5be6cba7e3cbff77716d868675078d6c1726dbfffa039ce2712bdf6b113f2.CreateErrorResponseFromDiscriminatorValue,
+        "403": ie2a5be6cba7e3cbff77716d868675078d6c1726dbfffa039ce2712bdf6b113f2.CreateErrorResponseFromDiscriminatorValue,
+        "500": ie2a5be6cba7e3cbff77716d868675078d6c1726dbfffa039ce2712bdf6b113f2.CreateErrorResponseFromDiscriminatorValue,
     }
-    res, err := m.BaseRequestBuilder.RequestAdapter.Send(ctx, requestInfo, if5fe6ebdb5303685c58216888d4b27c57bfc171364b5f0d7459d0af798f20bbf.CreatePaginatedResponseImageFromDiscriminatorValue, errorMapping)
+    res, err := m.BaseRequestBuilder.RequestAdapter.Send(ctx, requestInfo, ib66ccb37bcbc67b29a0c2ffebc868ea23d9b75fcb0e825e9eb5c452c15a92654.CreatePaginatedResponseImageFromDiscriminatorValue, errorMapping)
     if err != nil {
         return nil, err
     }
     if res == nil {
         return nil, nil
     }
-    return res.(if5fe6ebdb5303685c58216888d4b27c57bfc171364b5f0d7459d0af798f20bbf.PaginatedResponseImageable), nil
+    return res.(ib66ccb37bcbc67b29a0c2ffebc868ea23d9b75fcb0e825e9eb5c452c15a92654.PaginatedResponseImageable), nil
 }
 // ToGetRequestInformation retrieve all images for a specific project, with pagination and sorting.
 // returns a *RequestInformation when successful

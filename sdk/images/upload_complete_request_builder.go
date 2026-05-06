@@ -6,9 +6,9 @@ package images
 import (
     "context"
     i2ae4187f7daee263371cb1c977df639813ab50ffa529013b7437480d1ec0158f "github.com/microsoft/kiota-abstractions-go"
-    i5a0295206944821724fb175c9e7dc344b4d3a2abb6a77c9137ef720d4ea98bf7 "github.com/rixlhq/rixl-go/sdk/models"
-    i90c0e1ee53825fe36252e17a45e5d3b5f64ca0be4b2c3a2284950d3439c0ff4d "github.com/rixlhq/rixl-go/sdk/models/github_com_rixlhq_api_internal_errors"
-    if375031b6f3fea30e67f060684551de9b8061c0064e76864bc42aad16d00ceac "github.com/rixlhq/rixl-go/sdk/models/internal_images_handler"
+    i6dbfac78cc0ad69049cda5add9c379598e7bc509744d77292e84229ae7bf0e9e "github.com/rixlhq/rixl-go/sdk/models"
+    ie2a5be6cba7e3cbff77716d868675078d6c1726dbfffa039ce2712bdf6b113f2 "github.com/rixlhq/rixl-go/sdk/models/github_com_rixlhq_api_internal_errors"
+    ieb74c3a8cccfeb51b83ed78f973452a8af6479431fc36ba9c3b1dde37c906d84 "github.com/rixlhq/rixl-go/sdk/models/internal_images_handler"
 )
 
 // UploadCompleteRequestBuilder builds and executes requests for operations under \images\upload\complete
@@ -35,30 +35,30 @@ func NewUploadCompleteRequestBuilder(rawUrl string, requestAdapter i2ae4187f7dae
 // returns a ErrorResponse error when the service returns a 403 status code
 // returns a ErrorResponse error when the service returns a 404 status code
 // returns a ErrorResponse error when the service returns a 500 status code
-func (m *UploadCompleteRequestBuilder) Post(ctx context.Context, body if375031b6f3fea30e67f060684551de9b8061c0064e76864bc42aad16d00ceac.CompleteRequestable, requestConfiguration *i2ae4187f7daee263371cb1c977df639813ab50ffa529013b7437480d1ec0158f.RequestConfiguration[i2ae4187f7daee263371cb1c977df639813ab50ffa529013b7437480d1ec0158f.DefaultQueryParameters])(i5a0295206944821724fb175c9e7dc344b4d3a2abb6a77c9137ef720d4ea98bf7.Imageable, error) {
+func (m *UploadCompleteRequestBuilder) Post(ctx context.Context, body ieb74c3a8cccfeb51b83ed78f973452a8af6479431fc36ba9c3b1dde37c906d84.CompleteRequestable, requestConfiguration *i2ae4187f7daee263371cb1c977df639813ab50ffa529013b7437480d1ec0158f.RequestConfiguration[i2ae4187f7daee263371cb1c977df639813ab50ffa529013b7437480d1ec0158f.DefaultQueryParameters])(i6dbfac78cc0ad69049cda5add9c379598e7bc509744d77292e84229ae7bf0e9e.Imageable, error) {
     requestInfo, err := m.ToPostRequestInformation(ctx, body, requestConfiguration);
     if err != nil {
         return nil, err
     }
     errorMapping := i2ae4187f7daee263371cb1c977df639813ab50ffa529013b7437480d1ec0158f.ErrorMappings {
-        "400": i90c0e1ee53825fe36252e17a45e5d3b5f64ca0be4b2c3a2284950d3439c0ff4d.CreateErrorResponseFromDiscriminatorValue,
-        "401": i90c0e1ee53825fe36252e17a45e5d3b5f64ca0be4b2c3a2284950d3439c0ff4d.CreateErrorResponseFromDiscriminatorValue,
-        "403": i90c0e1ee53825fe36252e17a45e5d3b5f64ca0be4b2c3a2284950d3439c0ff4d.CreateErrorResponseFromDiscriminatorValue,
-        "404": i90c0e1ee53825fe36252e17a45e5d3b5f64ca0be4b2c3a2284950d3439c0ff4d.CreateErrorResponseFromDiscriminatorValue,
-        "500": i90c0e1ee53825fe36252e17a45e5d3b5f64ca0be4b2c3a2284950d3439c0ff4d.CreateErrorResponseFromDiscriminatorValue,
+        "400": ie2a5be6cba7e3cbff77716d868675078d6c1726dbfffa039ce2712bdf6b113f2.CreateErrorResponseFromDiscriminatorValue,
+        "401": ie2a5be6cba7e3cbff77716d868675078d6c1726dbfffa039ce2712bdf6b113f2.CreateErrorResponseFromDiscriminatorValue,
+        "403": ie2a5be6cba7e3cbff77716d868675078d6c1726dbfffa039ce2712bdf6b113f2.CreateErrorResponseFromDiscriminatorValue,
+        "404": ie2a5be6cba7e3cbff77716d868675078d6c1726dbfffa039ce2712bdf6b113f2.CreateErrorResponseFromDiscriminatorValue,
+        "500": ie2a5be6cba7e3cbff77716d868675078d6c1726dbfffa039ce2712bdf6b113f2.CreateErrorResponseFromDiscriminatorValue,
     }
-    res, err := m.BaseRequestBuilder.RequestAdapter.Send(ctx, requestInfo, i5a0295206944821724fb175c9e7dc344b4d3a2abb6a77c9137ef720d4ea98bf7.CreateImageFromDiscriminatorValue, errorMapping)
+    res, err := m.BaseRequestBuilder.RequestAdapter.Send(ctx, requestInfo, i6dbfac78cc0ad69049cda5add9c379598e7bc509744d77292e84229ae7bf0e9e.CreateImageFromDiscriminatorValue, errorMapping)
     if err != nil {
         return nil, err
     }
     if res == nil {
         return nil, nil
     }
-    return res.(i5a0295206944821724fb175c9e7dc344b4d3a2abb6a77c9137ef720d4ea98bf7.Imageable), nil
+    return res.(i6dbfac78cc0ad69049cda5add9c379598e7bc509744d77292e84229ae7bf0e9e.Imageable), nil
 }
 // ToPostRequestInformation complete the upload process and create the image record using API key authentication
 // returns a *RequestInformation when successful
-func (m *UploadCompleteRequestBuilder) ToPostRequestInformation(ctx context.Context, body if375031b6f3fea30e67f060684551de9b8061c0064e76864bc42aad16d00ceac.CompleteRequestable, requestConfiguration *i2ae4187f7daee263371cb1c977df639813ab50ffa529013b7437480d1ec0158f.RequestConfiguration[i2ae4187f7daee263371cb1c977df639813ab50ffa529013b7437480d1ec0158f.DefaultQueryParameters])(*i2ae4187f7daee263371cb1c977df639813ab50ffa529013b7437480d1ec0158f.RequestInformation, error) {
+func (m *UploadCompleteRequestBuilder) ToPostRequestInformation(ctx context.Context, body ieb74c3a8cccfeb51b83ed78f973452a8af6479431fc36ba9c3b1dde37c906d84.CompleteRequestable, requestConfiguration *i2ae4187f7daee263371cb1c977df639813ab50ffa529013b7437480d1ec0158f.RequestConfiguration[i2ae4187f7daee263371cb1c977df639813ab50ffa529013b7437480d1ec0158f.DefaultQueryParameters])(*i2ae4187f7daee263371cb1c977df639813ab50ffa529013b7437480d1ec0158f.RequestInformation, error) {
     requestInfo := i2ae4187f7daee263371cb1c977df639813ab50ffa529013b7437480d1ec0158f.NewRequestInformationWithMethodAndUrlTemplateAndPathParameters(i2ae4187f7daee263371cb1c977df639813ab50ffa529013b7437480d1ec0158f.POST, m.BaseRequestBuilder.UrlTemplate, m.BaseRequestBuilder.PathParameters)
     i2ae4187f7daee263371cb1c977df639813ab50ffa529013b7437480d1ec0158f.ConfigureRequestInformation(requestInfo, requestConfiguration)
     requestInfo.Headers.TryAdd("Accept", "application/json")

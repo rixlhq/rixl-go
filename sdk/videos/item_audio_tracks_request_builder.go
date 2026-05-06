@@ -6,24 +6,24 @@ package videos
 import (
     "context"
     i2ae4187f7daee263371cb1c977df639813ab50ffa529013b7437480d1ec0158f "github.com/microsoft/kiota-abstractions-go"
-    i5a0295206944821724fb175c9e7dc344b4d3a2abb6a77c9137ef720d4ea98bf7 "github.com/rixlhq/rixl-go/sdk/models"
+    i6dbfac78cc0ad69049cda5add9c379598e7bc509744d77292e84229ae7bf0e9e "github.com/rixlhq/rixl-go/sdk/models"
 )
 
 // ItemAudioTracksRequestBuilder builds and executes requests for operations under \videos\{videoId}\audio-tracks
 type ItemAudioTracksRequestBuilder struct {
     i2ae4187f7daee263371cb1c977df639813ab50ffa529013b7437480d1ec0158f.BaseRequestBuilder
 }
-// ByLang_code gets an item from the github.com/rixlhq/rixl-go/sdk.videos.item.audioTracks.item collection
-// returns a *ItemAudioTracksWithLang_codeItemRequestBuilder when successful
-func (m *ItemAudioTracksRequestBuilder) ByLang_code(lang_code string)(*ItemAudioTracksWithLang_codeItemRequestBuilder) {
+// ByTrackId gets an item from the github.com/rixlhq/rixl-go/sdk.videos.item.audioTracks.item collection
+// returns a *ItemAudioTracksWithTrackItemRequestBuilder when successful
+func (m *ItemAudioTracksRequestBuilder) ByTrackId(trackId string)(*ItemAudioTracksWithTrackItemRequestBuilder) {
     urlTplParams := make(map[string]string)
     for idx, item := range m.BaseRequestBuilder.PathParameters {
         urlTplParams[idx] = item
     }
-    if lang_code != "" {
-        urlTplParams["lang_code"] = lang_code
+    if trackId != "" {
+        urlTplParams["trackId"] = trackId
     }
-    return NewItemAudioTracksWithLang_codeItemRequestBuilderInternal(urlTplParams, m.BaseRequestBuilder.RequestAdapter)
+    return NewItemAudioTracksWithTrackItemRequestBuilderInternal(urlTplParams, m.BaseRequestBuilder.RequestAdapter)
 }
 // NewItemAudioTracksRequestBuilderInternal instantiates a new ItemAudioTracksRequestBuilder and sets the default values.
 func NewItemAudioTracksRequestBuilderInternal(pathParameters map[string]string, requestAdapter i2ae4187f7daee263371cb1c977df639813ab50ffa529013b7437480d1ec0158f.RequestAdapter)(*ItemAudioTracksRequestBuilder) {
@@ -40,19 +40,43 @@ func NewItemAudioTracksRequestBuilder(rawUrl string, requestAdapter i2ae4187f7da
 }
 // Delete remove all additional audio tracks from a video using API key authentication
 // returns a AudioTrackDeleteable when successful
-func (m *ItemAudioTracksRequestBuilder) Delete(ctx context.Context, requestConfiguration *i2ae4187f7daee263371cb1c977df639813ab50ffa529013b7437480d1ec0158f.RequestConfiguration[i2ae4187f7daee263371cb1c977df639813ab50ffa529013b7437480d1ec0158f.DefaultQueryParameters])(i5a0295206944821724fb175c9e7dc344b4d3a2abb6a77c9137ef720d4ea98bf7.AudioTrackDeleteable, error) {
+func (m *ItemAudioTracksRequestBuilder) Delete(ctx context.Context, requestConfiguration *i2ae4187f7daee263371cb1c977df639813ab50ffa529013b7437480d1ec0158f.RequestConfiguration[i2ae4187f7daee263371cb1c977df639813ab50ffa529013b7437480d1ec0158f.DefaultQueryParameters])(i6dbfac78cc0ad69049cda5add9c379598e7bc509744d77292e84229ae7bf0e9e.AudioTrackDeleteable, error) {
     requestInfo, err := m.ToDeleteRequestInformation(ctx, requestConfiguration);
     if err != nil {
         return nil, err
     }
-    res, err := m.BaseRequestBuilder.RequestAdapter.Send(ctx, requestInfo, i5a0295206944821724fb175c9e7dc344b4d3a2abb6a77c9137ef720d4ea98bf7.CreateAudioTrackDeleteFromDiscriminatorValue, nil)
+    res, err := m.BaseRequestBuilder.RequestAdapter.Send(ctx, requestInfo, i6dbfac78cc0ad69049cda5add9c379598e7bc509744d77292e84229ae7bf0e9e.CreateAudioTrackDeleteFromDiscriminatorValue, nil)
     if err != nil {
         return nil, err
     }
     if res == nil {
         return nil, nil
     }
-    return res.(i5a0295206944821724fb175c9e7dc344b4d3a2abb6a77c9137ef720d4ea98bf7.AudioTrackDeleteable), nil
+    return res.(i6dbfac78cc0ad69049cda5add9c379598e7bc509744d77292e84229ae7bf0e9e.AudioTrackDeleteable), nil
+}
+// Language the language property
+// returns a *ItemAudioTracksLanguageRequestBuilder when successful
+func (m *ItemAudioTracksRequestBuilder) Language()(*ItemAudioTracksLanguageRequestBuilder) {
+    return NewItemAudioTracksLanguageRequestBuilderInternal(m.BaseRequestBuilder.PathParameters, m.BaseRequestBuilder.RequestAdapter)
+}
+// Post replace all audio tracks with the provided ones using API key authentication
+// returns a []AudioTrackable when successful
+func (m *ItemAudioTracksRequestBuilder) Post(ctx context.Context, body i2ae4187f7daee263371cb1c977df639813ab50ffa529013b7437480d1ec0158f.MultipartBody, requestConfiguration *i2ae4187f7daee263371cb1c977df639813ab50ffa529013b7437480d1ec0158f.RequestConfiguration[i2ae4187f7daee263371cb1c977df639813ab50ffa529013b7437480d1ec0158f.DefaultQueryParameters])([]i6dbfac78cc0ad69049cda5add9c379598e7bc509744d77292e84229ae7bf0e9e.AudioTrackable, error) {
+    requestInfo, err := m.ToPostRequestInformation(ctx, body, requestConfiguration);
+    if err != nil {
+        return nil, err
+    }
+    res, err := m.BaseRequestBuilder.RequestAdapter.SendCollection(ctx, requestInfo, i6dbfac78cc0ad69049cda5add9c379598e7bc509744d77292e84229ae7bf0e9e.CreateAudioTrackFromDiscriminatorValue, nil)
+    if err != nil {
+        return nil, err
+    }
+    val := make([]i6dbfac78cc0ad69049cda5add9c379598e7bc509744d77292e84229ae7bf0e9e.AudioTrackable, len(res))
+    for i, v := range res {
+        if v != nil {
+            val[i] = v.(i6dbfac78cc0ad69049cda5add9c379598e7bc509744d77292e84229ae7bf0e9e.AudioTrackable)
+        }
+    }
+    return val, nil
 }
 // ToDeleteRequestInformation remove all additional audio tracks from a video using API key authentication
 // returns a *RequestInformation when successful
@@ -60,6 +84,18 @@ func (m *ItemAudioTracksRequestBuilder) ToDeleteRequestInformation(ctx context.C
     requestInfo := i2ae4187f7daee263371cb1c977df639813ab50ffa529013b7437480d1ec0158f.NewRequestInformationWithMethodAndUrlTemplateAndPathParameters(i2ae4187f7daee263371cb1c977df639813ab50ffa529013b7437480d1ec0158f.DELETE, m.BaseRequestBuilder.UrlTemplate, m.BaseRequestBuilder.PathParameters)
     i2ae4187f7daee263371cb1c977df639813ab50ffa529013b7437480d1ec0158f.ConfigureRequestInformation(requestInfo, requestConfiguration)
     requestInfo.Headers.TryAdd("Accept", "application/json")
+    return requestInfo, nil
+}
+// ToPostRequestInformation replace all audio tracks with the provided ones using API key authentication
+// returns a *RequestInformation when successful
+func (m *ItemAudioTracksRequestBuilder) ToPostRequestInformation(ctx context.Context, body i2ae4187f7daee263371cb1c977df639813ab50ffa529013b7437480d1ec0158f.MultipartBody, requestConfiguration *i2ae4187f7daee263371cb1c977df639813ab50ffa529013b7437480d1ec0158f.RequestConfiguration[i2ae4187f7daee263371cb1c977df639813ab50ffa529013b7437480d1ec0158f.DefaultQueryParameters])(*i2ae4187f7daee263371cb1c977df639813ab50ffa529013b7437480d1ec0158f.RequestInformation, error) {
+    requestInfo := i2ae4187f7daee263371cb1c977df639813ab50ffa529013b7437480d1ec0158f.NewRequestInformationWithMethodAndUrlTemplateAndPathParameters(i2ae4187f7daee263371cb1c977df639813ab50ffa529013b7437480d1ec0158f.POST, m.BaseRequestBuilder.UrlTemplate, m.BaseRequestBuilder.PathParameters)
+    i2ae4187f7daee263371cb1c977df639813ab50ffa529013b7437480d1ec0158f.ConfigureRequestInformation(requestInfo, requestConfiguration)
+    requestInfo.Headers.TryAdd("Accept", "application/json")
+    err := requestInfo.SetContentFromParsable(ctx, m.BaseRequestBuilder.RequestAdapter, "multipart/form-data", body)
+    if err != nil {
+        return nil, err
+    }
     return requestInfo, nil
 }
 // WithUrl returns a request builder with the provided arbitrary URL. Using this method means any other path or query parameters are ignored.

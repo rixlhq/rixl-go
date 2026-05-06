@@ -5,14 +5,14 @@ package pagination
 
 import (
     i878a80d2330e89d26896388a3f487eef27b0a0e6c010c493bf80be1452208f91 "github.com/microsoft/kiota-abstractions-go/serialization"
-    i5a0295206944821724fb175c9e7dc344b4d3a2abb6a77c9137ef720d4ea98bf7 "github.com/rixlhq/rixl-go/sdk/models"
+    i6dbfac78cc0ad69049cda5add9c379598e7bc509744d77292e84229ae7bf0e9e "github.com/rixlhq/rixl-go/sdk/models"
 )
 
 type PaginatedResponsePost struct {
     // Stores additional data not described in the OpenAPI description found when deserializing. Can be used for serialization as well.
     additionalData map[string]any
     // Data contains the slice of items for the current request.
-    data []i5a0295206944821724fb175c9e7dc344b4d3a2abb6a77c9137ef720d4ea98bf7.Postable
+    data []i6dbfac78cc0ad69049cda5add9c379598e7bc509744d77292e84229ae7bf0e9e.Postable
     // Pagination data for the request.
     pagination Paginationable
 }
@@ -35,7 +35,7 @@ func (m *PaginatedResponsePost) GetAdditionalData()(map[string]any) {
 }
 // GetData gets the data property value. Data contains the slice of items for the current request.
 // returns a []Postable when successful
-func (m *PaginatedResponsePost) GetData()([]i5a0295206944821724fb175c9e7dc344b4d3a2abb6a77c9137ef720d4ea98bf7.Postable) {
+func (m *PaginatedResponsePost) GetData()([]i6dbfac78cc0ad69049cda5add9c379598e7bc509744d77292e84229ae7bf0e9e.Postable) {
     return m.data
 }
 // GetFieldDeserializers the deserialization information for the current model
@@ -43,15 +43,15 @@ func (m *PaginatedResponsePost) GetData()([]i5a0295206944821724fb175c9e7dc344b4d
 func (m *PaginatedResponsePost) GetFieldDeserializers()(map[string]func(i878a80d2330e89d26896388a3f487eef27b0a0e6c010c493bf80be1452208f91.ParseNode)(error)) {
     res := make(map[string]func(i878a80d2330e89d26896388a3f487eef27b0a0e6c010c493bf80be1452208f91.ParseNode)(error))
     res["data"] = func (n i878a80d2330e89d26896388a3f487eef27b0a0e6c010c493bf80be1452208f91.ParseNode) error {
-        val, err := n.GetCollectionOfObjectValues(i5a0295206944821724fb175c9e7dc344b4d3a2abb6a77c9137ef720d4ea98bf7.CreatePostFromDiscriminatorValue)
+        val, err := n.GetCollectionOfObjectValues(i6dbfac78cc0ad69049cda5add9c379598e7bc509744d77292e84229ae7bf0e9e.CreatePostFromDiscriminatorValue)
         if err != nil {
             return err
         }
         if val != nil {
-            res := make([]i5a0295206944821724fb175c9e7dc344b4d3a2abb6a77c9137ef720d4ea98bf7.Postable, len(val))
+            res := make([]i6dbfac78cc0ad69049cda5add9c379598e7bc509744d77292e84229ae7bf0e9e.Postable, len(val))
             for i, v := range val {
                 if v != nil {
-                    res[i] = v.(i5a0295206944821724fb175c9e7dc344b4d3a2abb6a77c9137ef720d4ea98bf7.Postable)
+                    res[i] = v.(i6dbfac78cc0ad69049cda5add9c379598e7bc509744d77292e84229ae7bf0e9e.Postable)
                 }
             }
             m.SetData(res)
@@ -108,7 +108,7 @@ func (m *PaginatedResponsePost) SetAdditionalData(value map[string]any)() {
     m.additionalData = value
 }
 // SetData sets the data property value. Data contains the slice of items for the current request.
-func (m *PaginatedResponsePost) SetData(value []i5a0295206944821724fb175c9e7dc344b4d3a2abb6a77c9137ef720d4ea98bf7.Postable)() {
+func (m *PaginatedResponsePost) SetData(value []i6dbfac78cc0ad69049cda5add9c379598e7bc509744d77292e84229ae7bf0e9e.Postable)() {
     m.data = value
 }
 // SetPagination sets the pagination property value. Pagination data for the request.
@@ -118,8 +118,8 @@ func (m *PaginatedResponsePost) SetPagination(value Paginationable)() {
 type PaginatedResponsePostable interface {
     i878a80d2330e89d26896388a3f487eef27b0a0e6c010c493bf80be1452208f91.AdditionalDataHolder
     i878a80d2330e89d26896388a3f487eef27b0a0e6c010c493bf80be1452208f91.Parsable
-    GetData()([]i5a0295206944821724fb175c9e7dc344b4d3a2abb6a77c9137ef720d4ea98bf7.Postable)
+    GetData()([]i6dbfac78cc0ad69049cda5add9c379598e7bc509744d77292e84229ae7bf0e9e.Postable)
     GetPagination()(Paginationable)
-    SetData(value []i5a0295206944821724fb175c9e7dc344b4d3a2abb6a77c9137ef720d4ea98bf7.Postable)()
+    SetData(value []i6dbfac78cc0ad69049cda5add9c379598e7bc509744d77292e84229ae7bf0e9e.Postable)()
     SetPagination(value Paginationable)()
 }

@@ -6,7 +6,7 @@ package videos
 import (
     "context"
     i2ae4187f7daee263371cb1c977df639813ab50ffa529013b7437480d1ec0158f "github.com/microsoft/kiota-abstractions-go"
-    i90c0e1ee53825fe36252e17a45e5d3b5f64ca0be4b2c3a2284950d3439c0ff4d "github.com/rixlhq/rixl-go/sdk/models/github_com_rixlhq_api_internal_errors"
+    ie2a5be6cba7e3cbff77716d868675078d6c1726dbfffa039ce2712bdf6b113f2 "github.com/rixlhq/rixl-go/sdk/models/github_com_rixlhq_api_internal_errors"
 )
 
 // ItemDeleteRequestBuilder builds and executes requests for operations under \videos\{videoId}\delete
@@ -38,11 +38,11 @@ func (m *ItemDeleteRequestBuilder) Delete(ctx context.Context, requestConfigurat
         return err
     }
     errorMapping := i2ae4187f7daee263371cb1c977df639813ab50ffa529013b7437480d1ec0158f.ErrorMappings {
-        "400": i90c0e1ee53825fe36252e17a45e5d3b5f64ca0be4b2c3a2284950d3439c0ff4d.CreateErrorResponseFromDiscriminatorValue,
-        "401": i90c0e1ee53825fe36252e17a45e5d3b5f64ca0be4b2c3a2284950d3439c0ff4d.CreateErrorResponseFromDiscriminatorValue,
-        "403": i90c0e1ee53825fe36252e17a45e5d3b5f64ca0be4b2c3a2284950d3439c0ff4d.CreateErrorResponseFromDiscriminatorValue,
-        "404": i90c0e1ee53825fe36252e17a45e5d3b5f64ca0be4b2c3a2284950d3439c0ff4d.CreateErrorResponseFromDiscriminatorValue,
-        "500": i90c0e1ee53825fe36252e17a45e5d3b5f64ca0be4b2c3a2284950d3439c0ff4d.CreateErrorResponseFromDiscriminatorValue,
+        "400": ie2a5be6cba7e3cbff77716d868675078d6c1726dbfffa039ce2712bdf6b113f2.CreateErrorResponseFromDiscriminatorValue,
+        "401": ie2a5be6cba7e3cbff77716d868675078d6c1726dbfffa039ce2712bdf6b113f2.CreateErrorResponseFromDiscriminatorValue,
+        "403": ie2a5be6cba7e3cbff77716d868675078d6c1726dbfffa039ce2712bdf6b113f2.CreateErrorResponseFromDiscriminatorValue,
+        "404": ie2a5be6cba7e3cbff77716d868675078d6c1726dbfffa039ce2712bdf6b113f2.CreateErrorResponseFromDiscriminatorValue,
+        "500": ie2a5be6cba7e3cbff77716d868675078d6c1726dbfffa039ce2712bdf6b113f2.CreateErrorResponseFromDiscriminatorValue,
     }
     err = m.BaseRequestBuilder.RequestAdapter.SendNoContent(ctx, requestInfo, errorMapping)
     if err != nil {

@@ -6,9 +6,9 @@ package videos
 import (
     "context"
     i2ae4187f7daee263371cb1c977df639813ab50ffa529013b7437480d1ec0158f "github.com/microsoft/kiota-abstractions-go"
-    i5a0295206944821724fb175c9e7dc344b4d3a2abb6a77c9137ef720d4ea98bf7 "github.com/rixlhq/rixl-go/sdk/models"
-    i90c0e1ee53825fe36252e17a45e5d3b5f64ca0be4b2c3a2284950d3439c0ff4d "github.com/rixlhq/rixl-go/sdk/models/github_com_rixlhq_api_internal_errors"
-    ia26ef189ba46ca11d5f1702cfeae312f09fd90d0dd3e182a9b7c583f74be1fa5 "github.com/rixlhq/rixl-go/sdk/models/github_com_rixlhq_api_internal_videos_handler_upload"
+    i6dbfac78cc0ad69049cda5add9c379598e7bc509744d77292e84229ae7bf0e9e "github.com/rixlhq/rixl-go/sdk/models"
+    ia4f040cea612e95330792d0d2d155079b370fc0788de9ce35fb8f759b619cb74 "github.com/rixlhq/rixl-go/sdk/models/github_com_rixlhq_api_internal_videos_handler_upload"
+    ie2a5be6cba7e3cbff77716d868675078d6c1726dbfffa039ce2712bdf6b113f2 "github.com/rixlhq/rixl-go/sdk/models/github_com_rixlhq_api_internal_errors"
 )
 
 // UploadInitRequestBuilder builds and executes requests for operations under \videos\upload\init
@@ -34,29 +34,29 @@ func NewUploadInitRequestBuilder(rawUrl string, requestAdapter i2ae4187f7daee263
 // returns a ErrorResponse error when the service returns a 401 status code
 // returns a ErrorResponse error when the service returns a 403 status code
 // returns a ErrorResponse error when the service returns a 500 status code
-func (m *UploadInitRequestBuilder) Post(ctx context.Context, body i5a0295206944821724fb175c9e7dc344b4d3a2abb6a77c9137ef720d4ea98bf7.VideoUploadInitRequestable, requestConfiguration *i2ae4187f7daee263371cb1c977df639813ab50ffa529013b7437480d1ec0158f.RequestConfiguration[i2ae4187f7daee263371cb1c977df639813ab50ffa529013b7437480d1ec0158f.DefaultQueryParameters])(ia26ef189ba46ca11d5f1702cfeae312f09fd90d0dd3e182a9b7c583f74be1fa5.InitResponseable, error) {
+func (m *UploadInitRequestBuilder) Post(ctx context.Context, body i6dbfac78cc0ad69049cda5add9c379598e7bc509744d77292e84229ae7bf0e9e.VideoUploadInitRequestable, requestConfiguration *i2ae4187f7daee263371cb1c977df639813ab50ffa529013b7437480d1ec0158f.RequestConfiguration[i2ae4187f7daee263371cb1c977df639813ab50ffa529013b7437480d1ec0158f.DefaultQueryParameters])(ia4f040cea612e95330792d0d2d155079b370fc0788de9ce35fb8f759b619cb74.InitResponseable, error) {
     requestInfo, err := m.ToPostRequestInformation(ctx, body, requestConfiguration);
     if err != nil {
         return nil, err
     }
     errorMapping := i2ae4187f7daee263371cb1c977df639813ab50ffa529013b7437480d1ec0158f.ErrorMappings {
-        "400": i90c0e1ee53825fe36252e17a45e5d3b5f64ca0be4b2c3a2284950d3439c0ff4d.CreateErrorResponseFromDiscriminatorValue,
-        "401": i90c0e1ee53825fe36252e17a45e5d3b5f64ca0be4b2c3a2284950d3439c0ff4d.CreateErrorResponseFromDiscriminatorValue,
-        "403": i90c0e1ee53825fe36252e17a45e5d3b5f64ca0be4b2c3a2284950d3439c0ff4d.CreateErrorResponseFromDiscriminatorValue,
-        "500": i90c0e1ee53825fe36252e17a45e5d3b5f64ca0be4b2c3a2284950d3439c0ff4d.CreateErrorResponseFromDiscriminatorValue,
+        "400": ie2a5be6cba7e3cbff77716d868675078d6c1726dbfffa039ce2712bdf6b113f2.CreateErrorResponseFromDiscriminatorValue,
+        "401": ie2a5be6cba7e3cbff77716d868675078d6c1726dbfffa039ce2712bdf6b113f2.CreateErrorResponseFromDiscriminatorValue,
+        "403": ie2a5be6cba7e3cbff77716d868675078d6c1726dbfffa039ce2712bdf6b113f2.CreateErrorResponseFromDiscriminatorValue,
+        "500": ie2a5be6cba7e3cbff77716d868675078d6c1726dbfffa039ce2712bdf6b113f2.CreateErrorResponseFromDiscriminatorValue,
     }
-    res, err := m.BaseRequestBuilder.RequestAdapter.Send(ctx, requestInfo, ia26ef189ba46ca11d5f1702cfeae312f09fd90d0dd3e182a9b7c583f74be1fa5.CreateInitResponseFromDiscriminatorValue, errorMapping)
+    res, err := m.BaseRequestBuilder.RequestAdapter.Send(ctx, requestInfo, ia4f040cea612e95330792d0d2d155079b370fc0788de9ce35fb8f759b619cb74.CreateInitResponseFromDiscriminatorValue, errorMapping)
     if err != nil {
         return nil, err
     }
     if res == nil {
         return nil, nil
     }
-    return res.(ia26ef189ba46ca11d5f1702cfeae312f09fd90d0dd3e182a9b7c583f74be1fa5.InitResponseable), nil
+    return res.(ia4f040cea612e95330792d0d2d155079b370fc0788de9ce35fb8f759b619cb74.InitResponseable), nil
 }
 // ToPostRequestInformation initialize a video upload and get presigned URLs for video and poster using API key authentication
 // returns a *RequestInformation when successful
-func (m *UploadInitRequestBuilder) ToPostRequestInformation(ctx context.Context, body i5a0295206944821724fb175c9e7dc344b4d3a2abb6a77c9137ef720d4ea98bf7.VideoUploadInitRequestable, requestConfiguration *i2ae4187f7daee263371cb1c977df639813ab50ffa529013b7437480d1ec0158f.RequestConfiguration[i2ae4187f7daee263371cb1c977df639813ab50ffa529013b7437480d1ec0158f.DefaultQueryParameters])(*i2ae4187f7daee263371cb1c977df639813ab50ffa529013b7437480d1ec0158f.RequestInformation, error) {
+func (m *UploadInitRequestBuilder) ToPostRequestInformation(ctx context.Context, body i6dbfac78cc0ad69049cda5add9c379598e7bc509744d77292e84229ae7bf0e9e.VideoUploadInitRequestable, requestConfiguration *i2ae4187f7daee263371cb1c977df639813ab50ffa529013b7437480d1ec0158f.RequestConfiguration[i2ae4187f7daee263371cb1c977df639813ab50ffa529013b7437480d1ec0158f.DefaultQueryParameters])(*i2ae4187f7daee263371cb1c977df639813ab50ffa529013b7437480d1ec0158f.RequestInformation, error) {
     requestInfo := i2ae4187f7daee263371cb1c977df639813ab50ffa529013b7437480d1ec0158f.NewRequestInformationWithMethodAndUrlTemplateAndPathParameters(i2ae4187f7daee263371cb1c977df639813ab50ffa529013b7437480d1ec0158f.POST, m.BaseRequestBuilder.UrlTemplate, m.BaseRequestBuilder.PathParameters)
     i2ae4187f7daee263371cb1c977df639813ab50ffa529013b7437480d1ec0158f.ConfigureRequestInformation(requestInfo, requestConfiguration)
     requestInfo.Headers.TryAdd("Accept", "application/json")

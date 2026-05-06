@@ -6,8 +6,8 @@ package videos
 import (
     "context"
     i2ae4187f7daee263371cb1c977df639813ab50ffa529013b7437480d1ec0158f "github.com/microsoft/kiota-abstractions-go"
-    i5a0295206944821724fb175c9e7dc344b4d3a2abb6a77c9137ef720d4ea98bf7 "github.com/rixlhq/rixl-go/sdk/models"
-    i90c0e1ee53825fe36252e17a45e5d3b5f64ca0be4b2c3a2284950d3439c0ff4d "github.com/rixlhq/rixl-go/sdk/models/github_com_rixlhq_api_internal_errors"
+    i6dbfac78cc0ad69049cda5add9c379598e7bc509744d77292e84229ae7bf0e9e "github.com/rixlhq/rixl-go/sdk/models"
+    ie2a5be6cba7e3cbff77716d868675078d6c1726dbfffa039ce2712bdf6b113f2 "github.com/rixlhq/rixl-go/sdk/models/github_com_rixlhq_api_internal_errors"
 )
 
 // ItemChaptersRequestBuilder builds and executes requests for operations under \videos\{videoId}\chapters
@@ -33,25 +33,25 @@ func NewItemChaptersRequestBuilder(rawUrl string, requestAdapter i2ae4187f7daee2
 // returns a ErrorResponse error when the service returns a 403 status code
 // returns a ErrorResponse error when the service returns a 404 status code
 // returns a ErrorResponse error when the service returns a 500 status code
-func (m *ItemChaptersRequestBuilder) Delete(ctx context.Context, requestConfiguration *i2ae4187f7daee263371cb1c977df639813ab50ffa529013b7437480d1ec0158f.RequestConfiguration[i2ae4187f7daee263371cb1c977df639813ab50ffa529013b7437480d1ec0158f.DefaultQueryParameters])(i5a0295206944821724fb175c9e7dc344b4d3a2abb6a77c9137ef720d4ea98bf7.UpdateChaptersResponseable, error) {
+func (m *ItemChaptersRequestBuilder) Delete(ctx context.Context, requestConfiguration *i2ae4187f7daee263371cb1c977df639813ab50ffa529013b7437480d1ec0158f.RequestConfiguration[i2ae4187f7daee263371cb1c977df639813ab50ffa529013b7437480d1ec0158f.DefaultQueryParameters])(i6dbfac78cc0ad69049cda5add9c379598e7bc509744d77292e84229ae7bf0e9e.UpdateChaptersResponseable, error) {
     requestInfo, err := m.ToDeleteRequestInformation(ctx, requestConfiguration);
     if err != nil {
         return nil, err
     }
     errorMapping := i2ae4187f7daee263371cb1c977df639813ab50ffa529013b7437480d1ec0158f.ErrorMappings {
-        "401": i90c0e1ee53825fe36252e17a45e5d3b5f64ca0be4b2c3a2284950d3439c0ff4d.CreateErrorResponseFromDiscriminatorValue,
-        "403": i90c0e1ee53825fe36252e17a45e5d3b5f64ca0be4b2c3a2284950d3439c0ff4d.CreateErrorResponseFromDiscriminatorValue,
-        "404": i90c0e1ee53825fe36252e17a45e5d3b5f64ca0be4b2c3a2284950d3439c0ff4d.CreateErrorResponseFromDiscriminatorValue,
-        "500": i90c0e1ee53825fe36252e17a45e5d3b5f64ca0be4b2c3a2284950d3439c0ff4d.CreateErrorResponseFromDiscriminatorValue,
+        "401": ie2a5be6cba7e3cbff77716d868675078d6c1726dbfffa039ce2712bdf6b113f2.CreateErrorResponseFromDiscriminatorValue,
+        "403": ie2a5be6cba7e3cbff77716d868675078d6c1726dbfffa039ce2712bdf6b113f2.CreateErrorResponseFromDiscriminatorValue,
+        "404": ie2a5be6cba7e3cbff77716d868675078d6c1726dbfffa039ce2712bdf6b113f2.CreateErrorResponseFromDiscriminatorValue,
+        "500": ie2a5be6cba7e3cbff77716d868675078d6c1726dbfffa039ce2712bdf6b113f2.CreateErrorResponseFromDiscriminatorValue,
     }
-    res, err := m.BaseRequestBuilder.RequestAdapter.Send(ctx, requestInfo, i5a0295206944821724fb175c9e7dc344b4d3a2abb6a77c9137ef720d4ea98bf7.CreateUpdateChaptersResponseFromDiscriminatorValue, errorMapping)
+    res, err := m.BaseRequestBuilder.RequestAdapter.Send(ctx, requestInfo, i6dbfac78cc0ad69049cda5add9c379598e7bc509744d77292e84229ae7bf0e9e.CreateUpdateChaptersResponseFromDiscriminatorValue, errorMapping)
     if err != nil {
         return nil, err
     }
     if res == nil {
         return nil, nil
     }
-    return res.(i5a0295206944821724fb175c9e7dc344b4d3a2abb6a77c9137ef720d4ea98bf7.UpdateChaptersResponseable), nil
+    return res.(i6dbfac78cc0ad69049cda5add9c379598e7bc509744d77292e84229ae7bf0e9e.UpdateChaptersResponseable), nil
 }
 // Put replace all chapters for a video (atomic PUT operation) using API key authentication
 // returns a UpdateChaptersResponseable when successful
@@ -60,26 +60,26 @@ func (m *ItemChaptersRequestBuilder) Delete(ctx context.Context, requestConfigur
 // returns a ErrorResponse error when the service returns a 403 status code
 // returns a ErrorResponse error when the service returns a 404 status code
 // returns a ErrorResponse error when the service returns a 500 status code
-func (m *ItemChaptersRequestBuilder) Put(ctx context.Context, body i5a0295206944821724fb175c9e7dc344b4d3a2abb6a77c9137ef720d4ea98bf7.UpdateChaptersRequestable, requestConfiguration *i2ae4187f7daee263371cb1c977df639813ab50ffa529013b7437480d1ec0158f.RequestConfiguration[i2ae4187f7daee263371cb1c977df639813ab50ffa529013b7437480d1ec0158f.DefaultQueryParameters])(i5a0295206944821724fb175c9e7dc344b4d3a2abb6a77c9137ef720d4ea98bf7.UpdateChaptersResponseable, error) {
+func (m *ItemChaptersRequestBuilder) Put(ctx context.Context, body i6dbfac78cc0ad69049cda5add9c379598e7bc509744d77292e84229ae7bf0e9e.UpdateChaptersRequestable, requestConfiguration *i2ae4187f7daee263371cb1c977df639813ab50ffa529013b7437480d1ec0158f.RequestConfiguration[i2ae4187f7daee263371cb1c977df639813ab50ffa529013b7437480d1ec0158f.DefaultQueryParameters])(i6dbfac78cc0ad69049cda5add9c379598e7bc509744d77292e84229ae7bf0e9e.UpdateChaptersResponseable, error) {
     requestInfo, err := m.ToPutRequestInformation(ctx, body, requestConfiguration);
     if err != nil {
         return nil, err
     }
     errorMapping := i2ae4187f7daee263371cb1c977df639813ab50ffa529013b7437480d1ec0158f.ErrorMappings {
-        "400": i90c0e1ee53825fe36252e17a45e5d3b5f64ca0be4b2c3a2284950d3439c0ff4d.CreateErrorResponseFromDiscriminatorValue,
-        "401": i90c0e1ee53825fe36252e17a45e5d3b5f64ca0be4b2c3a2284950d3439c0ff4d.CreateErrorResponseFromDiscriminatorValue,
-        "403": i90c0e1ee53825fe36252e17a45e5d3b5f64ca0be4b2c3a2284950d3439c0ff4d.CreateErrorResponseFromDiscriminatorValue,
-        "404": i90c0e1ee53825fe36252e17a45e5d3b5f64ca0be4b2c3a2284950d3439c0ff4d.CreateErrorResponseFromDiscriminatorValue,
-        "500": i90c0e1ee53825fe36252e17a45e5d3b5f64ca0be4b2c3a2284950d3439c0ff4d.CreateErrorResponseFromDiscriminatorValue,
+        "400": ie2a5be6cba7e3cbff77716d868675078d6c1726dbfffa039ce2712bdf6b113f2.CreateErrorResponseFromDiscriminatorValue,
+        "401": ie2a5be6cba7e3cbff77716d868675078d6c1726dbfffa039ce2712bdf6b113f2.CreateErrorResponseFromDiscriminatorValue,
+        "403": ie2a5be6cba7e3cbff77716d868675078d6c1726dbfffa039ce2712bdf6b113f2.CreateErrorResponseFromDiscriminatorValue,
+        "404": ie2a5be6cba7e3cbff77716d868675078d6c1726dbfffa039ce2712bdf6b113f2.CreateErrorResponseFromDiscriminatorValue,
+        "500": ie2a5be6cba7e3cbff77716d868675078d6c1726dbfffa039ce2712bdf6b113f2.CreateErrorResponseFromDiscriminatorValue,
     }
-    res, err := m.BaseRequestBuilder.RequestAdapter.Send(ctx, requestInfo, i5a0295206944821724fb175c9e7dc344b4d3a2abb6a77c9137ef720d4ea98bf7.CreateUpdateChaptersResponseFromDiscriminatorValue, errorMapping)
+    res, err := m.BaseRequestBuilder.RequestAdapter.Send(ctx, requestInfo, i6dbfac78cc0ad69049cda5add9c379598e7bc509744d77292e84229ae7bf0e9e.CreateUpdateChaptersResponseFromDiscriminatorValue, errorMapping)
     if err != nil {
         return nil, err
     }
     if res == nil {
         return nil, nil
     }
-    return res.(i5a0295206944821724fb175c9e7dc344b4d3a2abb6a77c9137ef720d4ea98bf7.UpdateChaptersResponseable), nil
+    return res.(i6dbfac78cc0ad69049cda5add9c379598e7bc509744d77292e84229ae7bf0e9e.UpdateChaptersResponseable), nil
 }
 // ToDeleteRequestInformation remove all chapters from a video using API key authentication
 // returns a *RequestInformation when successful
@@ -91,7 +91,7 @@ func (m *ItemChaptersRequestBuilder) ToDeleteRequestInformation(ctx context.Cont
 }
 // ToPutRequestInformation replace all chapters for a video (atomic PUT operation) using API key authentication
 // returns a *RequestInformation when successful
-func (m *ItemChaptersRequestBuilder) ToPutRequestInformation(ctx context.Context, body i5a0295206944821724fb175c9e7dc344b4d3a2abb6a77c9137ef720d4ea98bf7.UpdateChaptersRequestable, requestConfiguration *i2ae4187f7daee263371cb1c977df639813ab50ffa529013b7437480d1ec0158f.RequestConfiguration[i2ae4187f7daee263371cb1c977df639813ab50ffa529013b7437480d1ec0158f.DefaultQueryParameters])(*i2ae4187f7daee263371cb1c977df639813ab50ffa529013b7437480d1ec0158f.RequestInformation, error) {
+func (m *ItemChaptersRequestBuilder) ToPutRequestInformation(ctx context.Context, body i6dbfac78cc0ad69049cda5add9c379598e7bc509744d77292e84229ae7bf0e9e.UpdateChaptersRequestable, requestConfiguration *i2ae4187f7daee263371cb1c977df639813ab50ffa529013b7437480d1ec0158f.RequestConfiguration[i2ae4187f7daee263371cb1c977df639813ab50ffa529013b7437480d1ec0158f.DefaultQueryParameters])(*i2ae4187f7daee263371cb1c977df639813ab50ffa529013b7437480d1ec0158f.RequestInformation, error) {
     requestInfo := i2ae4187f7daee263371cb1c977df639813ab50ffa529013b7437480d1ec0158f.NewRequestInformationWithMethodAndUrlTemplateAndPathParameters(i2ae4187f7daee263371cb1c977df639813ab50ffa529013b7437480d1ec0158f.PUT, m.BaseRequestBuilder.UrlTemplate, m.BaseRequestBuilder.PathParameters)
     i2ae4187f7daee263371cb1c977df639813ab50ffa529013b7437480d1ec0158f.ConfigureRequestInformation(requestInfo, requestConfiguration)
     requestInfo.Headers.TryAdd("Accept", "application/json")

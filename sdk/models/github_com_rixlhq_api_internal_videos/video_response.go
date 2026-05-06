@@ -5,8 +5,8 @@ package github_com_rixlhq_api_internal_videos
 
 import (
     i878a80d2330e89d26896388a3f487eef27b0a0e6c010c493bf80be1452208f91 "github.com/microsoft/kiota-abstractions-go/serialization"
-    i5a0295206944821724fb175c9e7dc344b4d3a2abb6a77c9137ef720d4ea98bf7 "github.com/rixlhq/rixl-go/sdk/models"
-    idd5d23568b1954ed5a4e987f05d5cdb6343f855566c6a9b4f10e785a3a6d4a0f "github.com/rixlhq/rixl-go/sdk/models/github_com_rixlhq_api_db_sqlc"
+    i6dbfac78cc0ad69049cda5add9c379598e7bc509744d77292e84229ae7bf0e9e "github.com/rixlhq/rixl-go/sdk/models"
+    ibfc94a998e6d18ac248503ca229786d152c87cf27abc54b7e8dd1be9afe71f75 "github.com/rixlhq/rixl-go/sdk/models/github_com_rixlhq_api_db_sqlc"
 )
 
 type VideoResponse struct {
@@ -15,13 +15,13 @@ type VideoResponse struct {
     // The bitrate property
     bitrate *int32
     // The chapters property
-    chapters []i5a0295206944821724fb175c9e7dc344b4d3a2abb6a77c9137ef720d4ea98bf7.Chapterable
+    chapters []i6dbfac78cc0ad69049cda5add9c379598e7bc509744d77292e84229ae7bf0e9e.Chapterable
     // The codec property
     codec *string
     // The duration property
     duration *float64
     // The file property
-    file i5a0295206944821724fb175c9e7dc344b4d3a2abb6a77c9137ef720d4ea98bf7.Fileable
+    file i6dbfac78cc0ad69049cda5add9c379598e7bc509744d77292e84229ae7bf0e9e.Fileable
     // The framerate property
     framerate *string
     // The hdr property
@@ -31,9 +31,9 @@ type VideoResponse struct {
     // The id property
     id *string
     // The plan_type property
-    plan_type *idd5d23568b1954ed5a4e987f05d5cdb6343f855566c6a9b4f10e785a3a6d4a0f.PlanType
+    plan_type *ibfc94a998e6d18ac248503ca229786d152c87cf27abc54b7e8dd1be9afe71f75.PlanType
     // The poster property
-    poster i5a0295206944821724fb175c9e7dc344b4d3a2abb6a77c9137ef720d4ea98bf7.Imageable
+    poster i6dbfac78cc0ad69049cda5add9c379598e7bc509744d77292e84229ae7bf0e9e.Imageable
     // The width property
     width *int32
 }
@@ -61,7 +61,7 @@ func (m *VideoResponse) GetBitrate()(*int32) {
 }
 // GetChapters gets the chapters property value. The chapters property
 // returns a []Chapterable when successful
-func (m *VideoResponse) GetChapters()([]i5a0295206944821724fb175c9e7dc344b4d3a2abb6a77c9137ef720d4ea98bf7.Chapterable) {
+func (m *VideoResponse) GetChapters()([]i6dbfac78cc0ad69049cda5add9c379598e7bc509744d77292e84229ae7bf0e9e.Chapterable) {
     return m.chapters
 }
 // GetCodec gets the codec property value. The codec property
@@ -89,15 +89,15 @@ func (m *VideoResponse) GetFieldDeserializers()(map[string]func(i878a80d2330e89d
         return nil
     }
     res["chapters"] = func (n i878a80d2330e89d26896388a3f487eef27b0a0e6c010c493bf80be1452208f91.ParseNode) error {
-        val, err := n.GetCollectionOfObjectValues(i5a0295206944821724fb175c9e7dc344b4d3a2abb6a77c9137ef720d4ea98bf7.CreateChapterFromDiscriminatorValue)
+        val, err := n.GetCollectionOfObjectValues(i6dbfac78cc0ad69049cda5add9c379598e7bc509744d77292e84229ae7bf0e9e.CreateChapterFromDiscriminatorValue)
         if err != nil {
             return err
         }
         if val != nil {
-            res := make([]i5a0295206944821724fb175c9e7dc344b4d3a2abb6a77c9137ef720d4ea98bf7.Chapterable, len(val))
+            res := make([]i6dbfac78cc0ad69049cda5add9c379598e7bc509744d77292e84229ae7bf0e9e.Chapterable, len(val))
             for i, v := range val {
                 if v != nil {
-                    res[i] = v.(i5a0295206944821724fb175c9e7dc344b4d3a2abb6a77c9137ef720d4ea98bf7.Chapterable)
+                    res[i] = v.(i6dbfac78cc0ad69049cda5add9c379598e7bc509744d77292e84229ae7bf0e9e.Chapterable)
                 }
             }
             m.SetChapters(res)
@@ -125,12 +125,12 @@ func (m *VideoResponse) GetFieldDeserializers()(map[string]func(i878a80d2330e89d
         return nil
     }
     res["file"] = func (n i878a80d2330e89d26896388a3f487eef27b0a0e6c010c493bf80be1452208f91.ParseNode) error {
-        val, err := n.GetObjectValue(i5a0295206944821724fb175c9e7dc344b4d3a2abb6a77c9137ef720d4ea98bf7.CreateFileFromDiscriminatorValue)
+        val, err := n.GetObjectValue(i6dbfac78cc0ad69049cda5add9c379598e7bc509744d77292e84229ae7bf0e9e.CreateFileFromDiscriminatorValue)
         if err != nil {
             return err
         }
         if val != nil {
-            m.SetFile(val.(i5a0295206944821724fb175c9e7dc344b4d3a2abb6a77c9137ef720d4ea98bf7.Fileable))
+            m.SetFile(val.(i6dbfac78cc0ad69049cda5add9c379598e7bc509744d77292e84229ae7bf0e9e.Fileable))
         }
         return nil
     }
@@ -175,22 +175,22 @@ func (m *VideoResponse) GetFieldDeserializers()(map[string]func(i878a80d2330e89d
         return nil
     }
     res["plan_type"] = func (n i878a80d2330e89d26896388a3f487eef27b0a0e6c010c493bf80be1452208f91.ParseNode) error {
-        val, err := n.GetEnumValue(idd5d23568b1954ed5a4e987f05d5cdb6343f855566c6a9b4f10e785a3a6d4a0f.ParsePlanType)
+        val, err := n.GetEnumValue(ibfc94a998e6d18ac248503ca229786d152c87cf27abc54b7e8dd1be9afe71f75.ParsePlanType)
         if err != nil {
             return err
         }
         if val != nil {
-            m.SetPlanType(val.(*idd5d23568b1954ed5a4e987f05d5cdb6343f855566c6a9b4f10e785a3a6d4a0f.PlanType))
+            m.SetPlanType(val.(*ibfc94a998e6d18ac248503ca229786d152c87cf27abc54b7e8dd1be9afe71f75.PlanType))
         }
         return nil
     }
     res["poster"] = func (n i878a80d2330e89d26896388a3f487eef27b0a0e6c010c493bf80be1452208f91.ParseNode) error {
-        val, err := n.GetObjectValue(i5a0295206944821724fb175c9e7dc344b4d3a2abb6a77c9137ef720d4ea98bf7.CreateImageFromDiscriminatorValue)
+        val, err := n.GetObjectValue(i6dbfac78cc0ad69049cda5add9c379598e7bc509744d77292e84229ae7bf0e9e.CreateImageFromDiscriminatorValue)
         if err != nil {
             return err
         }
         if val != nil {
-            m.SetPoster(val.(i5a0295206944821724fb175c9e7dc344b4d3a2abb6a77c9137ef720d4ea98bf7.Imageable))
+            m.SetPoster(val.(i6dbfac78cc0ad69049cda5add9c379598e7bc509744d77292e84229ae7bf0e9e.Imageable))
         }
         return nil
     }
@@ -208,7 +208,7 @@ func (m *VideoResponse) GetFieldDeserializers()(map[string]func(i878a80d2330e89d
 }
 // GetFile gets the file property value. The file property
 // returns a Fileable when successful
-func (m *VideoResponse) GetFile()(i5a0295206944821724fb175c9e7dc344b4d3a2abb6a77c9137ef720d4ea98bf7.Fileable) {
+func (m *VideoResponse) GetFile()(i6dbfac78cc0ad69049cda5add9c379598e7bc509744d77292e84229ae7bf0e9e.Fileable) {
     return m.file
 }
 // GetFramerate gets the framerate property value. The framerate property
@@ -233,12 +233,12 @@ func (m *VideoResponse) GetId()(*string) {
 }
 // GetPlanType gets the plan_type property value. The plan_type property
 // returns a *PlanType when successful
-func (m *VideoResponse) GetPlanType()(*idd5d23568b1954ed5a4e987f05d5cdb6343f855566c6a9b4f10e785a3a6d4a0f.PlanType) {
+func (m *VideoResponse) GetPlanType()(*ibfc94a998e6d18ac248503ca229786d152c87cf27abc54b7e8dd1be9afe71f75.PlanType) {
     return m.plan_type
 }
 // GetPoster gets the poster property value. The poster property
 // returns a Imageable when successful
-func (m *VideoResponse) GetPoster()(i5a0295206944821724fb175c9e7dc344b4d3a2abb6a77c9137ef720d4ea98bf7.Imageable) {
+func (m *VideoResponse) GetPoster()(i6dbfac78cc0ad69049cda5add9c379598e7bc509744d77292e84229ae7bf0e9e.Imageable) {
     return m.poster
 }
 // GetWidth gets the width property value. The width property
@@ -344,7 +344,7 @@ func (m *VideoResponse) SetBitrate(value *int32)() {
     m.bitrate = value
 }
 // SetChapters sets the chapters property value. The chapters property
-func (m *VideoResponse) SetChapters(value []i5a0295206944821724fb175c9e7dc344b4d3a2abb6a77c9137ef720d4ea98bf7.Chapterable)() {
+func (m *VideoResponse) SetChapters(value []i6dbfac78cc0ad69049cda5add9c379598e7bc509744d77292e84229ae7bf0e9e.Chapterable)() {
     m.chapters = value
 }
 // SetCodec sets the codec property value. The codec property
@@ -356,7 +356,7 @@ func (m *VideoResponse) SetDuration(value *float64)() {
     m.duration = value
 }
 // SetFile sets the file property value. The file property
-func (m *VideoResponse) SetFile(value i5a0295206944821724fb175c9e7dc344b4d3a2abb6a77c9137ef720d4ea98bf7.Fileable)() {
+func (m *VideoResponse) SetFile(value i6dbfac78cc0ad69049cda5add9c379598e7bc509744d77292e84229ae7bf0e9e.Fileable)() {
     m.file = value
 }
 // SetFramerate sets the framerate property value. The framerate property
@@ -376,11 +376,11 @@ func (m *VideoResponse) SetId(value *string)() {
     m.id = value
 }
 // SetPlanType sets the plan_type property value. The plan_type property
-func (m *VideoResponse) SetPlanType(value *idd5d23568b1954ed5a4e987f05d5cdb6343f855566c6a9b4f10e785a3a6d4a0f.PlanType)() {
+func (m *VideoResponse) SetPlanType(value *ibfc94a998e6d18ac248503ca229786d152c87cf27abc54b7e8dd1be9afe71f75.PlanType)() {
     m.plan_type = value
 }
 // SetPoster sets the poster property value. The poster property
-func (m *VideoResponse) SetPoster(value i5a0295206944821724fb175c9e7dc344b4d3a2abb6a77c9137ef720d4ea98bf7.Imageable)() {
+func (m *VideoResponse) SetPoster(value i6dbfac78cc0ad69049cda5add9c379598e7bc509744d77292e84229ae7bf0e9e.Imageable)() {
     m.poster = value
 }
 // SetWidth sets the width property value. The width property
@@ -391,27 +391,27 @@ type VideoResponseable interface {
     i878a80d2330e89d26896388a3f487eef27b0a0e6c010c493bf80be1452208f91.AdditionalDataHolder
     i878a80d2330e89d26896388a3f487eef27b0a0e6c010c493bf80be1452208f91.Parsable
     GetBitrate()(*int32)
-    GetChapters()([]i5a0295206944821724fb175c9e7dc344b4d3a2abb6a77c9137ef720d4ea98bf7.Chapterable)
+    GetChapters()([]i6dbfac78cc0ad69049cda5add9c379598e7bc509744d77292e84229ae7bf0e9e.Chapterable)
     GetCodec()(*string)
     GetDuration()(*float64)
-    GetFile()(i5a0295206944821724fb175c9e7dc344b4d3a2abb6a77c9137ef720d4ea98bf7.Fileable)
+    GetFile()(i6dbfac78cc0ad69049cda5add9c379598e7bc509744d77292e84229ae7bf0e9e.Fileable)
     GetFramerate()(*string)
     GetHdr()(*bool)
     GetHeight()(*int32)
     GetId()(*string)
-    GetPlanType()(*idd5d23568b1954ed5a4e987f05d5cdb6343f855566c6a9b4f10e785a3a6d4a0f.PlanType)
-    GetPoster()(i5a0295206944821724fb175c9e7dc344b4d3a2abb6a77c9137ef720d4ea98bf7.Imageable)
+    GetPlanType()(*ibfc94a998e6d18ac248503ca229786d152c87cf27abc54b7e8dd1be9afe71f75.PlanType)
+    GetPoster()(i6dbfac78cc0ad69049cda5add9c379598e7bc509744d77292e84229ae7bf0e9e.Imageable)
     GetWidth()(*int32)
     SetBitrate(value *int32)()
-    SetChapters(value []i5a0295206944821724fb175c9e7dc344b4d3a2abb6a77c9137ef720d4ea98bf7.Chapterable)()
+    SetChapters(value []i6dbfac78cc0ad69049cda5add9c379598e7bc509744d77292e84229ae7bf0e9e.Chapterable)()
     SetCodec(value *string)()
     SetDuration(value *float64)()
-    SetFile(value i5a0295206944821724fb175c9e7dc344b4d3a2abb6a77c9137ef720d4ea98bf7.Fileable)()
+    SetFile(value i6dbfac78cc0ad69049cda5add9c379598e7bc509744d77292e84229ae7bf0e9e.Fileable)()
     SetFramerate(value *string)()
     SetHdr(value *bool)()
     SetHeight(value *int32)()
     SetId(value *string)()
-    SetPlanType(value *idd5d23568b1954ed5a4e987f05d5cdb6343f855566c6a9b4f10e785a3a6d4a0f.PlanType)()
-    SetPoster(value i5a0295206944821724fb175c9e7dc344b4d3a2abb6a77c9137ef720d4ea98bf7.Imageable)()
+    SetPlanType(value *ibfc94a998e6d18ac248503ca229786d152c87cf27abc54b7e8dd1be9afe71f75.PlanType)()
+    SetPoster(value i6dbfac78cc0ad69049cda5add9c379598e7bc509744d77292e84229ae7bf0e9e.Imageable)()
     SetWidth(value *int32)()
 }

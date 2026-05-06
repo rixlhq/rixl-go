@@ -10,9 +10,9 @@ import (
     i56887720f41ac882814261620b1c8459c4a992a0207af547c4453dd39fabc426 "github.com/microsoft/kiota-serialization-multipart-go"
     i7294a22093d408fdca300f11b81a887d89c47b764af06c8b803e2323973fdb83 "github.com/microsoft/kiota-serialization-text-go"
     i878a80d2330e89d26896388a3f487eef27b0a0e6c010c493bf80be1452208f91 "github.com/microsoft/kiota-abstractions-go/serialization"
-    i92d11b1be5e1a219826558d618aa13b99bc39b363f84d44c8fae21cfe62a9c2a "github.com/rixlhq/rixl-go/sdk/videos"
-    ib4c772508aeee354f1c716370b53652066e5d9f2b538c24beb19195da586f678 "github.com/rixlhq/rixl-go/sdk/feeds"
-    iba494b443f34f4e89867800c46fdc1fe53488f5207fe8b64bd5d153d81836a09 "github.com/rixlhq/rixl-go/sdk/images"
+    i5d1b58efad67fd52cd593818d97a957927cde4a0cdeb1336e1f63e292ee0469a "github.com/rixlhq/rixl-go/sdk/images"
+    i8ad6a0e995c981d10fa62216669407477984be263b224ae3083276be9299d2be "github.com/rixlhq/rixl-go/sdk/videos"
+    ibdad7f993fe25470070530cf5a89acee7d08b07ba9d1ded016303bd494c11c82 "github.com/rixlhq/rixl-go/sdk/feeds"
 )
 
 // RixlClient the main entry point of the SDK, exposes the configuration and the fluent API.
@@ -31,20 +31,24 @@ func NewRixlClient(requestAdapter i2ae4187f7daee263371cb1c977df639813ab50ffa5290
     i2ae4187f7daee263371cb1c977df639813ab50ffa529013b7437480d1ec0158f.RegisterDefaultDeserializer(func() i878a80d2330e89d26896388a3f487eef27b0a0e6c010c493bf80be1452208f91.ParseNodeFactory { return i25911dc319edd61cbac496af7eab5ef20b6069a42515e22ec6a9bc97bf598488.NewJsonParseNodeFactory() })
     i2ae4187f7daee263371cb1c977df639813ab50ffa529013b7437480d1ec0158f.RegisterDefaultDeserializer(func() i878a80d2330e89d26896388a3f487eef27b0a0e6c010c493bf80be1452208f91.ParseNodeFactory { return i7294a22093d408fdca300f11b81a887d89c47b764af06c8b803e2323973fdb83.NewTextParseNodeFactory() })
     i2ae4187f7daee263371cb1c977df639813ab50ffa529013b7437480d1ec0158f.RegisterDefaultDeserializer(func() i878a80d2330e89d26896388a3f487eef27b0a0e6c010c493bf80be1452208f91.ParseNodeFactory { return i4bcdc892e61ac17e2afc10b5e2b536b29f4fd6c1ad30f4a5a68df47495db3347.NewFormParseNodeFactory() })
+    if m.BaseRequestBuilder.RequestAdapter.GetBaseUrl() == "" {
+        m.BaseRequestBuilder.RequestAdapter.SetBaseUrl("https://raw.githubusercontent.com")
+    }
+    m.BaseRequestBuilder.PathParameters["baseurl"] = m.BaseRequestBuilder.RequestAdapter.GetBaseUrl()
     return m
 }
 // Feeds the feeds property
 // returns a *FeedsRequestBuilder when successful
-func (m *RixlClient) Feeds()(*ib4c772508aeee354f1c716370b53652066e5d9f2b538c24beb19195da586f678.FeedsRequestBuilder) {
-    return ib4c772508aeee354f1c716370b53652066e5d9f2b538c24beb19195da586f678.NewFeedsRequestBuilderInternal(m.BaseRequestBuilder.PathParameters, m.BaseRequestBuilder.RequestAdapter)
+func (m *RixlClient) Feeds()(*ibdad7f993fe25470070530cf5a89acee7d08b07ba9d1ded016303bd494c11c82.FeedsRequestBuilder) {
+    return ibdad7f993fe25470070530cf5a89acee7d08b07ba9d1ded016303bd494c11c82.NewFeedsRequestBuilderInternal(m.BaseRequestBuilder.PathParameters, m.BaseRequestBuilder.RequestAdapter)
 }
 // Images the images property
 // returns a *ImagesRequestBuilder when successful
-func (m *RixlClient) Images()(*iba494b443f34f4e89867800c46fdc1fe53488f5207fe8b64bd5d153d81836a09.ImagesRequestBuilder) {
-    return iba494b443f34f4e89867800c46fdc1fe53488f5207fe8b64bd5d153d81836a09.NewImagesRequestBuilderInternal(m.BaseRequestBuilder.PathParameters, m.BaseRequestBuilder.RequestAdapter)
+func (m *RixlClient) Images()(*i5d1b58efad67fd52cd593818d97a957927cde4a0cdeb1336e1f63e292ee0469a.ImagesRequestBuilder) {
+    return i5d1b58efad67fd52cd593818d97a957927cde4a0cdeb1336e1f63e292ee0469a.NewImagesRequestBuilderInternal(m.BaseRequestBuilder.PathParameters, m.BaseRequestBuilder.RequestAdapter)
 }
 // Videos the videos property
 // returns a *VideosRequestBuilder when successful
-func (m *RixlClient) Videos()(*i92d11b1be5e1a219826558d618aa13b99bc39b363f84d44c8fae21cfe62a9c2a.VideosRequestBuilder) {
-    return i92d11b1be5e1a219826558d618aa13b99bc39b363f84d44c8fae21cfe62a9c2a.NewVideosRequestBuilderInternal(m.BaseRequestBuilder.PathParameters, m.BaseRequestBuilder.RequestAdapter)
+func (m *RixlClient) Videos()(*i8ad6a0e995c981d10fa62216669407477984be263b224ae3083276be9299d2be.VideosRequestBuilder) {
+    return i8ad6a0e995c981d10fa62216669407477984be263b224ae3083276be9299d2be.NewVideosRequestBuilderInternal(m.BaseRequestBuilder.PathParameters, m.BaseRequestBuilder.RequestAdapter)
 }
