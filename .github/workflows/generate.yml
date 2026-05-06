@@ -16,21 +16,12 @@ jobs:
         with:
           token: ${{ secrets.BUILD_GITHUB_TOKEN }}
 
-      - name: Install kiota
-        run: |
-          curl -fsSL "https://github.com/microsoft/kiota/releases/latest/download/linux-x64.zip" -o /tmp/kiota.zip
-          sudo unzip -o /tmp/kiota.zip -d /usr/local/lib/kiota
-          sudo ln -sf /usr/local/lib/kiota/kiota /usr/local/bin/kiota
-          sudo chmod +x /usr/local/bin/kiota
-          kiota --version
+      - uses: rixlhq/openapi/.github/actions/setup-kiota@main
 
       - name: Generate
         run: ./gen.sh
 
       - uses: stefanzweifel/git-auto-commit-action@v7
-        id: auto-commit-action
         with:
           commit_message: "feat(sdk): regenerate based on latest OpenAPI spec"
           file_pattern: "sdk/*"
-          commit_user_name: github-actions[bot]
-          commit_user_email: 41898282+github-actions[bot]@users.noreply.github.com
