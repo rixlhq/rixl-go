@@ -17,9 +17,9 @@ type ItemCreatorsWithCreatorItemRequestBuilder struct {
 // ItemCreatorsWithCreatorItemRequestBuilderGetQueryParameters retrieve posts in a feed by a specific creator, with pagination.
 type ItemCreatorsWithCreatorItemRequestBuilderGetQueryParameters struct {
     // Maximum number of items to return in a single request. <br> **Default:** `25`
-    Limit *int32 `uriparametername:"limit"`
+    Limit *int32 "uriparametername:\"limit\""
     // Starting point of the result set. <br>To get page 2 with a limit of 25, set `offset` to `25`. <br> **Default:** `0`
-    Offset *int32 `uriparametername:"offset"`
+    Offset *int32 "uriparametername:\"offset\""
 }
 // NewItemCreatorsWithCreatorItemRequestBuilderInternal instantiates a new ItemCreatorsWithCreatorItemRequestBuilder and sets the default values.
 func NewItemCreatorsWithCreatorItemRequestBuilderInternal(pathParameters map[string]string, requestAdapter i2ae4187f7daee263371cb1c977df639813ab50ffa529013b7437480d1ec0158f.RequestAdapter)(*ItemCreatorsWithCreatorItemRequestBuilder) {

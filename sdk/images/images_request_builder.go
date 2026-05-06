@@ -17,13 +17,13 @@ type ImagesRequestBuilder struct {
 // ImagesRequestBuilderGetQueryParameters retrieve all images for a specific project, with pagination and sorting.
 type ImagesRequestBuilderGetQueryParameters struct {
     // Maximum number of items to return in a single request. <br> **Default:** `25`
-    Limit *int32 `uriparametername:"limit"`
+    Limit *int32 "uriparametername:\"limit\""
     // Starting point of the result set. <br>To get page 2 with a limit of 25, set `offset` to `25`. <br> **Default:** `0`
-    Offset *int32 `uriparametername:"offset"`
+    Offset *int32 "uriparametername:\"offset\""
     // Sort order (asc, desc)
-    Order *string `uriparametername:"order"`
+    Order *string "uriparametername:\"order\""
     // Field to sort by (created_at, name, size, updated_at)
-    Sort *string `uriparametername:"sort"`
+    Sort *string "uriparametername:\"sort\""
 }
 // ByImageId gets an item from the github.com/rixlhq/rixl-go/sdk.images.item collection
 // returns a *WithImageItemRequestBuilder when successful
