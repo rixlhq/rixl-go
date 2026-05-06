@@ -20,8 +20,7 @@ jobs:
       - uses: googleapis/release-please-action@v5
         id: release
         with:
-          config-file: release-please-config.json
-          manifest-file: .release-please-manifest.json
+          release-type: go
 
       - name: Prepend install snippet to release notes
         if: ${{ steps.release.outputs.releases_created == 'true' }}
