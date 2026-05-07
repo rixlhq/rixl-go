@@ -1,6 +1,6 @@
 module github.com/rixlhq/rixl-go
 
-go 1.26.1
+go 1.25.0
 
 require (
 	github.com/microsoft/kiota-abstractions-go v1.9.4

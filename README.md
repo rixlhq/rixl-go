@@ -8,11 +8,9 @@ Go client for the [RIXL](https://rixl.com) API.
 
 ```bash
 go get github.com/rixlhq/rixl-go
-go get github.com/microsoft/kiota-http-go
-go get github.com/microsoft/kiota-abstractions-go
 ```
 
-Requires Go 1.22+.
+Requires Go 1.25+.
 
 ## Quick start
 
