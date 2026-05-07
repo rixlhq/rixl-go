@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.5.0](https://github.com/rixlhq/rixl-go/compare/v0.4.0...v0.5.0) (2026-05-07)
+
+
+### Features
+
+* **sdk:** regenerate based on latest OpenAPI spec ([188a264](https://github.com/rixlhq/rixl-go/commit/188a264e537c95896663b24f0b39878c8d2e347e))
+* **sdk:** switch from kiota to oapi codegen exp with split packages ([5f24046](https://github.com/rixlhq/rixl-go/commit/5f240468c710f7040dd6a7d4e411c1a52488597c))
+* **sdk:** switch from kiota to oapi codegen exp with split packages ([4b9bea5](https://github.com/rixlhq/rixl-go/commit/4b9bea55e8fc1bab934ca563c95ad0203f66bc83))
+
 ## [0.4.0](https://github.com/rixlhq/rixl-go/compare/v0.3.4...v0.4.0) (2026-05-07)
 
 
