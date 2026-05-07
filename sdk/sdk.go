@@ -13,7 +13,7 @@ import (
 	"github.com/rixlhq/rixl-go/sdk/videos"
 )
 
-const DefaultBaseURL = "https://api.rixl.com"
+const baseURL = "https://api.rixl.com"
 
 type Client struct {
 	Feeds  *feeds.SimpleClient
@@ -22,7 +22,7 @@ type Client struct {
 }
 
 func New(apiKey string, opts ...Option) (*Client, error) {
-	cfg := config{baseURL: DefaultBaseURL}
+	var cfg config
 	if apiKey != "" {
 		cfg.editors = append(cfg.editors, headerEditor("X-API-Key", apiKey))
 	}
@@ -30,15 +30,15 @@ func New(apiKey string, opts ...Option) (*Client, error) {
 		opt(&cfg)
 	}
 
-	feedsCli, err := feeds.NewSimpleClient(cfg.baseURL, feedsOpts(cfg)...)
+	feedsCli, err := feeds.NewSimpleClient(baseURL, feedsOpts(cfg)...)
 	if err != nil {
 		return nil, err
 	}
-	imagesCli, err := images.NewSimpleClient(cfg.baseURL, imagesOpts(cfg)...)
+	imagesCli, err := images.NewSimpleClient(baseURL, imagesOpts(cfg)...)
 	if err != nil {
 		return nil, err
 	}
-	videosCli, err := videos.NewSimpleClient(cfg.baseURL, videosOpts(cfg)...)
+	videosCli, err := videos.NewSimpleClient(baseURL, videosOpts(cfg)...)
 	if err != nil {
 		return nil, err
 	}
@@ -47,10 +47,6 @@ func New(apiKey string, opts ...Option) (*Client, error) {
 }
 
 type Option func(*config)
-
-func WithBaseURL(url string) Option {
-	return func(c *config) { c.baseURL = url }
-}
 
 // WithBearer replaces the API key passed to New with a bearer token.
 func WithBearer(token string) Option {
@@ -70,7 +66,6 @@ func WithRequestEditor(fn func(ctx context.Context, req *http.Request) error) Op
 type editorFn = func(ctx context.Context, req *http.Request) error
 
 type config struct {
-	baseURL    string
 	httpClient *http.Client
 	editors    []editorFn
 }

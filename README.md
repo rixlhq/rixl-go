@@ -44,9 +44,8 @@ func main() {
 
 ```go
 client, err := sdk.New(apiKey,
-    sdk.WithBaseURL("http://localhost:8081"),  // override default https://api.rixl.com
-    sdk.WithHTTPClient(myHTTPClient),          // custom timeouts, transport, etc.
-    sdk.WithRequestEditor(addTracing),         // mutate every outbound request
+    sdk.WithHTTPClient(myHTTPClient),  // custom timeouts, transport, etc.
+    sdk.WithRequestEditor(addTracing), // mutate every outbound request
 )
 ```
 
@@ -199,12 +198,13 @@ sdk/
 └── sdk.go     hand-written facade exposed as `sdk.New(...)`
 ```
 
+`oapi-codegen-exp` is pinned in `go.mod` as a project tool — `gen.sh` invokes it via `go tool oapi-codegen`, no separate install needed.
+
 ```bash
-go install github.com/oapi-codegen/oapi-codegen-exp/cmd/oapi-codegen@latest
 ./gen.sh
 ```
 
-`cfg.yaml` is one multi-document YAML file with one section per generated package; `gen.sh` splits it on `---` and runs the generator once per section.
+Per-package codegen configs live inline in `gen.sh` as heredocs.
 
 ## Issues
 

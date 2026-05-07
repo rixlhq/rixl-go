@@ -25,12 +25,8 @@ func main() {
 	if apiKey == "" {
 		log.Fatal("missing RIXL_API_KEY")
 	}
-	baseURL := os.Getenv("RIXL_BASE_URL")
-	if baseURL == "" {
-		baseURL = "http://localhost:8081"
-	}
 
-	client, err := sdk.New(apiKey, sdk.WithBaseURL(baseURL))
+	client, err := sdk.New(apiKey)
 	if err != nil {
 		log.Fatalf("client: %v", err)
 	}

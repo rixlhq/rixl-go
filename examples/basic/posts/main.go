@@ -18,12 +18,8 @@ func main() {
 	if apiKey == "" || feedID == "" || postID == "" {
 		log.Fatal("set RIXL_API_KEY, RIXL_FEED_ID, and RIXL_POST_ID")
 	}
-	baseURL := os.Getenv("RIXL_BASE_URL")
-	if baseURL == "" {
-		baseURL = "http://localhost:8081"
-	}
 
-	client, err := sdk.New(apiKey, sdk.WithBaseURL(baseURL))
+	client, err := sdk.New(apiKey)
 	if err != nil {
 		log.Fatalf("client: %v", err)
 	}

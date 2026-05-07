@@ -20,9 +20,7 @@ import (
 )
 
 func main() {
-	baseURL := envOr("RIXL_BASE_URL", "http://localhost:8081")
-
-	client, err := buildClient(baseURL)
+	client, err := buildClient()
 	if err != nil {
 		log.Fatalf("client: %v", err)
 	}
@@ -37,10 +35,10 @@ func main() {
 	log.Printf("auth ok — listed %d images", len(page.Data))
 }
 
-func buildClient(baseURL string) (*sdk.Client, error) {
+func buildClient() (*sdk.Client, error) {
 	if key := os.Getenv("RIXL_API_KEY"); key != "" {
 		log.Println("auth: API key")
-		return sdk.New(key, sdk.WithBaseURL(baseURL))
+		return sdk.New(key)
 	}
 
 	clientID := os.Getenv("RIXL_CLIENT_ID")
@@ -50,18 +48,18 @@ func buildClient(baseURL string) (*sdk.Client, error) {
 	}
 
 	log.Println("auth: client JWT")
-	token := mintToken(baseURL, map[string]string{
+	token := mintToken(map[string]string{
 		"client_id":     clientID,
 		"client_secret": clientSecret,
 		"subject":       mustEnv("RIXL_SUBJECT"),
 		"project_id":    mustEnv("RIXL_PROJECT_ID"),
 	})
-	return sdk.New("", sdk.WithBaseURL(baseURL), sdk.WithBearer(token))
+	return sdk.New("", sdk.WithBearer(token))
 }
 
-func mintToken(baseURL string, body map[string]string) string {
+func mintToken(body map[string]string) string {
 	payload, _ := json.Marshal(body)
-	resp, err := http.Post(baseURL+"/clientauth/token", "application/json", bytes.NewReader(payload))
+	resp, err := http.Post("https://api.rixl.com/clientauth/token", "application/json", bytes.NewReader(payload))
 	if err != nil {
 		log.Fatalf("mint token: %v", err)
 	}
@@ -85,11 +83,4 @@ func mustEnv(name string) string {
 		log.Fatalf("missing %s", name)
 	}
 	return v
-}
-
-func envOr(name, def string) string {
-	if v := os.Getenv(name); v != "" {
-		return v
-	}
-	return def
 }

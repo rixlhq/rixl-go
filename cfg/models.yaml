@@ -1,0 +1,5 @@
+package: models
+output: sdk/models/models.gen.go
+generation:
+  runtime-package:
+    path: github.com/rixlhq/rixl-go/sdk/runtime
