@@ -7,47 +7,31 @@ import (
 	"os"
 	"time"
 
-	abs "github.com/microsoft/kiota-abstractions-go"
-	kiotahttp "github.com/microsoft/kiota-http-go"
-
 	"github.com/rixlhq/rixl-go/sdk"
 )
-
-type apiKeyAuth struct{ key string }
-
-func (a *apiKeyAuth) AuthenticateRequest(_ context.Context, req *abs.RequestInformation, _ map[string]any) error {
-	req.Headers.Add("X-API-Key", a.key)
-	return nil
-}
 
 func main() {
 	apiKey := os.Getenv("RIXL_API_KEY")
 	if apiKey == "" {
 		log.Fatal("missing RIXL_API_KEY")
 	}
-	baseURL := os.Getenv("RIXL_BASE_URL")
-	if baseURL == "" {
-		baseURL = "http://localhost:8081"
-	}
 
-	adapter, err := kiotahttp.NewNetHttpRequestAdapter(&apiKeyAuth{key: apiKey})
+	client, err := sdk.New(apiKey)
 	if err != nil {
-		log.Fatalf("adapter: %v", err)
+		log.Fatalf("client: %v", err)
 	}
-	adapter.SetBaseUrl(baseURL)
-	client := sdk.NewRixlClient(adapter)
 
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
 
-	page, err := client.Videos().Get(ctx, nil)
+	page, err := client.Videos.GetVideos(ctx, nil)
 	if err != nil {
 		log.Fatalf("list: %v", err)
 	}
-	log.Printf("listed %d videos", len(page.GetData()))
-	for _, v := range page.GetData() {
-		if v.GetId() != nil {
-			log.Printf("  - %s", *v.GetId())
+	log.Printf("listed %d videos", len(page.Data))
+	for _, v := range page.Data {
+		if v.ID != nil {
+			log.Printf("  - %s", *v.ID)
 		}
 	}
 
@@ -55,9 +39,9 @@ func main() {
 	if id == "" {
 		return
 	}
-	v, err := client.Videos().ByVideoId(id).Get(ctx, nil)
+	v, err := client.Videos.GetVideosVideoId(ctx, id)
 	if err != nil {
 		log.Fatalf("get %s: %v", id, err)
 	}
-	log.Printf("video %s", *v.GetId())
+	log.Printf("video %s", *v.ID)
 }

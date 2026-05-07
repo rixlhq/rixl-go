@@ -1,0 +1,11 @@
+package: videos
+output: sdk/videos/videos.gen.go
+generation:
+  client: true
+  simple-client: true
+  models-package:
+    path: github.com/rixlhq/rixl-go/sdk/models
+  runtime-package:
+    path: github.com/rixlhq/rixl-go/sdk/runtime
+output-options:
+  include-tags: [Videos]

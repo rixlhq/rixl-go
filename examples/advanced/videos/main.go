@@ -12,12 +12,8 @@ import (
 	"os"
 	"time"
 
-	abs "github.com/microsoft/kiota-abstractions-go"
-	kiotahttp "github.com/microsoft/kiota-http-go"
-
 	"github.com/rixlhq/rixl-go/sdk"
 	"github.com/rixlhq/rixl-go/sdk/models"
-	vidupload "github.com/rixlhq/rixl-go/sdk/models/github_com_rixlhq_api_internal_videos_handler_upload"
 )
 
 const (
@@ -25,29 +21,16 @@ const (
 	samplePosterURL = "https://picsum.photos/seed/rixl/800/600.jpg"
 )
 
-type apiKeyAuth struct{ key string }
-
-func (a *apiKeyAuth) AuthenticateRequest(_ context.Context, req *abs.RequestInformation, _ map[string]any) error {
-	req.Headers.Add("X-API-Key", a.key)
-	return nil
-}
-
 func main() {
 	apiKey := os.Getenv("RIXL_API_KEY")
 	if apiKey == "" {
 		log.Fatal("missing RIXL_API_KEY")
 	}
-	baseURL := os.Getenv("RIXL_BASE_URL")
-	if baseURL == "" {
-		baseURL = "http://localhost:8081"
-	}
 
-	adapter, err := kiotahttp.NewNetHttpRequestAdapter(&apiKeyAuth{key: apiKey})
+	client, err := sdk.New(apiKey)
 	if err != nil {
-		log.Fatalf("adapter: %v", err)
+		log.Fatalf("client: %v", err)
 	}
-	adapter.SetBaseUrl(baseURL)
-	client := sdk.NewRixlClient(adapter)
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Minute)
 	defer cancel()
@@ -62,32 +45,30 @@ func main() {
 	}
 	log.Printf("downloaded video=%d poster=%d", len(video), len(poster))
 
-	initReq := models.NewVideoUploadInitRequest()
-	fileName, posterFormat := "sample.mp4", "jpeg"
-	initReq.SetFileName(&fileName)
-	initReq.SetImageFormat(&posterFormat)
-
-	init, err := client.Videos().Upload().Init().Post(ctx, initReq, nil)
+	posterFormat := "jpeg"
+	init, err := client.Videos.PostVideosUploadInit(ctx, models.VideoUploadInitRequest{
+		FileName:    "sample.mp4",
+		ImageFormat: &posterFormat,
+	})
 	if err != nil {
 		log.Fatalf("init: %v", err)
 	}
-	log.Printf("init: video_id=%s poster_id=%s", *init.GetVideoId(), *init.GetPosterId())
+	log.Printf("init: video_id=%s poster_id=%s", *init.VideoID, *init.PosterID)
 
-	if err := putBytes(ctx, *init.GetVideoPresignedUrl(), video, "video/mp4"); err != nil {
+	if err := putBytes(ctx, *init.VideoPresignedURL, video, "video/mp4"); err != nil {
 		log.Fatalf("PUT video: %v", err)
 	}
-	if err := putBytes(ctx, *init.GetPosterPresignedUrl(), poster, "image/jpeg"); err != nil {
+	if err := putBytes(ctx, *init.PosterPresignedURL, poster, "image/jpeg"); err != nil {
 		log.Fatalf("PUT poster: %v", err)
 	}
 
-	completeReq := vidupload.NewCompleteRequest()
-	completeReq.SetVideoId(init.GetVideoId())
-
-	v, err := client.Videos().Upload().Complete().Post(ctx, completeReq, nil)
+	v, err := client.Videos.PostVideosUploadComplete(ctx, models.GithubComRixlhqAPIInternalVideosHandlerUploadCompleteRequest{
+		VideoID: init.VideoID,
+	})
 	if err != nil {
 		log.Fatalf("complete: %v", err)
 	}
-	log.Printf("complete: id=%s", *v.GetId())
+	log.Printf("complete: id=%s", *v.ID)
 }
 
 func download(ctx context.Context, url string) ([]byte, error) {

@@ -8,18 +8,8 @@ import (
 	"os"
 	"time"
 
-	abs "github.com/microsoft/kiota-abstractions-go"
-	kiotahttp "github.com/microsoft/kiota-http-go"
-
 	"github.com/rixlhq/rixl-go/sdk"
 )
-
-type apiKeyAuth struct{ key string }
-
-func (a *apiKeyAuth) AuthenticateRequest(_ context.Context, req *abs.RequestInformation, _ map[string]any) error {
-	req.Headers.Add("X-API-Key", a.key)
-	return nil
-}
 
 func main() {
 	apiKey := os.Getenv("RIXL_API_KEY")
@@ -28,24 +18,18 @@ func main() {
 	if apiKey == "" || feedID == "" || postID == "" {
 		log.Fatal("set RIXL_API_KEY, RIXL_FEED_ID, and RIXL_POST_ID")
 	}
-	baseURL := os.Getenv("RIXL_BASE_URL")
-	if baseURL == "" {
-		baseURL = "http://localhost:8081"
-	}
 
-	adapter, err := kiotahttp.NewNetHttpRequestAdapter(&apiKeyAuth{key: apiKey})
+	client, err := sdk.New(apiKey)
 	if err != nil {
-		log.Fatalf("adapter: %v", err)
+		log.Fatalf("client: %v", err)
 	}
-	adapter.SetBaseUrl(baseURL)
-	client := sdk.NewRixlClient(adapter)
 
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
 
-	post, err := client.Feeds().ByFeedId(feedID).ByPostId(postID).Get(ctx, nil)
+	post, err := client.Feeds.GetFeedsFeedIdPostId(ctx, feedID, postID)
 	if err != nil {
 		log.Fatalf("get post: %v", err)
 	}
-	log.Printf("post %s", *post.GetId())
+	log.Printf("post %s", *post.ID)
 }

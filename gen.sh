@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
-# Regenerate the SDK from the upstream RIXL OpenAPI spec.
 set -euo pipefail
 
-kiota generate \
-    -l go \
-    -c RixlClient \
-    -n github.com/rixlhq/rixl-go/sdk \
-    -d https://raw.githubusercontent.com/rixlhq/openapi/refs/heads/main/openapi.yaml \
-    -o "./sdk" \
-    --clean-output \
-    --exclude-backward-compatible
+SPEC=https://raw.githubusercontent.com/rixlhq/openapi/refs/heads/main/openapi.yaml
+
+mkdir -p sdk/{runtime,models,feeds,images,videos}
+
+go tool oapi-codegen --generate-runtime github.com/rixlhq/rixl-go/sdk/runtime -output sdk/runtime/
+
+for cfg in cfg/*.yaml; do
+    go tool oapi-codegen -config "$cfg" "$SPEC"
+done

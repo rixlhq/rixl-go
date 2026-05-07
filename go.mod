@@ -2,21 +2,21 @@ module github.com/rixlhq/rixl-go
 
 go 1.25.0
 
-require (
-	github.com/microsoft/kiota-abstractions-go v1.9.4
-	github.com/microsoft/kiota-serialization-form-go v1.1.3
-	github.com/microsoft/kiota-serialization-json-go v1.1.2
-	github.com/microsoft/kiota-serialization-multipart-go v1.1.2
-	github.com/microsoft/kiota-serialization-text-go v1.1.3
-)
+require github.com/google/uuid v1.6.0
 
 require (
-	github.com/go-logr/logr v1.4.2 // indirect
-	github.com/go-logr/stdr v1.2.2 // indirect
-	github.com/google/uuid v1.6.0 // indirect
-	github.com/std-uritemplate/std-uritemplate/go/v2 v2.0.3 // indirect
-	go.opentelemetry.io/auto/sdk v1.1.0 // indirect
-	go.opentelemetry.io/otel v1.35.0 // indirect
-	go.opentelemetry.io/otel/metric v1.35.0 // indirect
-	go.opentelemetry.io/otel/trace v1.35.0 // indirect
+	github.com/bahlo/generic-list-go v0.2.0 // indirect
+	github.com/buger/jsonparser v1.1.2 // indirect
+	github.com/oapi-codegen/oapi-codegen-exp v0.1.0 // indirect
+	github.com/pb33f/jsonpath v0.8.2 // indirect
+	github.com/pb33f/libopenapi v0.36.1 // indirect
+	github.com/pb33f/ordered-map/v2 v2.3.1 // indirect
+	go.yaml.in/yaml/v4 v4.0.0-rc.4 // indirect
+	golang.org/x/mod v0.35.0 // indirect
+	golang.org/x/sync v0.20.0 // indirect
+	golang.org/x/text v0.36.0 // indirect
+	golang.org/x/tools v0.44.0 // indirect
+	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
+
+tool github.com/oapi-codegen/oapi-codegen-exp/cmd/oapi-codegen
