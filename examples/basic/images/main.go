@@ -7,18 +7,8 @@ import (
 	"os"
 	"time"
 
-	abs "github.com/microsoft/kiota-abstractions-go"
-	kiotahttp "github.com/microsoft/kiota-http-go"
-
 	"github.com/rixlhq/rixl-go/sdk"
 )
-
-type apiKeyAuth struct{ key string }
-
-func (a *apiKeyAuth) AuthenticateRequest(_ context.Context, req *abs.RequestInformation, _ map[string]any) error {
-	req.Headers.Add("X-API-Key", a.key)
-	return nil
-}
 
 func main() {
 	apiKey := os.Getenv("RIXL_API_KEY")
@@ -30,24 +20,22 @@ func main() {
 		baseURL = "http://localhost:8081"
 	}
 
-	adapter, err := kiotahttp.NewNetHttpRequestAdapter(&apiKeyAuth{key: apiKey})
+	client, err := sdk.New(apiKey, sdk.WithBaseURL(baseURL))
 	if err != nil {
-		log.Fatalf("adapter: %v", err)
+		log.Fatalf("client: %v", err)
 	}
-	adapter.SetBaseUrl(baseURL)
-	client := sdk.NewRixlClient(adapter)
 
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
 
-	page, err := client.Images().Get(ctx, nil)
+	page, err := client.Images.GetImages(ctx, nil)
 	if err != nil {
 		log.Fatalf("list: %v", err)
 	}
-	log.Printf("listed %d images", len(page.GetData()))
-	for _, img := range page.GetData() {
-		if img.GetId() != nil {
-			log.Printf("  - %s", *img.GetId())
+	log.Printf("listed %d images", len(page.Data))
+	for _, img := range page.Data {
+		if img.ID != nil {
+			log.Printf("  - %s", *img.ID)
 		}
 	}
 
@@ -55,9 +43,9 @@ func main() {
 	if id == "" {
 		return
 	}
-	img, err := client.Images().ByImageId(id).Get(ctx, nil)
+	img, err := client.Images.GetImagesImageId(ctx, id)
 	if err != nil {
 		log.Fatalf("get %s: %v", id, err)
 	}
-	log.Printf("image %s: %dv x %dv", *img.GetId(), *img.GetWidth(), *img.GetHeight())
+	log.Printf("image %s: %dx%d", *img.ID, *img.Width, *img.Height)
 }

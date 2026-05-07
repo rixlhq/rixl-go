@@ -10,7 +10,7 @@ Go client for the [RIXL](https://rixl.com) API.
 go get github.com/rixlhq/rixl-go
 ```
 
-Requires Go 1.25+.
+Requires Go 1.25.0+.
 
 ## Quick start
 
@@ -21,134 +21,130 @@ import (
     "context"
     "fmt"
 
-    "github.com/microsoft/kiota-abstractions-go/authentication"
-    kiotahttp "github.com/microsoft/kiota-http-go"
     "github.com/rixlhq/rixl-go/sdk"
 )
 
 func main() {
-    auth, _ := authentication.NewApiKeyAuthenticationProvider(
-        "YOUR_RIXL_API_KEY", "X-API-Key", authentication.HEADER_KEYLOCATION,
-    )
-    adapter, _ := kiotahttp.NewNetHttpRequestAdapter(auth)
-    client := sdk.NewRixlClient(adapter)
-
-    image, err := client.Images().ByImageId("PS5IMKoFLm").Get(context.Background(), nil)
+    client, err := sdk.New("YOUR_RIXL_API_KEY")
     if err != nil {
         panic(err)
     }
-    fmt.Println(*image.GetId(), *image.GetWidth(), *image.GetHeight())
+
+    img, err := client.Images.GetImagesImageId(context.Background(), "PS5IMKoFLm")
+    if err != nil {
+        panic(err)
+    }
+    fmt.Println(*img.ID, *img.Width, *img.Height)
 }
 ```
 
-Default base URL: `https://api.rixl.com`. Override with `adapter.SetBaseUrl(...)`.
+`sdk.New(apiKey, opts...)` returns a Client with three resource fields — `client.Feeds`, `client.Images`, `client.Videos` — each a typed client whose methods return parsed models and a Go error.
 
-## Authentication
-
-API key:
+## Configuration
 
 ```go
-import "github.com/microsoft/kiota-abstractions-go/authentication"
-
-auth, _ := authentication.NewApiKeyAuthenticationProvider(
-    "YOUR_RIXL_API_KEY", "X-API-Key", authentication.HEADER_KEYLOCATION,
+client, err := sdk.New(apiKey,
+    sdk.WithBaseURL("http://localhost:8081"),  // override default https://api.rixl.com
+    sdk.WithHTTPClient(myHTTPClient),          // custom timeouts, transport, etc.
+    sdk.WithRequestEditor(addTracing),         // mutate every outbound request
 )
 ```
 
-Bearer token (implement `AccessTokenProvider`):
+For bearer-token auth, pass an empty key and use `WithBearer`:
 
 ```go
-auth, _ := authentication.NewBaseBearerTokenAuthenticationProvider(tokenProvider)
+client, err := sdk.New("", sdk.WithBearer(token))
 ```
 
 ## Feeds
 
 ```go
-posts, err := client.Feeds().ByFeedId("FD4y3QB38S").Get(ctx, nil)
-for _, post := range posts.GetData() {
-    fmt.Println(*post.GetId())
+import "github.com/rixlhq/rixl-go/sdk/feeds"
+
+page, err := client.Feeds.GetFeedsFeedId(ctx, "FD4y3QB38S", &feeds.GetFeedsFeedIdParams{})
+for _, post := range page.Data {
+    fmt.Println(*post.ID)
 }
+
+post, err := client.Feeds.GetFeedsFeedIdPostId(ctx, "FD4y3QB38S", "PO9XQxWXQ")
 ```
 
 ## Images
 
 ```go
-page, err := client.Images().Get(ctx, nil)
-image, err := client.Images().ByImageId("PS5IMKoFLm").Get(ctx, nil)
-err = client.Images().ByImageId("PS5IMKoFLm").Delete(ctx, nil)
+import "github.com/rixlhq/rixl-go/sdk/images"
+
+list, err := client.Images.GetImages(ctx, nil)
+img,  err := client.Images.GetImagesImageId(ctx, "PS5IMKoFLm")
+
+// Delete returns the raw *http.Response (no JSON body to parse).
+resp, err := client.Images.DeleteImagesImageId(ctx, "PS5IMKoFLm")
 ```
 
 Upload (init → PUT bytes → complete):
 
 ```go
-import imghandler "github.com/rixlhq/rixl-go/sdk/models/internal_images_handler"
+import "github.com/rixlhq/rixl-go/sdk/models"
 
-initReq := imghandler.NewUploadInitRequest()
 name, format := "photo.jpg", "jpeg"
-initReq.SetName(&name)
-initReq.SetFormat(&format)
+init, err := client.Images.PostImagesUploadInit(ctx, models.InternalImagesHandlerUploadInitRequest{
+    Name:   &name,
+    Format: &format,
+})
+// PUT bytes to *init.PresignedURL
 
-initRes, err := client.Images().Upload().Init().Post(ctx, initReq, nil)
-// PUT bytes to *initRes.GetPresignedUrl()
-
-completeReq := imghandler.NewCompleteRequest()
-completeReq.SetImageId(initRes.GetImageId())
 attached := false
-completeReq.SetAttachedToVideo(&attached)
-image, err := client.Images().Upload().Complete().Post(ctx, completeReq, nil)
+done, err := client.Images.PostImagesUploadComplete(ctx, models.InternalImagesHandlerCompleteRequest{
+    ImageID:         init.ImageID,
+    AttachedToVideo: &attached,
+})
+fmt.Println(*done.ID)
 ```
 
 ## Videos
 
 ```go
-videos, err := client.Videos().Get(ctx, nil)
-video, err := client.Videos().ByVideoId("VI9VXQxWXQ").Get(ctx, nil)
-tracks, err := client.Videos().ByVideoId("VI9VXQxWXQ").Subtitles().Get(ctx, nil)
+import "github.com/rixlhq/rixl-go/sdk/models"
+
+list,  err := client.Videos.GetVideos(ctx, nil)
+video, err := client.Videos.GetVideosVideoId(ctx, "VI9VXQxWXQ")
 ```
 
 Upload returns presigned URLs for both the video and a poster image:
 
 ```go
-import (
-    "github.com/rixlhq/rixl-go/sdk/models"
-    vidupload "github.com/rixlhq/rixl-go/sdk/models/github_com_rixlhq_api_internal_videos_handler_upload"
-)
+posterFormat := "jpeg"
+init, err := client.Videos.PostVideosUploadInit(ctx, models.VideoUploadInitRequest{
+    FileName:    "clip.mp4",
+    ImageFormat: &posterFormat,
+})
+// PUT to init.VideoPresignedURL and init.PosterPresignedURL
 
-initReq := models.NewVideoUploadInitRequest()
-fileName, posterFormat := "clip.mp4", "jpeg"
-initReq.SetFileName(&fileName)
-initReq.SetImageFormat(&posterFormat)
-
-initRes, err := client.Videos().Upload().Init().Post(ctx, initReq, nil)
-// PUT to initRes.GetVideoPresignedUrl() and initRes.GetPosterPresignedUrl()
-
-completeReq := vidupload.NewCompleteRequest()
-completeReq.SetVideoId(initRes.GetVideoId())
-video, err := client.Videos().Upload().Complete().Post(ctx, completeReq, nil)
+done, err := client.Videos.PostVideosUploadComplete(ctx, models.GithubComRixlhqAPIInternalVideosHandlerUploadCompleteRequest{
+    VideoID: init.VideoID,
+})
+fmt.Println(*done.ID)
 ```
 
 ## Pagination
 
-List endpoints take `limit`, `offset`, `sort`, `order`:
+List endpoints accept `limit`, `offset`, `sort`, `order`:
 
 ```go
-import (
-    kabs "github.com/microsoft/kiota-abstractions-go"
-    "github.com/rixlhq/rixl-go/sdk/images"
-)
+import "github.com/rixlhq/rixl-go/sdk/images"
 
-limit, offset := int32(50), int32(0)
+limit, offset := 50, 0
 for {
-    cfg := &kabs.RequestConfiguration[images.ImagesRequestBuilderGetQueryParameters]{
-        QueryParameters: &images.ImagesRequestBuilderGetQueryParameters{
-            Limit: &limit, Offset: &offset,
-        },
-    }
-    page, err := client.Images().Get(ctx, cfg)
+    page, err := client.Images.GetImages(ctx, &images.GetImagesParams{
+        Limit: &limit, Offset: &offset,
+    })
     if err != nil {
         return err
     }
-    if offset+int32(len(page.GetData())) >= *page.GetPagination().GetTotal() {
+    for _, img := range page.Data {
+        fmt.Println(*img.ID)
+    }
+    if offset+len(page.Data) >= *page.Pagination.Total {
         break
     }
     offset += limit
@@ -157,23 +153,27 @@ for {
 
 ## Errors
 
-API errors come back as `*ErrorResponse`:
+API errors come back as a typed `*ClientHttpError[E]` carrying the HTTP status, raw body, and the parsed error response.
 
 ```go
 import (
     "errors"
-    apierr "github.com/rixlhq/rixl-go/sdk/models/github_com_rixlhq_api_internal_errors"
+
+    "github.com/rixlhq/rixl-go/sdk/images"
+    "github.com/rixlhq/rixl-go/sdk/models"
 )
 
-image, err := client.Images().ByImageId("PS5IMKoFLm").Get(ctx, nil)
+img, err := client.Images.GetImagesImageId(ctx, "PS5IMKoFLm")
 if err != nil {
-    var apiErr *apierr.ErrorResponse
+    var apiErr *images.ClientHttpError[models.GithubComRixlhqAPIInternalErrorsErrorResponse]
     if errors.As(err, &apiErr) {
-        fmt.Printf("HTTP %d: %s\n", *apiErr.GetCode(), *apiErr.GetError())
+        fmt.Printf("HTTP %d: %s\n", apiErr.StatusCode, *apiErr.Body.Error)
     }
     return err
 }
 ```
+
+Each resource package (`feeds`, `images`, `videos`) defines its own `ClientHttpError[E]` — type-assert against the package whose method you called.
 
 ## Examples
 
@@ -184,6 +184,27 @@ export RIXL_API_KEY=<key>
 go run ./examples/basic/images
 go run ./examples/advanced/videos
 ```
+
+## Regenerating the SDK
+
+The SDK is generated by [oapi-codegen-exp](https://github.com/oapi-codegen/oapi-codegen-exp) — the experimental fork that supports OpenAPI 3.1. Layout:
+
+```
+sdk/
+├── models/    every component schema
+├── runtime/   shared codegen helpers
+├── feeds/     Client + SimpleClient for tag=Feeds
+├── images/    same for Images
+├── videos/    same for Videos
+└── sdk.go     hand-written facade exposed as `sdk.New(...)`
+```
+
+```bash
+go install github.com/oapi-codegen/oapi-codegen-exp/cmd/oapi-codegen@latest
+./gen.sh
+```
+
+`cfg.yaml` is one multi-document YAML file with one section per generated package; `gen.sh` splits it on `---` and runs the generator once per section.
 
 ## Issues
 

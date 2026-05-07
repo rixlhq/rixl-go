@@ -14,21 +14,11 @@ import (
 	"os"
 	"time"
 
-	abs "github.com/microsoft/kiota-abstractions-go"
-	kiotahttp "github.com/microsoft/kiota-http-go"
-
 	"github.com/rixlhq/rixl-go/sdk"
-	imghandler "github.com/rixlhq/rixl-go/sdk/models/internal_images_handler"
+	"github.com/rixlhq/rixl-go/sdk/models"
 )
 
 const sampleImageURL = "https://picsum.photos/seed/rixl/800/600.jpg"
-
-type apiKeyAuth struct{ key string }
-
-func (a *apiKeyAuth) AuthenticateRequest(_ context.Context, req *abs.RequestInformation, _ map[string]any) error {
-	req.Headers.Add("X-API-Key", a.key)
-	return nil
-}
 
 func main() {
 	apiKey := os.Getenv("RIXL_API_KEY")
@@ -40,12 +30,10 @@ func main() {
 		baseURL = "http://localhost:8081"
 	}
 
-	adapter, err := kiotahttp.NewNetHttpRequestAdapter(&apiKeyAuth{key: apiKey})
+	client, err := sdk.New(apiKey, sdk.WithBaseURL(baseURL))
 	if err != nil {
-		log.Fatalf("adapter: %v", err)
+		log.Fatalf("client: %v", err)
 	}
-	adapter.SetBaseUrl(baseURL)
-	client := sdk.NewRixlClient(adapter)
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Minute)
 	defer cancel()
@@ -56,31 +44,29 @@ func main() {
 	}
 	log.Printf("downloaded %d bytes", len(body))
 
-	initReq := imghandler.NewUploadInitRequest()
 	name, format := "sample.jpg", "jpeg"
-	initReq.SetName(&name)
-	initReq.SetFormat(&format)
-
-	init, err := client.Images().Upload().Init().Post(ctx, initReq, nil)
+	init, err := client.Images.PostImagesUploadInit(ctx, models.InternalImagesHandlerUploadInitRequest{
+		Name:   &name,
+		Format: &format,
+	})
 	if err != nil {
 		log.Fatalf("init: %v", err)
 	}
-	log.Printf("init: image_id=%s", *init.GetImageId())
+	log.Printf("init: image_id=%s", *init.ImageID)
 
-	if err := putBytes(ctx, *init.GetPresignedUrl(), body, "image/jpeg"); err != nil {
+	if err := putBytes(ctx, *init.PresignedURL, body, "image/jpeg"); err != nil {
 		log.Fatalf("PUT: %v", err)
 	}
 
-	completeReq := imghandler.NewCompleteRequest()
-	completeReq.SetImageId(init.GetImageId())
 	notAttached := false
-	completeReq.SetAttachedToVideo(&notAttached)
-
-	img, err := client.Images().Upload().Complete().Post(ctx, completeReq, nil)
+	img, err := client.Images.PostImagesUploadComplete(ctx, models.InternalImagesHandlerCompleteRequest{
+		ImageID:         init.ImageID,
+		AttachedToVideo: &notAttached,
+	})
 	if err != nil {
 		log.Fatalf("complete: %v", err)
 	}
-	log.Printf("complete: id=%s %dx%d", *img.GetId(), *img.GetWidth(), *img.GetHeight())
+	log.Printf("complete: id=%s %dx%d", *img.ID, *img.Width, *img.Height)
 }
 
 func download(ctx context.Context, url string) ([]byte, error) {
