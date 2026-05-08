@@ -111,34 +111,34 @@ func (c *Client) applyEditors(ctx context.Context, req *http.Request, additional
 
 // ClientInterface is the interface specification for the client.
 type ClientInterface interface {
-	// GetFeedsFeedId makes a GET request to /feeds/{feedId}
-	GetFeedsFeedId(ctx context.Context, feedId string, params *GetFeedsFeedIdParams, reqEditors ...RequestEditorFn) (*http.Response, error)
-	// GetFeedsFeedIdCreatorsCreatorId makes a GET request to /feeds/{feedId}/creators/{creatorId}
-	GetFeedsFeedIdCreatorsCreatorId(ctx context.Context, feedId string, creatorId string, params *GetFeedsFeedIdCreatorsCreatorIdParams, reqEditors ...RequestEditorFn) (*http.Response, error)
-	// GetFeedsFeedIdPostId makes a GET request to /feeds/{feedId}/{postId}
-	GetFeedsFeedIdPostId(ctx context.Context, feedId string, postId string, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// List makes a GET request to /feeds/{feedId}
+	List(ctx context.Context, feedId string, params *ListParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// ListByCreator makes a GET request to /feeds/{feedId}/creators/{creatorId}
+	ListByCreator(ctx context.Context, feedId string, creatorId string, params *ListByCreatorParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// Get makes a GET request to /feeds/{feedId}/{postId}
+	Get(ctx context.Context, feedId string, postId string, reqEditors ...RequestEditorFn) (*http.Response, error)
 }
 
-// GetFeedsFeedIdParams defines parameters for GetFeedsFeedId.
-type GetFeedsFeedIdParams struct {
+// ListParams defines parameters for List.
+type ListParams struct {
 	// limit (optional)
 	Limit *int `form:"limit" json:"limit"`
 	// offset (optional)
 	Offset *int `form:"offset" json:"offset"`
 }
 
-// GetFeedsFeedIdCreatorsCreatorIdParams defines parameters for GetFeedsFeedIdCreatorsCreatorId.
-type GetFeedsFeedIdCreatorsCreatorIdParams struct {
+// ListByCreatorParams defines parameters for ListByCreator.
+type ListByCreatorParams struct {
 	// limit (optional)
 	Limit *int `form:"limit" json:"limit"`
 	// offset (optional)
 	Offset *int `form:"offset" json:"offset"`
 }
 
-// GetFeedsFeedId makes a GET request to /feeds/{feedId}
+// List makes a GET request to /feeds/{feedId}
 // List posts in a feed
-func (c *Client) GetFeedsFeedId(ctx context.Context, feedId string, params *GetFeedsFeedIdParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewGetFeedsFeedIdRequest(c.Server, feedId, params)
+func (c *Client) List(ctx context.Context, feedId string, params *ListParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListRequest(c.Server, feedId, params)
 	if err != nil {
 		return nil, err
 	}
@@ -149,10 +149,10 @@ func (c *Client) GetFeedsFeedId(ctx context.Context, feedId string, params *GetF
 	return c.Client.Do(req)
 }
 
-// GetFeedsFeedIdCreatorsCreatorId makes a GET request to /feeds/{feedId}/creators/{creatorId}
+// ListByCreator makes a GET request to /feeds/{feedId}/creators/{creatorId}
 // List posts by creator
-func (c *Client) GetFeedsFeedIdCreatorsCreatorId(ctx context.Context, feedId string, creatorId string, params *GetFeedsFeedIdCreatorsCreatorIdParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewGetFeedsFeedIdCreatorsCreatorIdRequest(c.Server, feedId, creatorId, params)
+func (c *Client) ListByCreator(ctx context.Context, feedId string, creatorId string, params *ListByCreatorParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListByCreatorRequest(c.Server, feedId, creatorId, params)
 	if err != nil {
 		return nil, err
 	}
@@ -163,10 +163,10 @@ func (c *Client) GetFeedsFeedIdCreatorsCreatorId(ctx context.Context, feedId str
 	return c.Client.Do(req)
 }
 
-// GetFeedsFeedIdPostId makes a GET request to /feeds/{feedId}/{postId}
+// Get makes a GET request to /feeds/{feedId}/{postId}
 // Get a post
-func (c *Client) GetFeedsFeedIdPostId(ctx context.Context, feedId string, postId string, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewGetFeedsFeedIdPostIdRequest(c.Server, feedId, postId)
+func (c *Client) Get(ctx context.Context, feedId string, postId string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetRequest(c.Server, feedId, postId)
 	if err != nil {
 		return nil, err
 	}
@@ -177,8 +177,8 @@ func (c *Client) GetFeedsFeedIdPostId(ctx context.Context, feedId string, postId
 	return c.Client.Do(req)
 }
 
-// NewGetFeedsFeedIdRequest creates a GET request for /feeds/{feedId}
-func NewGetFeedsFeedIdRequest(server string, feedId string, params *GetFeedsFeedIdParams) (*http.Request, error) {
+// NewListRequest creates a GET request for /feeds/{feedId}
+func NewListRequest(server string, feedId string, params *ListParams) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -241,8 +241,8 @@ func NewGetFeedsFeedIdRequest(server string, feedId string, params *GetFeedsFeed
 	return req, nil
 }
 
-// NewGetFeedsFeedIdCreatorsCreatorIdRequest creates a GET request for /feeds/{feedId}/creators/{creatorId}
-func NewGetFeedsFeedIdCreatorsCreatorIdRequest(server string, feedId string, creatorId string, params *GetFeedsFeedIdCreatorsCreatorIdParams) (*http.Request, error) {
+// NewListByCreatorRequest creates a GET request for /feeds/{feedId}/creators/{creatorId}
+func NewListByCreatorRequest(server string, feedId string, creatorId string, params *ListByCreatorParams) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -311,8 +311,8 @@ func NewGetFeedsFeedIdCreatorsCreatorIdRequest(server string, feedId string, cre
 	return req, nil
 }
 
-// NewGetFeedsFeedIdPostIdRequest creates a GET request for /feeds/{feedId}/{postId}
-func NewGetFeedsFeedIdPostIdRequest(server string, feedId string, postId string) (*http.Request, error) {
+// NewGetRequest creates a GET request for /feeds/{feedId}/{postId}
+func NewGetRequest(server string, feedId string, postId string) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -378,12 +378,12 @@ func NewSimpleClient(server string, opts ...ClientOption) (*SimpleClient, error)
 	return &SimpleClient{Client: inner}, nil
 }
 
-// GetFeedsFeedId makes a GET request to /feeds/{feedId} and returns the parsed response.
+// List makes a GET request to /feeds/{feedId} and returns the parsed response.
 // List posts in a feed
 // On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GithubComRixlhqAPIInternalErrorsErrorResponse].
-func (c *SimpleClient) GetFeedsFeedId(ctx context.Context, feedId string, params *GetFeedsFeedIdParams, reqEditors ...RequestEditorFn) (models.PaginationPaginatedResponsePost, error) {
+func (c *SimpleClient) List(ctx context.Context, feedId string, params *ListParams, reqEditors ...RequestEditorFn) (models.PaginationPaginatedResponsePost, error) {
 	var result models.PaginationPaginatedResponsePost
-	resp, err := c.Client.GetFeedsFeedId(ctx, feedId, params, reqEditors...)
+	resp, err := c.Client.List(ctx, feedId, params, reqEditors...)
 	if err != nil {
 		return result, err
 	}
@@ -411,12 +411,12 @@ func (c *SimpleClient) GetFeedsFeedId(ctx context.Context, feedId string, params
 	}
 }
 
-// GetFeedsFeedIdCreatorsCreatorId makes a GET request to /feeds/{feedId}/creators/{creatorId} and returns the parsed response.
+// ListByCreator makes a GET request to /feeds/{feedId}/creators/{creatorId} and returns the parsed response.
 // List posts by creator
 // On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GithubComRixlhqAPIInternalErrorsErrorResponse].
-func (c *SimpleClient) GetFeedsFeedIdCreatorsCreatorId(ctx context.Context, feedId string, creatorId string, params *GetFeedsFeedIdCreatorsCreatorIdParams, reqEditors ...RequestEditorFn) (models.PaginationPaginatedResponsePost, error) {
+func (c *SimpleClient) ListByCreator(ctx context.Context, feedId string, creatorId string, params *ListByCreatorParams, reqEditors ...RequestEditorFn) (models.PaginationPaginatedResponsePost, error) {
 	var result models.PaginationPaginatedResponsePost
-	resp, err := c.Client.GetFeedsFeedIdCreatorsCreatorId(ctx, feedId, creatorId, params, reqEditors...)
+	resp, err := c.Client.ListByCreator(ctx, feedId, creatorId, params, reqEditors...)
 	if err != nil {
 		return result, err
 	}
@@ -444,12 +444,12 @@ func (c *SimpleClient) GetFeedsFeedIdCreatorsCreatorId(ctx context.Context, feed
 	}
 }
 
-// GetFeedsFeedIdPostId makes a GET request to /feeds/{feedId}/{postId} and returns the parsed response.
+// Get makes a GET request to /feeds/{feedId}/{postId} and returns the parsed response.
 // Get a post
 // On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GithubComRixlhqAPIInternalErrorsErrorResponse].
-func (c *SimpleClient) GetFeedsFeedIdPostId(ctx context.Context, feedId string, postId string, reqEditors ...RequestEditorFn) (models.Post, error) {
+func (c *SimpleClient) Get(ctx context.Context, feedId string, postId string, reqEditors ...RequestEditorFn) (models.Post, error) {
 	var result models.Post
-	resp, err := c.Client.GetFeedsFeedIdPostId(ctx, feedId, postId, reqEditors...)
+	resp, err := c.Client.Get(ctx, feedId, postId, reqEditors...)
 	if err != nil {
 		return result, err
 	}

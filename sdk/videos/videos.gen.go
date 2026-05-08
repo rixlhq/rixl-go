@@ -16,11 +16,11 @@ import (
 	oapiCodegenParamsPkg "github.com/rixlhq/rixl-go/sdk/runtime/params"
 )
 
-type PostVideosUploadCompleteJSONRequestBody = models.GithubComRixlhqAPIInternalVideosHandlerUploadCompleteRequest
+type uploadCompleteJSONRequestBody = models.GithubComRixlhqAPIInternalVideosHandlerUploadCompleteRequest
 
-type PostVideosUploadInitJSONRequestBody = models.VideoUploadInitRequest
+type uploadInitJSONRequestBody = models.VideoUploadInitRequest
 
-type PutVideosVideoIdChaptersJSONRequestBody = models.UpdateChaptersRequest
+type updateChaptersJSONRequestBody = models.UpdateChaptersRequest
 
 // RequestEditorFn is the function signature for the RequestEditor callback function.
 type RequestEditorFn func(ctx context.Context, req *http.Request) error
@@ -118,51 +118,51 @@ func (c *Client) applyEditors(ctx context.Context, req *http.Request, additional
 
 // ClientInterface is the interface specification for the client.
 type ClientInterface interface {
-	// GetVideos makes a GET request to /videos
-	GetVideos(ctx context.Context, params *GetVideosParams, reqEditors ...RequestEditorFn) (*http.Response, error)
-	// GetVideosLanguages makes a GET request to /videos/languages
-	GetVideosLanguages(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
-	// PostVideosUploadCompleteWithBody makes a POST request to /videos/upload/complete
-	PostVideosUploadCompleteWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
-	PostVideosUploadComplete(ctx context.Context, body PostVideosUploadCompleteJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
-	// PostVideosUploadInitWithBody makes a POST request to /videos/upload/init
-	PostVideosUploadInitWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
-	PostVideosUploadInit(ctx context.Context, body PostVideosUploadInitJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
-	// GetVideosVideoId makes a GET request to /videos/{videoId}
-	GetVideosVideoId(ctx context.Context, videoId string, reqEditors ...RequestEditorFn) (*http.Response, error)
-	// DeleteVideosVideoIdAudioTracks makes a DELETE request to /videos/{videoId}/audio-tracks
-	DeleteVideosVideoIdAudioTracks(ctx context.Context, videoId string, reqEditors ...RequestEditorFn) (*http.Response, error)
-	// PostVideosVideoIdAudioTracksWithBody makes a POST request to /videos/{videoId}/audio-tracks
-	PostVideosVideoIdAudioTracksWithBody(ctx context.Context, videoId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
-	// DeleteVideosVideoIdAudioTracksLanguageLangCode makes a DELETE request to /videos/{videoId}/audio-tracks/language/{lang_code}
-	DeleteVideosVideoIdAudioTracksLanguageLangCode(ctx context.Context, videoId string, langCode string, reqEditors ...RequestEditorFn) (*http.Response, error)
-	// PutVideosVideoIdAudioTracksLanguageLangCodeWithBody makes a PUT request to /videos/{videoId}/audio-tracks/language/{lang_code}
-	PutVideosVideoIdAudioTracksLanguageLangCodeWithBody(ctx context.Context, videoId string, langCode string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
-	// DeleteVideosVideoIdAudioTracksTrackId makes a DELETE request to /videos/{videoId}/audio-tracks/{trackId}
-	DeleteVideosVideoIdAudioTracksTrackId(ctx context.Context, videoId string, trackId string, reqEditors ...RequestEditorFn) (*http.Response, error)
-	// DeleteVideosVideoIdChapters makes a DELETE request to /videos/{videoId}/chapters
-	DeleteVideosVideoIdChapters(ctx context.Context, videoId string, reqEditors ...RequestEditorFn) (*http.Response, error)
-	// PutVideosVideoIdChaptersWithBody makes a PUT request to /videos/{videoId}/chapters
-	PutVideosVideoIdChaptersWithBody(ctx context.Context, videoId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
-	PutVideosVideoIdChapters(ctx context.Context, videoId string, body PutVideosVideoIdChaptersJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
-	// DeleteVideosVideoIdDelete makes a DELETE request to /videos/{videoId}/delete
-	DeleteVideosVideoIdDelete(ctx context.Context, videoId string, reqEditors ...RequestEditorFn) (*http.Response, error)
-	// DeleteVideosVideoIdSubtitles makes a DELETE request to /videos/{videoId}/subtitles
-	DeleteVideosVideoIdSubtitles(ctx context.Context, videoId string, reqEditors ...RequestEditorFn) (*http.Response, error)
-	// PostVideosVideoIdSubtitlesWithBody makes a POST request to /videos/{videoId}/subtitles
-	PostVideosVideoIdSubtitlesWithBody(ctx context.Context, videoId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
-	// DeleteVideosVideoIdSubtitlesLanguageLangCode makes a DELETE request to /videos/{videoId}/subtitles/language/{lang_code}
-	DeleteVideosVideoIdSubtitlesLanguageLangCode(ctx context.Context, videoId string, langCode string, reqEditors ...RequestEditorFn) (*http.Response, error)
-	// PutVideosVideoIdSubtitlesLanguageLangCodeWithBody makes a PUT request to /videos/{videoId}/subtitles/language/{lang_code}
-	PutVideosVideoIdSubtitlesLanguageLangCodeWithBody(ctx context.Context, videoId string, langCode string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
-	// DeleteVideosVideoIdSubtitlesSubtitleId makes a DELETE request to /videos/{videoId}/subtitles/{subtitleId}
-	DeleteVideosVideoIdSubtitlesSubtitleId(ctx context.Context, videoId string, subtitleId string, reqEditors ...RequestEditorFn) (*http.Response, error)
-	// PutVideosVideoIdThumbnailWithBody makes a PUT request to /videos/{videoId}/thumbnail
-	PutVideosVideoIdThumbnailWithBody(ctx context.Context, videoId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// List makes a GET request to /videos
+	List(ctx context.Context, params *ListParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// ListLanguages makes a GET request to /videos/languages
+	ListLanguages(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// UploadCompleteWithBody makes a POST request to /videos/upload/complete
+	UploadCompleteWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+	UploadComplete(ctx context.Context, body uploadCompleteJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// UploadInitWithBody makes a POST request to /videos/upload/init
+	UploadInitWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+	UploadInit(ctx context.Context, body uploadInitJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// Get makes a GET request to /videos/{videoId}
+	Get(ctx context.Context, videoId string, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// DeleteAudioTracks makes a DELETE request to /videos/{videoId}/audio-tracks
+	DeleteAudioTracks(ctx context.Context, videoId string, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// ReplaceAudioTracksWithBody makes a POST request to /videos/{videoId}/audio-tracks
+	ReplaceAudioTracksWithBody(ctx context.Context, videoId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// DeleteAudioTrackByLanguage makes a DELETE request to /videos/{videoId}/audio-tracks/language/{lang_code}
+	DeleteAudioTrackByLanguage(ctx context.Context, videoId string, langCode string, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// UpdateAudioTrackByLanguageWithBody makes a PUT request to /videos/{videoId}/audio-tracks/language/{lang_code}
+	UpdateAudioTrackByLanguageWithBody(ctx context.Context, videoId string, langCode string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// DeleteAudioTrack makes a DELETE request to /videos/{videoId}/audio-tracks/{trackId}
+	DeleteAudioTrack(ctx context.Context, videoId string, trackId string, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// DeleteChapters makes a DELETE request to /videos/{videoId}/chapters
+	DeleteChapters(ctx context.Context, videoId string, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// UpdateChaptersWithBody makes a PUT request to /videos/{videoId}/chapters
+	UpdateChaptersWithBody(ctx context.Context, videoId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+	UpdateChapters(ctx context.Context, videoId string, body updateChaptersJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// Delete makes a DELETE request to /videos/{videoId}/delete
+	Delete(ctx context.Context, videoId string, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// DeleteSubtitles makes a DELETE request to /videos/{videoId}/subtitles
+	DeleteSubtitles(ctx context.Context, videoId string, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// ReplaceSubtitlesWithBody makes a POST request to /videos/{videoId}/subtitles
+	ReplaceSubtitlesWithBody(ctx context.Context, videoId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// DeleteSubtitleByLanguage makes a DELETE request to /videos/{videoId}/subtitles/language/{lang_code}
+	DeleteSubtitleByLanguage(ctx context.Context, videoId string, langCode string, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// UpdateSubtitleByLanguageWithBody makes a PUT request to /videos/{videoId}/subtitles/language/{lang_code}
+	UpdateSubtitleByLanguageWithBody(ctx context.Context, videoId string, langCode string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// DeleteSubtitle makes a DELETE request to /videos/{videoId}/subtitles/{subtitleId}
+	DeleteSubtitle(ctx context.Context, videoId string, subtitleId string, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// UpdateThumbnailWithBody makes a PUT request to /videos/{videoId}/thumbnail
+	UpdateThumbnailWithBody(ctx context.Context, videoId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 }
 
-// GetVideosParams defines parameters for GetVideos.
-type GetVideosParams struct {
+// ListParams defines parameters for List.
+type ListParams struct {
 	// limit (optional)
 	Limit *int `form:"limit" json:"limit"`
 	// offset (optional)
@@ -173,10 +173,10 @@ type GetVideosParams struct {
 	Order *string `form:"order" json:"order"`
 }
 
-// GetVideos makes a GET request to /videos
+// List makes a GET request to /videos
 // List videos for a project
-func (c *Client) GetVideos(ctx context.Context, params *GetVideosParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewGetVideosRequest(c.Server, params)
+func (c *Client) List(ctx context.Context, params *ListParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListRequest(c.Server, params)
 	if err != nil {
 		return nil, err
 	}
@@ -187,10 +187,10 @@ func (c *Client) GetVideos(ctx context.Context, params *GetVideosParams, reqEdit
 	return c.Client.Do(req)
 }
 
-// GetVideosLanguages makes a GET request to /videos/languages
+// ListLanguages makes a GET request to /videos/languages
 // List available subtitle languages
-func (c *Client) GetVideosLanguages(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewGetVideosLanguagesRequest(c.Server)
+func (c *Client) ListLanguages(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListLanguagesRequest(c.Server)
 	if err != nil {
 		return nil, err
 	}
@@ -201,10 +201,10 @@ func (c *Client) GetVideosLanguages(ctx context.Context, reqEditors ...RequestEd
 	return c.Client.Do(req)
 }
 
-// PostVideosUploadCompleteWithBody makes a POST request to /videos/upload/complete
+// UploadCompleteWithBody makes a POST request to /videos/upload/complete
 // Upload: Mark as complete
-func (c *Client) PostVideosUploadCompleteWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewPostVideosUploadCompleteRequestWithBody(c.Server, contentType, body)
+func (c *Client) UploadCompleteWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUploadCompleteRequestWithBody(c.Server, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -215,9 +215,9 @@ func (c *Client) PostVideosUploadCompleteWithBody(ctx context.Context, contentTy
 	return c.Client.Do(req)
 }
 
-// PostVideosUploadComplete makes a POST request to /videos/upload/complete with application/json body
-func (c *Client) PostVideosUploadComplete(ctx context.Context, body PostVideosUploadCompleteJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewPostVideosUploadCompleteRequest(c.Server, body)
+// UploadComplete makes a POST request to /videos/upload/complete with application/json body
+func (c *Client) UploadComplete(ctx context.Context, body uploadCompleteJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUploadCompleteRequest(c.Server, body)
 	if err != nil {
 		return nil, err
 	}
@@ -228,10 +228,10 @@ func (c *Client) PostVideosUploadComplete(ctx context.Context, body PostVideosUp
 	return c.Client.Do(req)
 }
 
-// PostVideosUploadInitWithBody makes a POST request to /videos/upload/init
+// UploadInitWithBody makes a POST request to /videos/upload/init
 // Upload: Init
-func (c *Client) PostVideosUploadInitWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewPostVideosUploadInitRequestWithBody(c.Server, contentType, body)
+func (c *Client) UploadInitWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUploadInitRequestWithBody(c.Server, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -242,9 +242,9 @@ func (c *Client) PostVideosUploadInitWithBody(ctx context.Context, contentType s
 	return c.Client.Do(req)
 }
 
-// PostVideosUploadInit makes a POST request to /videos/upload/init with application/json body
-func (c *Client) PostVideosUploadInit(ctx context.Context, body PostVideosUploadInitJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewPostVideosUploadInitRequest(c.Server, body)
+// UploadInit makes a POST request to /videos/upload/init with application/json body
+func (c *Client) UploadInit(ctx context.Context, body uploadInitJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUploadInitRequest(c.Server, body)
 	if err != nil {
 		return nil, err
 	}
@@ -255,10 +255,10 @@ func (c *Client) PostVideosUploadInit(ctx context.Context, body PostVideosUpload
 	return c.Client.Do(req)
 }
 
-// GetVideosVideoId makes a GET request to /videos/{videoId}
+// Get makes a GET request to /videos/{videoId}
 // Get a video
-func (c *Client) GetVideosVideoId(ctx context.Context, videoId string, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewGetVideosVideoIdRequest(c.Server, videoId)
+func (c *Client) Get(ctx context.Context, videoId string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetRequest(c.Server, videoId)
 	if err != nil {
 		return nil, err
 	}
@@ -269,10 +269,10 @@ func (c *Client) GetVideosVideoId(ctx context.Context, videoId string, reqEditor
 	return c.Client.Do(req)
 }
 
-// DeleteVideosVideoIdAudioTracks makes a DELETE request to /videos/{videoId}/audio-tracks
+// DeleteAudioTracks makes a DELETE request to /videos/{videoId}/audio-tracks
 // Delete all audio tracks
-func (c *Client) DeleteVideosVideoIdAudioTracks(ctx context.Context, videoId string, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewDeleteVideosVideoIdAudioTracksRequest(c.Server, videoId)
+func (c *Client) DeleteAudioTracks(ctx context.Context, videoId string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewDeleteAudioTracksRequest(c.Server, videoId)
 	if err != nil {
 		return nil, err
 	}
@@ -283,10 +283,10 @@ func (c *Client) DeleteVideosVideoIdAudioTracks(ctx context.Context, videoId str
 	return c.Client.Do(req)
 }
 
-// PostVideosVideoIdAudioTracksWithBody makes a POST request to /videos/{videoId}/audio-tracks
+// ReplaceAudioTracksWithBody makes a POST request to /videos/{videoId}/audio-tracks
 // Bulk upsert video audio tracks
-func (c *Client) PostVideosVideoIdAudioTracksWithBody(ctx context.Context, videoId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewPostVideosVideoIdAudioTracksRequestWithBody(c.Server, videoId, contentType, body)
+func (c *Client) ReplaceAudioTracksWithBody(ctx context.Context, videoId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewReplaceAudioTracksRequestWithBody(c.Server, videoId, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -297,10 +297,10 @@ func (c *Client) PostVideosVideoIdAudioTracksWithBody(ctx context.Context, video
 	return c.Client.Do(req)
 }
 
-// DeleteVideosVideoIdAudioTracksLanguageLangCode makes a DELETE request to /videos/{videoId}/audio-tracks/language/{lang_code}
+// DeleteAudioTrackByLanguage makes a DELETE request to /videos/{videoId}/audio-tracks/language/{lang_code}
 // Delete audio track by language
-func (c *Client) DeleteVideosVideoIdAudioTracksLanguageLangCode(ctx context.Context, videoId string, langCode string, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewDeleteVideosVideoIdAudioTracksLanguageLangCodeRequest(c.Server, videoId, langCode)
+func (c *Client) DeleteAudioTrackByLanguage(ctx context.Context, videoId string, langCode string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewDeleteAudioTrackByLanguageRequest(c.Server, videoId, langCode)
 	if err != nil {
 		return nil, err
 	}
@@ -311,10 +311,10 @@ func (c *Client) DeleteVideosVideoIdAudioTracksLanguageLangCode(ctx context.Cont
 	return c.Client.Do(req)
 }
 
-// PutVideosVideoIdAudioTracksLanguageLangCodeWithBody makes a PUT request to /videos/{videoId}/audio-tracks/language/{lang_code}
+// UpdateAudioTrackByLanguageWithBody makes a PUT request to /videos/{videoId}/audio-tracks/language/{lang_code}
 // Upsert video audio track
-func (c *Client) PutVideosVideoIdAudioTracksLanguageLangCodeWithBody(ctx context.Context, videoId string, langCode string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewPutVideosVideoIdAudioTracksLanguageLangCodeRequestWithBody(c.Server, videoId, langCode, contentType, body)
+func (c *Client) UpdateAudioTrackByLanguageWithBody(ctx context.Context, videoId string, langCode string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpdateAudioTrackByLanguageRequestWithBody(c.Server, videoId, langCode, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -325,10 +325,10 @@ func (c *Client) PutVideosVideoIdAudioTracksLanguageLangCodeWithBody(ctx context
 	return c.Client.Do(req)
 }
 
-// DeleteVideosVideoIdAudioTracksTrackId makes a DELETE request to /videos/{videoId}/audio-tracks/{trackId}
+// DeleteAudioTrack makes a DELETE request to /videos/{videoId}/audio-tracks/{trackId}
 // Delete audio track
-func (c *Client) DeleteVideosVideoIdAudioTracksTrackId(ctx context.Context, videoId string, trackId string, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewDeleteVideosVideoIdAudioTracksTrackIdRequest(c.Server, videoId, trackId)
+func (c *Client) DeleteAudioTrack(ctx context.Context, videoId string, trackId string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewDeleteAudioTrackRequest(c.Server, videoId, trackId)
 	if err != nil {
 		return nil, err
 	}
@@ -339,10 +339,10 @@ func (c *Client) DeleteVideosVideoIdAudioTracksTrackId(ctx context.Context, vide
 	return c.Client.Do(req)
 }
 
-// DeleteVideosVideoIdChapters makes a DELETE request to /videos/{videoId}/chapters
+// DeleteChapters makes a DELETE request to /videos/{videoId}/chapters
 // Delete video chapters
-func (c *Client) DeleteVideosVideoIdChapters(ctx context.Context, videoId string, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewDeleteVideosVideoIdChaptersRequest(c.Server, videoId)
+func (c *Client) DeleteChapters(ctx context.Context, videoId string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewDeleteChaptersRequest(c.Server, videoId)
 	if err != nil {
 		return nil, err
 	}
@@ -353,10 +353,10 @@ func (c *Client) DeleteVideosVideoIdChapters(ctx context.Context, videoId string
 	return c.Client.Do(req)
 }
 
-// PutVideosVideoIdChaptersWithBody makes a PUT request to /videos/{videoId}/chapters
+// UpdateChaptersWithBody makes a PUT request to /videos/{videoId}/chapters
 // Update video chapters
-func (c *Client) PutVideosVideoIdChaptersWithBody(ctx context.Context, videoId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewPutVideosVideoIdChaptersRequestWithBody(c.Server, videoId, contentType, body)
+func (c *Client) UpdateChaptersWithBody(ctx context.Context, videoId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpdateChaptersRequestWithBody(c.Server, videoId, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -367,9 +367,9 @@ func (c *Client) PutVideosVideoIdChaptersWithBody(ctx context.Context, videoId s
 	return c.Client.Do(req)
 }
 
-// PutVideosVideoIdChapters makes a PUT request to /videos/{videoId}/chapters with application/json body
-func (c *Client) PutVideosVideoIdChapters(ctx context.Context, videoId string, body PutVideosVideoIdChaptersJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewPutVideosVideoIdChaptersRequest(c.Server, videoId, body)
+// UpdateChapters makes a PUT request to /videos/{videoId}/chapters with application/json body
+func (c *Client) UpdateChapters(ctx context.Context, videoId string, body updateChaptersJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpdateChaptersRequest(c.Server, videoId, body)
 	if err != nil {
 		return nil, err
 	}
@@ -380,10 +380,10 @@ func (c *Client) PutVideosVideoIdChapters(ctx context.Context, videoId string, b
 	return c.Client.Do(req)
 }
 
-// DeleteVideosVideoIdDelete makes a DELETE request to /videos/{videoId}/delete
+// Delete makes a DELETE request to /videos/{videoId}/delete
 // Delete video
-func (c *Client) DeleteVideosVideoIdDelete(ctx context.Context, videoId string, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewDeleteVideosVideoIdDeleteRequest(c.Server, videoId)
+func (c *Client) Delete(ctx context.Context, videoId string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewDeleteRequest(c.Server, videoId)
 	if err != nil {
 		return nil, err
 	}
@@ -394,10 +394,10 @@ func (c *Client) DeleteVideosVideoIdDelete(ctx context.Context, videoId string, 
 	return c.Client.Do(req)
 }
 
-// DeleteVideosVideoIdSubtitles makes a DELETE request to /videos/{videoId}/subtitles
+// DeleteSubtitles makes a DELETE request to /videos/{videoId}/subtitles
 // Delete all subtitles
-func (c *Client) DeleteVideosVideoIdSubtitles(ctx context.Context, videoId string, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewDeleteVideosVideoIdSubtitlesRequest(c.Server, videoId)
+func (c *Client) DeleteSubtitles(ctx context.Context, videoId string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewDeleteSubtitlesRequest(c.Server, videoId)
 	if err != nil {
 		return nil, err
 	}
@@ -408,10 +408,10 @@ func (c *Client) DeleteVideosVideoIdSubtitles(ctx context.Context, videoId strin
 	return c.Client.Do(req)
 }
 
-// PostVideosVideoIdSubtitlesWithBody makes a POST request to /videos/{videoId}/subtitles
+// ReplaceSubtitlesWithBody makes a POST request to /videos/{videoId}/subtitles
 // Bulk upsert video subtitles
-func (c *Client) PostVideosVideoIdSubtitlesWithBody(ctx context.Context, videoId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewPostVideosVideoIdSubtitlesRequestWithBody(c.Server, videoId, contentType, body)
+func (c *Client) ReplaceSubtitlesWithBody(ctx context.Context, videoId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewReplaceSubtitlesRequestWithBody(c.Server, videoId, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -422,10 +422,10 @@ func (c *Client) PostVideosVideoIdSubtitlesWithBody(ctx context.Context, videoId
 	return c.Client.Do(req)
 }
 
-// DeleteVideosVideoIdSubtitlesLanguageLangCode makes a DELETE request to /videos/{videoId}/subtitles/language/{lang_code}
+// DeleteSubtitleByLanguage makes a DELETE request to /videos/{videoId}/subtitles/language/{lang_code}
 // Delete subtitle by language
-func (c *Client) DeleteVideosVideoIdSubtitlesLanguageLangCode(ctx context.Context, videoId string, langCode string, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewDeleteVideosVideoIdSubtitlesLanguageLangCodeRequest(c.Server, videoId, langCode)
+func (c *Client) DeleteSubtitleByLanguage(ctx context.Context, videoId string, langCode string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewDeleteSubtitleByLanguageRequest(c.Server, videoId, langCode)
 	if err != nil {
 		return nil, err
 	}
@@ -436,10 +436,10 @@ func (c *Client) DeleteVideosVideoIdSubtitlesLanguageLangCode(ctx context.Contex
 	return c.Client.Do(req)
 }
 
-// PutVideosVideoIdSubtitlesLanguageLangCodeWithBody makes a PUT request to /videos/{videoId}/subtitles/language/{lang_code}
+// UpdateSubtitleByLanguageWithBody makes a PUT request to /videos/{videoId}/subtitles/language/{lang_code}
 // Upsert video subtitle
-func (c *Client) PutVideosVideoIdSubtitlesLanguageLangCodeWithBody(ctx context.Context, videoId string, langCode string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewPutVideosVideoIdSubtitlesLanguageLangCodeRequestWithBody(c.Server, videoId, langCode, contentType, body)
+func (c *Client) UpdateSubtitleByLanguageWithBody(ctx context.Context, videoId string, langCode string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpdateSubtitleByLanguageRequestWithBody(c.Server, videoId, langCode, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -450,10 +450,10 @@ func (c *Client) PutVideosVideoIdSubtitlesLanguageLangCodeWithBody(ctx context.C
 	return c.Client.Do(req)
 }
 
-// DeleteVideosVideoIdSubtitlesSubtitleId makes a DELETE request to /videos/{videoId}/subtitles/{subtitleId}
+// DeleteSubtitle makes a DELETE request to /videos/{videoId}/subtitles/{subtitleId}
 // Delete subtitle
-func (c *Client) DeleteVideosVideoIdSubtitlesSubtitleId(ctx context.Context, videoId string, subtitleId string, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewDeleteVideosVideoIdSubtitlesSubtitleIdRequest(c.Server, videoId, subtitleId)
+func (c *Client) DeleteSubtitle(ctx context.Context, videoId string, subtitleId string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewDeleteSubtitleRequest(c.Server, videoId, subtitleId)
 	if err != nil {
 		return nil, err
 	}
@@ -464,10 +464,10 @@ func (c *Client) DeleteVideosVideoIdSubtitlesSubtitleId(ctx context.Context, vid
 	return c.Client.Do(req)
 }
 
-// PutVideosVideoIdThumbnailWithBody makes a PUT request to /videos/{videoId}/thumbnail
+// UpdateThumbnailWithBody makes a PUT request to /videos/{videoId}/thumbnail
 // Update video thumbnail
-func (c *Client) PutVideosVideoIdThumbnailWithBody(ctx context.Context, videoId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewPutVideosVideoIdThumbnailRequestWithBody(c.Server, videoId, contentType, body)
+func (c *Client) UpdateThumbnailWithBody(ctx context.Context, videoId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpdateThumbnailRequestWithBody(c.Server, videoId, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -478,8 +478,8 @@ func (c *Client) PutVideosVideoIdThumbnailWithBody(ctx context.Context, videoId 
 	return c.Client.Do(req)
 }
 
-// NewGetVideosRequest creates a GET request for /videos
-func NewGetVideosRequest(server string, params *GetVideosParams) (*http.Request, error) {
+// NewListRequest creates a GET request for /videos
+func NewListRequest(server string, params *ListParams) (*http.Request, error) {
 	var err error
 
 	serverURL, err := url.Parse(server)
@@ -562,8 +562,8 @@ func NewGetVideosRequest(server string, params *GetVideosParams) (*http.Request,
 	return req, nil
 }
 
-// NewGetVideosLanguagesRequest creates a GET request for /videos/languages
-func NewGetVideosLanguagesRequest(server string) (*http.Request, error) {
+// NewListLanguagesRequest creates a GET request for /videos/languages
+func NewListLanguagesRequest(server string) (*http.Request, error) {
 	var err error
 
 	serverURL, err := url.Parse(server)
@@ -589,19 +589,19 @@ func NewGetVideosLanguagesRequest(server string) (*http.Request, error) {
 	return req, nil
 }
 
-// NewPostVideosUploadCompleteRequest creates a POST request for /videos/upload/complete with application/json body
-func NewPostVideosUploadCompleteRequest(server string, body PostVideosUploadCompleteJSONRequestBody) (*http.Request, error) {
+// NewUploadCompleteRequest creates a POST request for /videos/upload/complete with application/json body
+func NewUploadCompleteRequest(server string, body uploadCompleteJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return NewPostVideosUploadCompleteRequestWithBody(server, "application/json", bodyReader)
+	return NewUploadCompleteRequestWithBody(server, "application/json", bodyReader)
 }
 
-// NewPostVideosUploadCompleteRequestWithBody creates a POST request for /videos/upload/complete with any body
-func NewPostVideosUploadCompleteRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
+// NewUploadCompleteRequestWithBody creates a POST request for /videos/upload/complete with any body
+func NewUploadCompleteRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	serverURL, err := url.Parse(server)
@@ -629,19 +629,19 @@ func NewPostVideosUploadCompleteRequestWithBody(server string, contentType strin
 	return req, nil
 }
 
-// NewPostVideosUploadInitRequest creates a POST request for /videos/upload/init with application/json body
-func NewPostVideosUploadInitRequest(server string, body PostVideosUploadInitJSONRequestBody) (*http.Request, error) {
+// NewUploadInitRequest creates a POST request for /videos/upload/init with application/json body
+func NewUploadInitRequest(server string, body uploadInitJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return NewPostVideosUploadInitRequestWithBody(server, "application/json", bodyReader)
+	return NewUploadInitRequestWithBody(server, "application/json", bodyReader)
 }
 
-// NewPostVideosUploadInitRequestWithBody creates a POST request for /videos/upload/init with any body
-func NewPostVideosUploadInitRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
+// NewUploadInitRequestWithBody creates a POST request for /videos/upload/init with any body
+func NewUploadInitRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	serverURL, err := url.Parse(server)
@@ -669,8 +669,8 @@ func NewPostVideosUploadInitRequestWithBody(server string, contentType string, b
 	return req, nil
 }
 
-// NewGetVideosVideoIdRequest creates a GET request for /videos/{videoId}
-func NewGetVideosVideoIdRequest(server string, videoId string) (*http.Request, error) {
+// NewGetRequest creates a GET request for /videos/{videoId}
+func NewGetRequest(server string, videoId string) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -702,8 +702,8 @@ func NewGetVideosVideoIdRequest(server string, videoId string) (*http.Request, e
 	return req, nil
 }
 
-// NewDeleteVideosVideoIdAudioTracksRequest creates a DELETE request for /videos/{videoId}/audio-tracks
-func NewDeleteVideosVideoIdAudioTracksRequest(server string, videoId string) (*http.Request, error) {
+// NewDeleteAudioTracksRequest creates a DELETE request for /videos/{videoId}/audio-tracks
+func NewDeleteAudioTracksRequest(server string, videoId string) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -735,8 +735,8 @@ func NewDeleteVideosVideoIdAudioTracksRequest(server string, videoId string) (*h
 	return req, nil
 }
 
-// NewPostVideosVideoIdAudioTracksRequestWithBody creates a POST request for /videos/{videoId}/audio-tracks with any body
-func NewPostVideosVideoIdAudioTracksRequestWithBody(server string, videoId string, contentType string, body io.Reader) (*http.Request, error) {
+// NewReplaceAudioTracksRequestWithBody creates a POST request for /videos/{videoId}/audio-tracks with any body
+func NewReplaceAudioTracksRequestWithBody(server string, videoId string, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -770,8 +770,8 @@ func NewPostVideosVideoIdAudioTracksRequestWithBody(server string, videoId strin
 	return req, nil
 }
 
-// NewDeleteVideosVideoIdAudioTracksLanguageLangCodeRequest creates a DELETE request for /videos/{videoId}/audio-tracks/language/{lang_code}
-func NewDeleteVideosVideoIdAudioTracksLanguageLangCodeRequest(server string, videoId string, langCode string) (*http.Request, error) {
+// NewDeleteAudioTrackByLanguageRequest creates a DELETE request for /videos/{videoId}/audio-tracks/language/{lang_code}
+func NewDeleteAudioTrackByLanguageRequest(server string, videoId string, langCode string) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -809,8 +809,8 @@ func NewDeleteVideosVideoIdAudioTracksLanguageLangCodeRequest(server string, vid
 	return req, nil
 }
 
-// NewPutVideosVideoIdAudioTracksLanguageLangCodeRequestWithBody creates a PUT request for /videos/{videoId}/audio-tracks/language/{lang_code} with any body
-func NewPutVideosVideoIdAudioTracksLanguageLangCodeRequestWithBody(server string, videoId string, langCode string, contentType string, body io.Reader) (*http.Request, error) {
+// NewUpdateAudioTrackByLanguageRequestWithBody creates a PUT request for /videos/{videoId}/audio-tracks/language/{lang_code} with any body
+func NewUpdateAudioTrackByLanguageRequestWithBody(server string, videoId string, langCode string, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -850,8 +850,8 @@ func NewPutVideosVideoIdAudioTracksLanguageLangCodeRequestWithBody(server string
 	return req, nil
 }
 
-// NewDeleteVideosVideoIdAudioTracksTrackIdRequest creates a DELETE request for /videos/{videoId}/audio-tracks/{trackId}
-func NewDeleteVideosVideoIdAudioTracksTrackIdRequest(server string, videoId string, trackId string) (*http.Request, error) {
+// NewDeleteAudioTrackRequest creates a DELETE request for /videos/{videoId}/audio-tracks/{trackId}
+func NewDeleteAudioTrackRequest(server string, videoId string, trackId string) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -889,8 +889,8 @@ func NewDeleteVideosVideoIdAudioTracksTrackIdRequest(server string, videoId stri
 	return req, nil
 }
 
-// NewDeleteVideosVideoIdChaptersRequest creates a DELETE request for /videos/{videoId}/chapters
-func NewDeleteVideosVideoIdChaptersRequest(server string, videoId string) (*http.Request, error) {
+// NewDeleteChaptersRequest creates a DELETE request for /videos/{videoId}/chapters
+func NewDeleteChaptersRequest(server string, videoId string) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -922,19 +922,19 @@ func NewDeleteVideosVideoIdChaptersRequest(server string, videoId string) (*http
 	return req, nil
 }
 
-// NewPutVideosVideoIdChaptersRequest creates a PUT request for /videos/{videoId}/chapters with application/json body
-func NewPutVideosVideoIdChaptersRequest(server string, videoId string, body PutVideosVideoIdChaptersJSONRequestBody) (*http.Request, error) {
+// NewUpdateChaptersRequest creates a PUT request for /videos/{videoId}/chapters with application/json body
+func NewUpdateChaptersRequest(server string, videoId string, body updateChaptersJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return NewPutVideosVideoIdChaptersRequestWithBody(server, videoId, "application/json", bodyReader)
+	return NewUpdateChaptersRequestWithBody(server, videoId, "application/json", bodyReader)
 }
 
-// NewPutVideosVideoIdChaptersRequestWithBody creates a PUT request for /videos/{videoId}/chapters with any body
-func NewPutVideosVideoIdChaptersRequestWithBody(server string, videoId string, contentType string, body io.Reader) (*http.Request, error) {
+// NewUpdateChaptersRequestWithBody creates a PUT request for /videos/{videoId}/chapters with any body
+func NewUpdateChaptersRequestWithBody(server string, videoId string, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -968,8 +968,8 @@ func NewPutVideosVideoIdChaptersRequestWithBody(server string, videoId string, c
 	return req, nil
 }
 
-// NewDeleteVideosVideoIdDeleteRequest creates a DELETE request for /videos/{videoId}/delete
-func NewDeleteVideosVideoIdDeleteRequest(server string, videoId string) (*http.Request, error) {
+// NewDeleteRequest creates a DELETE request for /videos/{videoId}/delete
+func NewDeleteRequest(server string, videoId string) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -1001,8 +1001,8 @@ func NewDeleteVideosVideoIdDeleteRequest(server string, videoId string) (*http.R
 	return req, nil
 }
 
-// NewDeleteVideosVideoIdSubtitlesRequest creates a DELETE request for /videos/{videoId}/subtitles
-func NewDeleteVideosVideoIdSubtitlesRequest(server string, videoId string) (*http.Request, error) {
+// NewDeleteSubtitlesRequest creates a DELETE request for /videos/{videoId}/subtitles
+func NewDeleteSubtitlesRequest(server string, videoId string) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -1034,8 +1034,8 @@ func NewDeleteVideosVideoIdSubtitlesRequest(server string, videoId string) (*htt
 	return req, nil
 }
 
-// NewPostVideosVideoIdSubtitlesRequestWithBody creates a POST request for /videos/{videoId}/subtitles with any body
-func NewPostVideosVideoIdSubtitlesRequestWithBody(server string, videoId string, contentType string, body io.Reader) (*http.Request, error) {
+// NewReplaceSubtitlesRequestWithBody creates a POST request for /videos/{videoId}/subtitles with any body
+func NewReplaceSubtitlesRequestWithBody(server string, videoId string, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -1069,8 +1069,8 @@ func NewPostVideosVideoIdSubtitlesRequestWithBody(server string, videoId string,
 	return req, nil
 }
 
-// NewDeleteVideosVideoIdSubtitlesLanguageLangCodeRequest creates a DELETE request for /videos/{videoId}/subtitles/language/{lang_code}
-func NewDeleteVideosVideoIdSubtitlesLanguageLangCodeRequest(server string, videoId string, langCode string) (*http.Request, error) {
+// NewDeleteSubtitleByLanguageRequest creates a DELETE request for /videos/{videoId}/subtitles/language/{lang_code}
+func NewDeleteSubtitleByLanguageRequest(server string, videoId string, langCode string) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -1108,8 +1108,8 @@ func NewDeleteVideosVideoIdSubtitlesLanguageLangCodeRequest(server string, video
 	return req, nil
 }
 
-// NewPutVideosVideoIdSubtitlesLanguageLangCodeRequestWithBody creates a PUT request for /videos/{videoId}/subtitles/language/{lang_code} with any body
-func NewPutVideosVideoIdSubtitlesLanguageLangCodeRequestWithBody(server string, videoId string, langCode string, contentType string, body io.Reader) (*http.Request, error) {
+// NewUpdateSubtitleByLanguageRequestWithBody creates a PUT request for /videos/{videoId}/subtitles/language/{lang_code} with any body
+func NewUpdateSubtitleByLanguageRequestWithBody(server string, videoId string, langCode string, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -1149,8 +1149,8 @@ func NewPutVideosVideoIdSubtitlesLanguageLangCodeRequestWithBody(server string, 
 	return req, nil
 }
 
-// NewDeleteVideosVideoIdSubtitlesSubtitleIdRequest creates a DELETE request for /videos/{videoId}/subtitles/{subtitleId}
-func NewDeleteVideosVideoIdSubtitlesSubtitleIdRequest(server string, videoId string, subtitleId string) (*http.Request, error) {
+// NewDeleteSubtitleRequest creates a DELETE request for /videos/{videoId}/subtitles/{subtitleId}
+func NewDeleteSubtitleRequest(server string, videoId string, subtitleId string) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -1188,8 +1188,8 @@ func NewDeleteVideosVideoIdSubtitlesSubtitleIdRequest(server string, videoId str
 	return req, nil
 }
 
-// NewPutVideosVideoIdThumbnailRequestWithBody creates a PUT request for /videos/{videoId}/thumbnail with any body
-func NewPutVideosVideoIdThumbnailRequestWithBody(server string, videoId string, contentType string, body io.Reader) (*http.Request, error) {
+// NewUpdateThumbnailRequestWithBody creates a PUT request for /videos/{videoId}/thumbnail with any body
+func NewUpdateThumbnailRequestWithBody(server string, videoId string, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -1251,12 +1251,12 @@ func NewSimpleClient(server string, opts ...ClientOption) (*SimpleClient, error)
 	return &SimpleClient{Client: inner}, nil
 }
 
-// GetVideos makes a GET request to /videos and returns the parsed response.
+// List makes a GET request to /videos and returns the parsed response.
 // List videos for a project
 // On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GithubComRixlhqAPIInternalErrorsErrorResponse].
-func (c *SimpleClient) GetVideos(ctx context.Context, params *GetVideosParams, reqEditors ...RequestEditorFn) (models.PaginationPaginatedResponseVideo, error) {
+func (c *SimpleClient) List(ctx context.Context, params *ListParams, reqEditors ...RequestEditorFn) (models.PaginationPaginatedResponseVideo, error) {
 	var result models.PaginationPaginatedResponseVideo
-	resp, err := c.Client.GetVideos(ctx, params, reqEditors...)
+	resp, err := c.Client.List(ctx, params, reqEditors...)
 	if err != nil {
 		return result, err
 	}
@@ -1284,12 +1284,12 @@ func (c *SimpleClient) GetVideos(ctx context.Context, params *GetVideosParams, r
 	}
 }
 
-// GetVideosLanguages makes a GET request to /videos/languages and returns the parsed response.
+// ListLanguages makes a GET request to /videos/languages and returns the parsed response.
 // List available subtitle languages
 // On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
-func (c *SimpleClient) GetVideosLanguages(ctx context.Context, reqEditors ...RequestEditorFn) ([]models.InternalVideosHandlerSubtitlesLanguageResponse, error) {
+func (c *SimpleClient) ListLanguages(ctx context.Context, reqEditors ...RequestEditorFn) ([]models.InternalVideosHandlerSubtitlesLanguageResponse, error) {
 	var result []models.InternalVideosHandlerSubtitlesLanguageResponse
-	resp, err := c.Client.GetVideosLanguages(ctx, reqEditors...)
+	resp, err := c.Client.ListLanguages(ctx, reqEditors...)
 	if err != nil {
 		return result, err
 	}
@@ -1314,12 +1314,12 @@ func (c *SimpleClient) GetVideosLanguages(ctx context.Context, reqEditors ...Req
 	}
 }
 
-// PostVideosUploadComplete makes a POST request to /videos/upload/complete and returns the parsed response.
+// UploadComplete makes a POST request to /videos/upload/complete and returns the parsed response.
 // Upload: Mark as complete
 // On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GithubComRixlhqAPIInternalErrorsErrorResponse].
-func (c *SimpleClient) PostVideosUploadComplete(ctx context.Context, body PostVideosUploadCompleteJSONRequestBody, reqEditors ...RequestEditorFn) (models.Video, error) {
+func (c *SimpleClient) UploadComplete(ctx context.Context, body uploadCompleteJSONRequestBody, reqEditors ...RequestEditorFn) (models.Video, error) {
 	var result models.Video
-	resp, err := c.Client.PostVideosUploadComplete(ctx, body, reqEditors...)
+	resp, err := c.Client.UploadComplete(ctx, body, reqEditors...)
 	if err != nil {
 		return result, err
 	}
@@ -1347,12 +1347,12 @@ func (c *SimpleClient) PostVideosUploadComplete(ctx context.Context, body PostVi
 	}
 }
 
-// PostVideosUploadInit makes a POST request to /videos/upload/init and returns the parsed response.
+// UploadInit makes a POST request to /videos/upload/init and returns the parsed response.
 // Upload: Init
 // On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GithubComRixlhqAPIInternalErrorsErrorResponse].
-func (c *SimpleClient) PostVideosUploadInit(ctx context.Context, body PostVideosUploadInitJSONRequestBody, reqEditors ...RequestEditorFn) (models.GithubComRixlhqAPIInternalVideosHandlerUploadInitResponse, error) {
+func (c *SimpleClient) UploadInit(ctx context.Context, body uploadInitJSONRequestBody, reqEditors ...RequestEditorFn) (models.GithubComRixlhqAPIInternalVideosHandlerUploadInitResponse, error) {
 	var result models.GithubComRixlhqAPIInternalVideosHandlerUploadInitResponse
-	resp, err := c.Client.PostVideosUploadInit(ctx, body, reqEditors...)
+	resp, err := c.Client.UploadInit(ctx, body, reqEditors...)
 	if err != nil {
 		return result, err
 	}
@@ -1380,12 +1380,12 @@ func (c *SimpleClient) PostVideosUploadInit(ctx context.Context, body PostVideos
 	}
 }
 
-// GetVideosVideoId makes a GET request to /videos/{videoId} and returns the parsed response.
+// Get makes a GET request to /videos/{videoId} and returns the parsed response.
 // Get a video
 // On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GithubComRixlhqAPIInternalErrorsErrorResponse].
-func (c *SimpleClient) GetVideosVideoId(ctx context.Context, videoId string, reqEditors ...RequestEditorFn) (models.Video, error) {
+func (c *SimpleClient) Get(ctx context.Context, videoId string, reqEditors ...RequestEditorFn) (models.Video, error) {
 	var result models.Video
-	resp, err := c.Client.GetVideosVideoId(ctx, videoId, reqEditors...)
+	resp, err := c.Client.Get(ctx, videoId, reqEditors...)
 	if err != nil {
 		return result, err
 	}
@@ -1413,12 +1413,12 @@ func (c *SimpleClient) GetVideosVideoId(ctx context.Context, videoId string, req
 	}
 }
 
-// DeleteVideosVideoIdAudioTracks makes a DELETE request to /videos/{videoId}/audio-tracks and returns the parsed response.
+// DeleteAudioTracks makes a DELETE request to /videos/{videoId}/audio-tracks and returns the parsed response.
 // Delete all audio tracks
 // On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
-func (c *SimpleClient) DeleteVideosVideoIdAudioTracks(ctx context.Context, videoId string, reqEditors ...RequestEditorFn) (models.AudioTrackDelete, error) {
+func (c *SimpleClient) DeleteAudioTracks(ctx context.Context, videoId string, reqEditors ...RequestEditorFn) (models.AudioTrackDelete, error) {
 	var result models.AudioTrackDelete
-	resp, err := c.Client.DeleteVideosVideoIdAudioTracks(ctx, videoId, reqEditors...)
+	resp, err := c.Client.DeleteAudioTracks(ctx, videoId, reqEditors...)
 	if err != nil {
 		return result, err
 	}
@@ -1443,12 +1443,12 @@ func (c *SimpleClient) DeleteVideosVideoIdAudioTracks(ctx context.Context, video
 	}
 }
 
-// DeleteVideosVideoIdAudioTracksLanguageLangCode makes a DELETE request to /videos/{videoId}/audio-tracks/language/{lang_code} and returns the parsed response.
+// DeleteAudioTrackByLanguage makes a DELETE request to /videos/{videoId}/audio-tracks/language/{lang_code} and returns the parsed response.
 // Delete audio track by language
 // On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
-func (c *SimpleClient) DeleteVideosVideoIdAudioTracksLanguageLangCode(ctx context.Context, videoId string, langCode string, reqEditors ...RequestEditorFn) (models.AudioTrackDelete, error) {
+func (c *SimpleClient) DeleteAudioTrackByLanguage(ctx context.Context, videoId string, langCode string, reqEditors ...RequestEditorFn) (models.AudioTrackDelete, error) {
 	var result models.AudioTrackDelete
-	resp, err := c.Client.DeleteVideosVideoIdAudioTracksLanguageLangCode(ctx, videoId, langCode, reqEditors...)
+	resp, err := c.Client.DeleteAudioTrackByLanguage(ctx, videoId, langCode, reqEditors...)
 	if err != nil {
 		return result, err
 	}
@@ -1473,12 +1473,12 @@ func (c *SimpleClient) DeleteVideosVideoIdAudioTracksLanguageLangCode(ctx contex
 	}
 }
 
-// DeleteVideosVideoIdAudioTracksTrackId makes a DELETE request to /videos/{videoId}/audio-tracks/{trackId} and returns the parsed response.
+// DeleteAudioTrack makes a DELETE request to /videos/{videoId}/audio-tracks/{trackId} and returns the parsed response.
 // Delete audio track
 // On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GithubComRixlhqAPIInternalErrorsErrorResponse].
-func (c *SimpleClient) DeleteVideosVideoIdAudioTracksTrackId(ctx context.Context, videoId string, trackId string, reqEditors ...RequestEditorFn) (models.AudioTrackDelete, error) {
+func (c *SimpleClient) DeleteAudioTrack(ctx context.Context, videoId string, trackId string, reqEditors ...RequestEditorFn) (models.AudioTrackDelete, error) {
 	var result models.AudioTrackDelete
-	resp, err := c.Client.DeleteVideosVideoIdAudioTracksTrackId(ctx, videoId, trackId, reqEditors...)
+	resp, err := c.Client.DeleteAudioTrack(ctx, videoId, trackId, reqEditors...)
 	if err != nil {
 		return result, err
 	}
@@ -1506,12 +1506,12 @@ func (c *SimpleClient) DeleteVideosVideoIdAudioTracksTrackId(ctx context.Context
 	}
 }
 
-// DeleteVideosVideoIdChapters makes a DELETE request to /videos/{videoId}/chapters and returns the parsed response.
+// DeleteChapters makes a DELETE request to /videos/{videoId}/chapters and returns the parsed response.
 // Delete video chapters
 // On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GithubComRixlhqAPIInternalErrorsErrorResponse].
-func (c *SimpleClient) DeleteVideosVideoIdChapters(ctx context.Context, videoId string, reqEditors ...RequestEditorFn) (models.UpdateChaptersResponse, error) {
+func (c *SimpleClient) DeleteChapters(ctx context.Context, videoId string, reqEditors ...RequestEditorFn) (models.UpdateChaptersResponse, error) {
 	var result models.UpdateChaptersResponse
-	resp, err := c.Client.DeleteVideosVideoIdChapters(ctx, videoId, reqEditors...)
+	resp, err := c.Client.DeleteChapters(ctx, videoId, reqEditors...)
 	if err != nil {
 		return result, err
 	}
@@ -1539,12 +1539,12 @@ func (c *SimpleClient) DeleteVideosVideoIdChapters(ctx context.Context, videoId 
 	}
 }
 
-// PutVideosVideoIdChapters makes a PUT request to /videos/{videoId}/chapters and returns the parsed response.
+// UpdateChapters makes a PUT request to /videos/{videoId}/chapters and returns the parsed response.
 // Update video chapters
 // On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GithubComRixlhqAPIInternalErrorsErrorResponse].
-func (c *SimpleClient) PutVideosVideoIdChapters(ctx context.Context, videoId string, body PutVideosVideoIdChaptersJSONRequestBody, reqEditors ...RequestEditorFn) (models.UpdateChaptersResponse, error) {
+func (c *SimpleClient) UpdateChapters(ctx context.Context, videoId string, body updateChaptersJSONRequestBody, reqEditors ...RequestEditorFn) (models.UpdateChaptersResponse, error) {
 	var result models.UpdateChaptersResponse
-	resp, err := c.Client.PutVideosVideoIdChapters(ctx, videoId, body, reqEditors...)
+	resp, err := c.Client.UpdateChapters(ctx, videoId, body, reqEditors...)
 	if err != nil {
 		return result, err
 	}
@@ -1572,12 +1572,12 @@ func (c *SimpleClient) PutVideosVideoIdChapters(ctx context.Context, videoId str
 	}
 }
 
-// DeleteVideosVideoIdSubtitles makes a DELETE request to /videos/{videoId}/subtitles and returns the parsed response.
+// DeleteSubtitles makes a DELETE request to /videos/{videoId}/subtitles and returns the parsed response.
 // Delete all subtitles
 // On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
-func (c *SimpleClient) DeleteVideosVideoIdSubtitles(ctx context.Context, videoId string, reqEditors ...RequestEditorFn) (models.SubtitleDelete, error) {
+func (c *SimpleClient) DeleteSubtitles(ctx context.Context, videoId string, reqEditors ...RequestEditorFn) (models.SubtitleDelete, error) {
 	var result models.SubtitleDelete
-	resp, err := c.Client.DeleteVideosVideoIdSubtitles(ctx, videoId, reqEditors...)
+	resp, err := c.Client.DeleteSubtitles(ctx, videoId, reqEditors...)
 	if err != nil {
 		return result, err
 	}
@@ -1602,12 +1602,12 @@ func (c *SimpleClient) DeleteVideosVideoIdSubtitles(ctx context.Context, videoId
 	}
 }
 
-// DeleteVideosVideoIdSubtitlesLanguageLangCode makes a DELETE request to /videos/{videoId}/subtitles/language/{lang_code} and returns the parsed response.
+// DeleteSubtitleByLanguage makes a DELETE request to /videos/{videoId}/subtitles/language/{lang_code} and returns the parsed response.
 // Delete subtitle by language
 // On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
-func (c *SimpleClient) DeleteVideosVideoIdSubtitlesLanguageLangCode(ctx context.Context, videoId string, langCode string, reqEditors ...RequestEditorFn) (models.SubtitleDelete, error) {
+func (c *SimpleClient) DeleteSubtitleByLanguage(ctx context.Context, videoId string, langCode string, reqEditors ...RequestEditorFn) (models.SubtitleDelete, error) {
 	var result models.SubtitleDelete
-	resp, err := c.Client.DeleteVideosVideoIdSubtitlesLanguageLangCode(ctx, videoId, langCode, reqEditors...)
+	resp, err := c.Client.DeleteSubtitleByLanguage(ctx, videoId, langCode, reqEditors...)
 	if err != nil {
 		return result, err
 	}
@@ -1632,12 +1632,12 @@ func (c *SimpleClient) DeleteVideosVideoIdSubtitlesLanguageLangCode(ctx context.
 	}
 }
 
-// DeleteVideosVideoIdSubtitlesSubtitleId makes a DELETE request to /videos/{videoId}/subtitles/{subtitleId} and returns the parsed response.
+// DeleteSubtitle makes a DELETE request to /videos/{videoId}/subtitles/{subtitleId} and returns the parsed response.
 // Delete subtitle
 // On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GithubComRixlhqAPIInternalErrorsErrorResponse].
-func (c *SimpleClient) DeleteVideosVideoIdSubtitlesSubtitleId(ctx context.Context, videoId string, subtitleId string, reqEditors ...RequestEditorFn) (models.SubtitleDelete, error) {
+func (c *SimpleClient) DeleteSubtitle(ctx context.Context, videoId string, subtitleId string, reqEditors ...RequestEditorFn) (models.SubtitleDelete, error) {
 	var result models.SubtitleDelete
-	resp, err := c.Client.DeleteVideosVideoIdSubtitlesSubtitleId(ctx, videoId, subtitleId, reqEditors...)
+	resp, err := c.Client.DeleteSubtitle(ctx, videoId, subtitleId, reqEditors...)
 	if err != nil {
 		return result, err
 	}
