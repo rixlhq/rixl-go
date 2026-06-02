@@ -3,6 +3,7 @@
 package feeds
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -14,6 +15,14 @@ import (
 	"github.com/rixlhq/rixl-go/sdk/models"
 	oapiCodegenParamsPkg "github.com/rixlhq/rixl-go/sdk/runtime/params"
 )
+
+type listFeedsJSONRequestBody = any
+
+type createFeedJSONRequestBody = models.GithubComRixlhqAPIInternalFeedsTypesCreateFeedRequest
+
+type deleteFeedJSONRequestBody = any
+
+type updateFeedJSONRequestBody = models.GithubComRixlhqAPIInternalFeedsTypesUpdateFeedRequest
 
 // RequestEditorFn is the function signature for the RequestEditor callback function.
 type RequestEditorFn func(ctx context.Context, req *http.Request) error
@@ -111,12 +120,32 @@ func (c *Client) applyEditors(ctx context.Context, req *http.Request, additional
 
 // ClientInterface is the interface specification for the client.
 type ClientInterface interface {
-	// List makes a GET request to /feeds/{feedId}
+	// ListFeedsWithBody makes a GET request to /media/feeds
+	ListFeedsWithBody(ctx context.Context, params *ListFeedsParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+	ListFeeds(ctx context.Context, params *ListFeedsParams, body listFeedsJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// CreateFeedWithBody makes a POST request to /media/feeds
+	CreateFeedWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+	CreateFeed(ctx context.Context, body createFeedJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// DeleteFeedWithBody makes a DELETE request to /media/feeds/{feedId}
+	DeleteFeedWithBody(ctx context.Context, feedId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+	DeleteFeed(ctx context.Context, feedId string, body deleteFeedJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// List makes a GET request to /media/feeds/{feedId}
 	List(ctx context.Context, feedId string, params *ListParams, reqEditors ...RequestEditorFn) (*http.Response, error)
-	// ListByCreator makes a GET request to /feeds/{feedId}/creators/{creatorId}
+	// UpdateFeedWithBody makes a PUT request to /media/feeds/{feedId}
+	UpdateFeedWithBody(ctx context.Context, feedId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+	UpdateFeed(ctx context.Context, feedId string, body updateFeedJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// ListByCreator makes a GET request to /media/feeds/{feedId}/creators/{creatorId}
 	ListByCreator(ctx context.Context, feedId string, creatorId string, params *ListByCreatorParams, reqEditors ...RequestEditorFn) (*http.Response, error)
-	// Get makes a GET request to /feeds/{feedId}/{postId}
+	// Get makes a GET request to /media/feeds/{feedId}/{postId}
 	Get(ctx context.Context, feedId string, postId string, reqEditors ...RequestEditorFn) (*http.Response, error)
+}
+
+// ListFeedsParams defines parameters for ListFeeds.
+type ListFeedsParams struct {
+	// limit (optional)
+	Limit *int `form:"limit" json:"limit"`
+	// offset (optional)
+	Offset *int `form:"offset" json:"offset"`
 }
 
 // ListParams defines parameters for List.
@@ -135,7 +164,88 @@ type ListByCreatorParams struct {
 	Offset *int `form:"offset" json:"offset"`
 }
 
-// List makes a GET request to /feeds/{feedId}
+// ListFeedsWithBody makes a GET request to /media/feeds
+// List feeds
+func (c *Client) ListFeedsWithBody(ctx context.Context, params *ListFeedsParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListFeedsRequestWithBody(c.Server, params, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// ListFeeds makes a GET request to /media/feeds with application/json body
+func (c *Client) ListFeeds(ctx context.Context, params *ListFeedsParams, body listFeedsJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListFeedsRequest(c.Server, params, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// CreateFeedWithBody makes a POST request to /media/feeds
+// Create a feed
+func (c *Client) CreateFeedWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateFeedRequestWithBody(c.Server, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// CreateFeed makes a POST request to /media/feeds with application/json body
+func (c *Client) CreateFeed(ctx context.Context, body createFeedJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateFeedRequest(c.Server, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// DeleteFeedWithBody makes a DELETE request to /media/feeds/{feedId}
+// Delete a feed
+func (c *Client) DeleteFeedWithBody(ctx context.Context, feedId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewDeleteFeedRequestWithBody(c.Server, feedId, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// DeleteFeed makes a DELETE request to /media/feeds/{feedId} with application/json body
+func (c *Client) DeleteFeed(ctx context.Context, feedId string, body deleteFeedJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewDeleteFeedRequest(c.Server, feedId, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// List makes a GET request to /media/feeds/{feedId}
 // List posts in a feed
 func (c *Client) List(ctx context.Context, feedId string, params *ListParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewListRequest(c.Server, feedId, params)
@@ -149,7 +259,34 @@ func (c *Client) List(ctx context.Context, feedId string, params *ListParams, re
 	return c.Client.Do(req)
 }
 
-// ListByCreator makes a GET request to /feeds/{feedId}/creators/{creatorId}
+// UpdateFeedWithBody makes a PUT request to /media/feeds/{feedId}
+// Update a feed
+func (c *Client) UpdateFeedWithBody(ctx context.Context, feedId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpdateFeedRequestWithBody(c.Server, feedId, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// UpdateFeed makes a PUT request to /media/feeds/{feedId} with application/json body
+func (c *Client) UpdateFeed(ctx context.Context, feedId string, body updateFeedJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpdateFeedRequest(c.Server, feedId, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// ListByCreator makes a GET request to /media/feeds/{feedId}/creators/{creatorId}
 // List posts by creator
 func (c *Client) ListByCreator(ctx context.Context, feedId string, creatorId string, params *ListByCreatorParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewListByCreatorRequest(c.Server, feedId, creatorId, params)
@@ -163,7 +300,7 @@ func (c *Client) ListByCreator(ctx context.Context, feedId string, creatorId str
 	return c.Client.Do(req)
 }
 
-// Get makes a GET request to /feeds/{feedId}/{postId}
+// Get makes a GET request to /media/feeds/{feedId}/{postId}
 // Get a post
 func (c *Client) Get(ctx context.Context, feedId string, postId string, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewGetRequest(c.Server, feedId, postId)
@@ -177,7 +314,164 @@ func (c *Client) Get(ctx context.Context, feedId string, postId string, reqEdito
 	return c.Client.Do(req)
 }
 
-// NewListRequest creates a GET request for /feeds/{feedId}
+// NewListFeedsRequest creates a GET request for /media/feeds with application/json body
+func NewListFeedsRequest(server string, params *ListFeedsParams, body listFeedsJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewListFeedsRequestWithBody(server, params, "application/json", bodyReader)
+}
+
+// NewListFeedsRequestWithBody creates a GET request for /media/feeds with any body
+func NewListFeedsRequestWithBody(server string, params *ListFeedsParams, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/media/feeds")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	reqURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		queryValues := reqURL.Query()
+		if params.Limit != nil {
+			if queryFrag, err := oapiCodegenParamsPkg.StyleParameter("limit", *params.Limit, oapiCodegenParamsPkg.ParameterOptions{Style: "form", ParamLocation: oapiCodegenParamsPkg.ParamLocationQuery, Explode: true, Required: false, Type: "integer", Format: "", AllowReserved: false}); err != nil {
+				return nil, err
+			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+				return nil, err
+			} else {
+				for k, v := range parsed {
+					for _, v2 := range v {
+						queryValues.Add(k, v2)
+					}
+				}
+			}
+		}
+		if params.Offset != nil {
+			if queryFrag, err := oapiCodegenParamsPkg.StyleParameter("offset", *params.Offset, oapiCodegenParamsPkg.ParameterOptions{Style: "form", ParamLocation: oapiCodegenParamsPkg.ParamLocationQuery, Explode: true, Required: false, Type: "integer", Format: "", AllowReserved: false}); err != nil {
+				return nil, err
+			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+				return nil, err
+			} else {
+				for k, v := range parsed {
+					for _, v2 := range v {
+						queryValues.Add(k, v2)
+					}
+				}
+			}
+		}
+		reqURL.RawQuery = queryValues.Encode()
+	}
+
+	req, err := http.NewRequest("GET", reqURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
+// NewCreateFeedRequest creates a POST request for /media/feeds with application/json body
+func NewCreateFeedRequest(server string, body createFeedJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewCreateFeedRequestWithBody(server, "application/json", bodyReader)
+}
+
+// NewCreateFeedRequestWithBody creates a POST request for /media/feeds with any body
+func NewCreateFeedRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/media/feeds")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	reqURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("POST", reqURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
+// NewDeleteFeedRequest creates a DELETE request for /media/feeds/{feedId} with application/json body
+func NewDeleteFeedRequest(server string, feedId string, body deleteFeedJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewDeleteFeedRequestWithBody(server, feedId, "application/json", bodyReader)
+}
+
+// NewDeleteFeedRequestWithBody creates a DELETE request for /media/feeds/{feedId} with any body
+func NewDeleteFeedRequestWithBody(server string, feedId string, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+	pathParam0, err = oapiCodegenParamsPkg.StyleParameter("feedId", feedId, oapiCodegenParamsPkg.ParameterOptions{Style: "simple", ParamLocation: oapiCodegenParamsPkg.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", AllowReserved: false})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/media/feeds/%s", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	reqURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("DELETE", reqURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
+// NewListRequest creates a GET request for /media/feeds/{feedId}
 func NewListRequest(server string, feedId string, params *ListParams) (*http.Request, error) {
 	var err error
 
@@ -192,7 +486,7 @@ func NewListRequest(server string, feedId string, params *ListParams) (*http.Req
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/feeds/%s", pathParam0)
+	operationPath := fmt.Sprintf("/media/feeds/%s", pathParam0)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
@@ -241,7 +535,53 @@ func NewListRequest(server string, feedId string, params *ListParams) (*http.Req
 	return req, nil
 }
 
-// NewListByCreatorRequest creates a GET request for /feeds/{feedId}/creators/{creatorId}
+// NewUpdateFeedRequest creates a PUT request for /media/feeds/{feedId} with application/json body
+func NewUpdateFeedRequest(server string, feedId string, body updateFeedJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewUpdateFeedRequestWithBody(server, feedId, "application/json", bodyReader)
+}
+
+// NewUpdateFeedRequestWithBody creates a PUT request for /media/feeds/{feedId} with any body
+func NewUpdateFeedRequestWithBody(server string, feedId string, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+	pathParam0, err = oapiCodegenParamsPkg.StyleParameter("feedId", feedId, oapiCodegenParamsPkg.ParameterOptions{Style: "simple", ParamLocation: oapiCodegenParamsPkg.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", AllowReserved: false})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/media/feeds/%s", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	reqURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("PUT", reqURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
+// NewListByCreatorRequest creates a GET request for /media/feeds/{feedId}/creators/{creatorId}
 func NewListByCreatorRequest(server string, feedId string, creatorId string, params *ListByCreatorParams) (*http.Request, error) {
 	var err error
 
@@ -262,7 +602,7 @@ func NewListByCreatorRequest(server string, feedId string, creatorId string, par
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/feeds/%s/creators/%s", pathParam0, pathParam1)
+	operationPath := fmt.Sprintf("/media/feeds/%s/creators/%s", pathParam0, pathParam1)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
@@ -311,7 +651,7 @@ func NewListByCreatorRequest(server string, feedId string, creatorId string, par
 	return req, nil
 }
 
-// NewGetRequest creates a GET request for /feeds/{feedId}/{postId}
+// NewGetRequest creates a GET request for /media/feeds/{feedId}/{postId}
 func NewGetRequest(server string, feedId string, postId string) (*http.Request, error) {
 	var err error
 
@@ -332,7 +672,7 @@ func NewGetRequest(server string, feedId string, postId string) (*http.Request, 
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/feeds/%s/%s", pathParam0, pathParam1)
+	operationPath := fmt.Sprintf("/media/feeds/%s/%s", pathParam0, pathParam1)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
@@ -378,7 +718,106 @@ func NewSimpleClient(server string, opts ...ClientOption) (*SimpleClient, error)
 	return &SimpleClient{Client: inner}, nil
 }
 
-// List makes a GET request to /feeds/{feedId} and returns the parsed response.
+// ListFeeds makes a GET request to /media/feeds and returns the parsed response.
+// List feeds
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GithubComRixlhqAPIInternalErrorsErrorResponse].
+func (c *SimpleClient) ListFeeds(ctx context.Context, params *ListFeedsParams, body listFeedsJSONRequestBody, reqEditors ...RequestEditorFn) (models.PaginationPaginatedResponseGithubComRixlhqAPIInternalFeedsTypesFeedResponse, error) {
+	var result models.PaginationPaginatedResponseGithubComRixlhqAPIInternalFeedsTypesFeedResponse
+	resp, err := c.Client.ListFeeds(ctx, params, body, reqEditors...)
+	if err != nil {
+		return result, err
+	}
+	defer resp.Body.Close()
+
+	rawBody, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return result, err
+	}
+
+	if resp.StatusCode >= 200 && resp.StatusCode < 300 {
+		if err := json.Unmarshal(rawBody, &result); err != nil {
+			return result, err
+		}
+		return result, nil
+	}
+
+	// Parse error response
+	var errBody models.GithubComRixlhqAPIInternalErrorsErrorResponse
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GithubComRixlhqAPIInternalErrorsErrorResponse]{
+		StatusCode: resp.StatusCode,
+		Body:       errBody,
+		RawBody:    rawBody,
+	}
+}
+
+// CreateFeed makes a POST request to /media/feeds and returns the parsed response.
+// Create a feed
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GithubComRixlhqAPIInternalErrorsErrorResponse].
+func (c *SimpleClient) CreateFeed(ctx context.Context, body createFeedJSONRequestBody, reqEditors ...RequestEditorFn) (models.GithubComRixlhqAPIInternalFeedsTypesFeedResponse, error) {
+	var result models.GithubComRixlhqAPIInternalFeedsTypesFeedResponse
+	resp, err := c.Client.CreateFeed(ctx, body, reqEditors...)
+	if err != nil {
+		return result, err
+	}
+	defer resp.Body.Close()
+
+	rawBody, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return result, err
+	}
+
+	if resp.StatusCode >= 200 && resp.StatusCode < 300 {
+		if err := json.Unmarshal(rawBody, &result); err != nil {
+			return result, err
+		}
+		return result, nil
+	}
+
+	// Parse error response
+	var errBody models.GithubComRixlhqAPIInternalErrorsErrorResponse
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GithubComRixlhqAPIInternalErrorsErrorResponse]{
+		StatusCode: resp.StatusCode,
+		Body:       errBody,
+		RawBody:    rawBody,
+	}
+}
+
+// DeleteFeed makes a DELETE request to /media/feeds/{feedId} and returns the parsed response.
+// Delete a feed
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GithubComRixlhqAPIInternalErrorsErrorResponse].
+func (c *SimpleClient) DeleteFeed(ctx context.Context, feedId string, body deleteFeedJSONRequestBody, reqEditors ...RequestEditorFn) (map[string]any, error) {
+	var result map[string]any
+	resp, err := c.Client.DeleteFeed(ctx, feedId, body, reqEditors...)
+	if err != nil {
+		return result, err
+	}
+	defer resp.Body.Close()
+
+	rawBody, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return result, err
+	}
+
+	if resp.StatusCode >= 200 && resp.StatusCode < 300 {
+		if err := json.Unmarshal(rawBody, &result); err != nil {
+			return result, err
+		}
+		return result, nil
+	}
+
+	// Parse error response
+	var errBody models.GithubComRixlhqAPIInternalErrorsErrorResponse
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GithubComRixlhqAPIInternalErrorsErrorResponse]{
+		StatusCode: resp.StatusCode,
+		Body:       errBody,
+		RawBody:    rawBody,
+	}
+}
+
+// List makes a GET request to /media/feeds/{feedId} and returns the parsed response.
 // List posts in a feed
 // On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GithubComRixlhqAPIInternalErrorsErrorResponse].
 func (c *SimpleClient) List(ctx context.Context, feedId string, params *ListParams, reqEditors ...RequestEditorFn) (models.PaginationPaginatedResponsePost, error) {
@@ -411,7 +850,40 @@ func (c *SimpleClient) List(ctx context.Context, feedId string, params *ListPara
 	}
 }
 
-// ListByCreator makes a GET request to /feeds/{feedId}/creators/{creatorId} and returns the parsed response.
+// UpdateFeed makes a PUT request to /media/feeds/{feedId} and returns the parsed response.
+// Update a feed
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GithubComRixlhqAPIInternalErrorsErrorResponse].
+func (c *SimpleClient) UpdateFeed(ctx context.Context, feedId string, body updateFeedJSONRequestBody, reqEditors ...RequestEditorFn) (models.GithubComRixlhqAPIInternalFeedsTypesFeedResponse, error) {
+	var result models.GithubComRixlhqAPIInternalFeedsTypesFeedResponse
+	resp, err := c.Client.UpdateFeed(ctx, feedId, body, reqEditors...)
+	if err != nil {
+		return result, err
+	}
+	defer resp.Body.Close()
+
+	rawBody, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return result, err
+	}
+
+	if resp.StatusCode >= 200 && resp.StatusCode < 300 {
+		if err := json.Unmarshal(rawBody, &result); err != nil {
+			return result, err
+		}
+		return result, nil
+	}
+
+	// Parse error response
+	var errBody models.GithubComRixlhqAPIInternalErrorsErrorResponse
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GithubComRixlhqAPIInternalErrorsErrorResponse]{
+		StatusCode: resp.StatusCode,
+		Body:       errBody,
+		RawBody:    rawBody,
+	}
+}
+
+// ListByCreator makes a GET request to /media/feeds/{feedId}/creators/{creatorId} and returns the parsed response.
 // List posts by creator
 // On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GithubComRixlhqAPIInternalErrorsErrorResponse].
 func (c *SimpleClient) ListByCreator(ctx context.Context, feedId string, creatorId string, params *ListByCreatorParams, reqEditors ...RequestEditorFn) (models.PaginationPaginatedResponsePost, error) {
@@ -444,7 +916,7 @@ func (c *SimpleClient) ListByCreator(ctx context.Context, feedId string, creator
 	}
 }
 
-// Get makes a GET request to /feeds/{feedId}/{postId} and returns the parsed response.
+// Get makes a GET request to /media/feeds/{feedId}/{postId} and returns the parsed response.
 // Get a post
 // On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GithubComRixlhqAPIInternalErrorsErrorResponse].
 func (c *SimpleClient) Get(ctx context.Context, feedId string, postId string, reqEditors ...RequestEditorFn) (models.Post, error) {

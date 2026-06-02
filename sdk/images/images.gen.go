@@ -16,9 +16,9 @@ import (
 	oapiCodegenParamsPkg "github.com/rixlhq/rixl-go/sdk/runtime/params"
 )
 
-type uploadCompleteJSONRequestBody = models.InternalImagesHandlerCompleteRequest
+type completeImageUploadJSONRequestBody = models.InternalImagesHandlerCompleteRequest
 
-type uploadInitJSONRequestBody = models.InternalImagesHandlerUploadInitRequest
+type initImageUploadJSONRequestBody = models.InternalImagesHandlerUploadInitRequest
 
 // RequestEditorFn is the function signature for the RequestEditor callback function.
 type RequestEditorFn func(ctx context.Context, req *http.Request) error
@@ -116,22 +116,22 @@ func (c *Client) applyEditors(ctx context.Context, req *http.Request, additional
 
 // ClientInterface is the interface specification for the client.
 type ClientInterface interface {
-	// List makes a GET request to /images
-	List(ctx context.Context, params *ListParams, reqEditors ...RequestEditorFn) (*http.Response, error)
-	// UploadCompleteWithBody makes a POST request to /images/upload/complete
-	UploadCompleteWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
-	UploadComplete(ctx context.Context, body uploadCompleteJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
-	// UploadInitWithBody makes a POST request to /images/upload/init
-	UploadInitWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
-	UploadInit(ctx context.Context, body uploadInitJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
-	// Delete makes a DELETE request to /images/{imageId}
-	Delete(ctx context.Context, imageId string, reqEditors ...RequestEditorFn) (*http.Response, error)
-	// Get makes a GET request to /images/{imageId}
+	// ListImages makes a GET request to /media/images
+	ListImages(ctx context.Context, params *ListImagesParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// CompleteImageUploadWithBody makes a POST request to /media/images/upload/complete
+	CompleteImageUploadWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+	CompleteImageUpload(ctx context.Context, body completeImageUploadJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// InitImageUploadWithBody makes a POST request to /media/images/upload/init
+	InitImageUploadWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+	InitImageUpload(ctx context.Context, body initImageUploadJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// DeleteImage makes a DELETE request to /media/images/{imageId}
+	DeleteImage(ctx context.Context, imageId string, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// Get makes a GET request to /media/images/{imageId}
 	Get(ctx context.Context, imageId string, reqEditors ...RequestEditorFn) (*http.Response, error)
 }
 
-// ListParams defines parameters for List.
-type ListParams struct {
+// ListImagesParams defines parameters for ListImages.
+type ListImagesParams struct {
 	// limit (optional)
 	Limit *int `form:"limit" json:"limit"`
 	// offset (optional)
@@ -142,10 +142,10 @@ type ListParams struct {
 	Order *string `form:"order" json:"order"`
 }
 
-// List makes a GET request to /images
-// List images for a project
-func (c *Client) List(ctx context.Context, params *ListParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewListRequest(c.Server, params)
+// ListImages makes a GET request to /media/images
+// List images for the active project
+func (c *Client) ListImages(ctx context.Context, params *ListImagesParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListImagesRequest(c.Server, params)
 	if err != nil {
 		return nil, err
 	}
@@ -156,10 +156,10 @@ func (c *Client) List(ctx context.Context, params *ListParams, reqEditors ...Req
 	return c.Client.Do(req)
 }
 
-// UploadCompleteWithBody makes a POST request to /images/upload/complete
-// Upload: Mark as complete
-func (c *Client) UploadCompleteWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewUploadCompleteRequestWithBody(c.Server, contentType, body)
+// CompleteImageUploadWithBody makes a POST request to /media/images/upload/complete
+// Complete image upload
+func (c *Client) CompleteImageUploadWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCompleteImageUploadRequestWithBody(c.Server, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -170,9 +170,9 @@ func (c *Client) UploadCompleteWithBody(ctx context.Context, contentType string,
 	return c.Client.Do(req)
 }
 
-// UploadComplete makes a POST request to /images/upload/complete with application/json body
-func (c *Client) UploadComplete(ctx context.Context, body uploadCompleteJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewUploadCompleteRequest(c.Server, body)
+// CompleteImageUpload makes a POST request to /media/images/upload/complete with application/json body
+func (c *Client) CompleteImageUpload(ctx context.Context, body completeImageUploadJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCompleteImageUploadRequest(c.Server, body)
 	if err != nil {
 		return nil, err
 	}
@@ -183,10 +183,10 @@ func (c *Client) UploadComplete(ctx context.Context, body uploadCompleteJSONRequ
 	return c.Client.Do(req)
 }
 
-// UploadInitWithBody makes a POST request to /images/upload/init
-// Upload: Init
-func (c *Client) UploadInitWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewUploadInitRequestWithBody(c.Server, contentType, body)
+// InitImageUploadWithBody makes a POST request to /media/images/upload/init
+// Initialize image upload
+func (c *Client) InitImageUploadWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewInitImageUploadRequestWithBody(c.Server, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -197,9 +197,9 @@ func (c *Client) UploadInitWithBody(ctx context.Context, contentType string, bod
 	return c.Client.Do(req)
 }
 
-// UploadInit makes a POST request to /images/upload/init with application/json body
-func (c *Client) UploadInit(ctx context.Context, body uploadInitJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewUploadInitRequest(c.Server, body)
+// InitImageUpload makes a POST request to /media/images/upload/init with application/json body
+func (c *Client) InitImageUpload(ctx context.Context, body initImageUploadJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewInitImageUploadRequest(c.Server, body)
 	if err != nil {
 		return nil, err
 	}
@@ -210,10 +210,10 @@ func (c *Client) UploadInit(ctx context.Context, body uploadInitJSONRequestBody,
 	return c.Client.Do(req)
 }
 
-// Delete makes a DELETE request to /images/{imageId}
+// DeleteImage makes a DELETE request to /media/images/{imageId}
 // Delete image
-func (c *Client) Delete(ctx context.Context, imageId string, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewDeleteRequest(c.Server, imageId)
+func (c *Client) DeleteImage(ctx context.Context, imageId string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewDeleteImageRequest(c.Server, imageId)
 	if err != nil {
 		return nil, err
 	}
@@ -224,7 +224,7 @@ func (c *Client) Delete(ctx context.Context, imageId string, reqEditors ...Reque
 	return c.Client.Do(req)
 }
 
-// Get makes a GET request to /images/{imageId}
+// Get makes a GET request to /media/images/{imageId}
 // Get image
 func (c *Client) Get(ctx context.Context, imageId string, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewGetRequest(c.Server, imageId)
@@ -238,8 +238,8 @@ func (c *Client) Get(ctx context.Context, imageId string, reqEditors ...RequestE
 	return c.Client.Do(req)
 }
 
-// NewListRequest creates a GET request for /images
-func NewListRequest(server string, params *ListParams) (*http.Request, error) {
+// NewListImagesRequest creates a GET request for /media/images
+func NewListImagesRequest(server string, params *ListImagesParams) (*http.Request, error) {
 	var err error
 
 	serverURL, err := url.Parse(server)
@@ -247,7 +247,7 @@ func NewListRequest(server string, params *ListParams) (*http.Request, error) {
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/images")
+	operationPath := fmt.Sprintf("/media/images")
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
@@ -322,19 +322,19 @@ func NewListRequest(server string, params *ListParams) (*http.Request, error) {
 	return req, nil
 }
 
-// NewUploadCompleteRequest creates a POST request for /images/upload/complete with application/json body
-func NewUploadCompleteRequest(server string, body uploadCompleteJSONRequestBody) (*http.Request, error) {
+// NewCompleteImageUploadRequest creates a POST request for /media/images/upload/complete with application/json body
+func NewCompleteImageUploadRequest(server string, body completeImageUploadJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return NewUploadCompleteRequestWithBody(server, "application/json", bodyReader)
+	return NewCompleteImageUploadRequestWithBody(server, "application/json", bodyReader)
 }
 
-// NewUploadCompleteRequestWithBody creates a POST request for /images/upload/complete with any body
-func NewUploadCompleteRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
+// NewCompleteImageUploadRequestWithBody creates a POST request for /media/images/upload/complete with any body
+func NewCompleteImageUploadRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	serverURL, err := url.Parse(server)
@@ -342,7 +342,7 @@ func NewUploadCompleteRequestWithBody(server string, contentType string, body io
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/images/upload/complete")
+	operationPath := fmt.Sprintf("/media/images/upload/complete")
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
@@ -362,19 +362,19 @@ func NewUploadCompleteRequestWithBody(server string, contentType string, body io
 	return req, nil
 }
 
-// NewUploadInitRequest creates a POST request for /images/upload/init with application/json body
-func NewUploadInitRequest(server string, body uploadInitJSONRequestBody) (*http.Request, error) {
+// NewInitImageUploadRequest creates a POST request for /media/images/upload/init with application/json body
+func NewInitImageUploadRequest(server string, body initImageUploadJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return NewUploadInitRequestWithBody(server, "application/json", bodyReader)
+	return NewInitImageUploadRequestWithBody(server, "application/json", bodyReader)
 }
 
-// NewUploadInitRequestWithBody creates a POST request for /images/upload/init with any body
-func NewUploadInitRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
+// NewInitImageUploadRequestWithBody creates a POST request for /media/images/upload/init with any body
+func NewInitImageUploadRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	serverURL, err := url.Parse(server)
@@ -382,7 +382,7 @@ func NewUploadInitRequestWithBody(server string, contentType string, body io.Rea
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/images/upload/init")
+	operationPath := fmt.Sprintf("/media/images/upload/init")
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
@@ -402,8 +402,8 @@ func NewUploadInitRequestWithBody(server string, contentType string, body io.Rea
 	return req, nil
 }
 
-// NewDeleteRequest creates a DELETE request for /images/{imageId}
-func NewDeleteRequest(server string, imageId string) (*http.Request, error) {
+// NewDeleteImageRequest creates a DELETE request for /media/images/{imageId}
+func NewDeleteImageRequest(server string, imageId string) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -417,7 +417,7 @@ func NewDeleteRequest(server string, imageId string) (*http.Request, error) {
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/images/%s", pathParam0)
+	operationPath := fmt.Sprintf("/media/images/%s", pathParam0)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
@@ -435,7 +435,7 @@ func NewDeleteRequest(server string, imageId string) (*http.Request, error) {
 	return req, nil
 }
 
-// NewGetRequest creates a GET request for /images/{imageId}
+// NewGetRequest creates a GET request for /media/images/{imageId}
 func NewGetRequest(server string, imageId string) (*http.Request, error) {
 	var err error
 
@@ -450,7 +450,7 @@ func NewGetRequest(server string, imageId string) (*http.Request, error) {
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/images/%s", pathParam0)
+	operationPath := fmt.Sprintf("/media/images/%s", pathParam0)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
@@ -496,12 +496,12 @@ func NewSimpleClient(server string, opts ...ClientOption) (*SimpleClient, error)
 	return &SimpleClient{Client: inner}, nil
 }
 
-// List makes a GET request to /images and returns the parsed response.
-// List images for a project
+// ListImages makes a GET request to /media/images and returns the parsed response.
+// List images for the active project
 // On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GithubComRixlhqAPIInternalErrorsErrorResponse].
-func (c *SimpleClient) List(ctx context.Context, params *ListParams, reqEditors ...RequestEditorFn) (models.PaginationPaginatedResponseImage, error) {
+func (c *SimpleClient) ListImages(ctx context.Context, params *ListImagesParams, reqEditors ...RequestEditorFn) (models.PaginationPaginatedResponseImage, error) {
 	var result models.PaginationPaginatedResponseImage
-	resp, err := c.Client.List(ctx, params, reqEditors...)
+	resp, err := c.Client.ListImages(ctx, params, reqEditors...)
 	if err != nil {
 		return result, err
 	}
@@ -529,12 +529,12 @@ func (c *SimpleClient) List(ctx context.Context, params *ListParams, reqEditors 
 	}
 }
 
-// UploadComplete makes a POST request to /images/upload/complete and returns the parsed response.
-// Upload: Mark as complete
+// CompleteImageUpload makes a POST request to /media/images/upload/complete and returns the parsed response.
+// Complete image upload
 // On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GithubComRixlhqAPIInternalErrorsErrorResponse].
-func (c *SimpleClient) UploadComplete(ctx context.Context, body uploadCompleteJSONRequestBody, reqEditors ...RequestEditorFn) (models.Image, error) {
+func (c *SimpleClient) CompleteImageUpload(ctx context.Context, body completeImageUploadJSONRequestBody, reqEditors ...RequestEditorFn) (models.Image, error) {
 	var result models.Image
-	resp, err := c.Client.UploadComplete(ctx, body, reqEditors...)
+	resp, err := c.Client.CompleteImageUpload(ctx, body, reqEditors...)
 	if err != nil {
 		return result, err
 	}
@@ -562,12 +562,12 @@ func (c *SimpleClient) UploadComplete(ctx context.Context, body uploadCompleteJS
 	}
 }
 
-// UploadInit makes a POST request to /images/upload/init and returns the parsed response.
-// Upload: Init
+// InitImageUpload makes a POST request to /media/images/upload/init and returns the parsed response.
+// Initialize image upload
 // On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GithubComRixlhqAPIInternalErrorsErrorResponse].
-func (c *SimpleClient) UploadInit(ctx context.Context, body uploadInitJSONRequestBody, reqEditors ...RequestEditorFn) (models.InternalImagesHandlerInitResponse, error) {
+func (c *SimpleClient) InitImageUpload(ctx context.Context, body initImageUploadJSONRequestBody, reqEditors ...RequestEditorFn) (models.InternalImagesHandlerInitResponse, error) {
 	var result models.InternalImagesHandlerInitResponse
-	resp, err := c.Client.UploadInit(ctx, body, reqEditors...)
+	resp, err := c.Client.InitImageUpload(ctx, body, reqEditors...)
 	if err != nil {
 		return result, err
 	}
@@ -595,7 +595,40 @@ func (c *SimpleClient) UploadInit(ctx context.Context, body uploadInitJSONReques
 	}
 }
 
-// Get makes a GET request to /images/{imageId} and returns the parsed response.
+// DeleteImage makes a DELETE request to /media/images/{imageId} and returns the parsed response.
+// Delete image
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GithubComRixlhqAPIInternalErrorsErrorResponse].
+func (c *SimpleClient) DeleteImage(ctx context.Context, imageId string, reqEditors ...RequestEditorFn) (map[string]any, error) {
+	var result map[string]any
+	resp, err := c.Client.DeleteImage(ctx, imageId, reqEditors...)
+	if err != nil {
+		return result, err
+	}
+	defer resp.Body.Close()
+
+	rawBody, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return result, err
+	}
+
+	if resp.StatusCode >= 200 && resp.StatusCode < 300 {
+		if err := json.Unmarshal(rawBody, &result); err != nil {
+			return result, err
+		}
+		return result, nil
+	}
+
+	// Parse error response
+	var errBody models.GithubComRixlhqAPIInternalErrorsErrorResponse
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GithubComRixlhqAPIInternalErrorsErrorResponse]{
+		StatusCode: resp.StatusCode,
+		Body:       errBody,
+		RawBody:    rawBody,
+	}
+}
+
+// Get makes a GET request to /media/images/{imageId} and returns the parsed response.
 // Get image
 // On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GithubComRixlhqAPIInternalErrorsErrorResponse].
 func (c *SimpleClient) Get(ctx context.Context, imageId string, reqEditors ...RequestEditorFn) (models.Image, error) {
