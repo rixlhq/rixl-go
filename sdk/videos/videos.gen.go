@@ -4,15 +4,10 @@ package videos
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
-	"io"
 	"net/http"
 	"net/url"
 	"strings"
-
-	"github.com/rixlhq/rixl-go/sdk/models"
-	oapiCodegenParamsPkg "github.com/rixlhq/rixl-go/sdk/runtime/params"
 )
 
 // RequestEditorFn is the function signature for the RequestEditor callback function.
@@ -111,98 +106,6 @@ func (c *Client) applyEditors(ctx context.Context, req *http.Request, additional
 
 // ClientInterface is the interface specification for the client.
 type ClientInterface interface {
-	// ListLanguages makes a GET request to /media/videos/languages
-	ListLanguages(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
-	// Get makes a GET request to /media/videos/{videoId}
-	Get(ctx context.Context, videoId string, reqEditors ...RequestEditorFn) (*http.Response, error)
-}
-
-// ListLanguages makes a GET request to /media/videos/languages
-// List available subtitle languages
-func (c *Client) ListLanguages(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewListLanguagesRequest(c.Server)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-// Get makes a GET request to /media/videos/{videoId}
-// Get a video
-func (c *Client) Get(ctx context.Context, videoId string, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewGetRequest(c.Server, videoId)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-// NewListLanguagesRequest creates a GET request for /media/videos/languages
-func NewListLanguagesRequest(server string) (*http.Request, error) {
-	var err error
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/media/videos/languages")
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	reqURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest("GET", reqURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return req, nil
-}
-
-// NewGetRequest creates a GET request for /media/videos/{videoId}
-func NewGetRequest(server string, videoId string) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-	pathParam0, err = oapiCodegenParamsPkg.StyleParameter("videoId", videoId, oapiCodegenParamsPkg.ParameterOptions{Style: "simple", ParamLocation: oapiCodegenParamsPkg.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", AllowReserved: false})
-	if err != nil {
-		return nil, err
-	}
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/media/videos/%s", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	reqURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest("GET", reqURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return req, nil
 }
 
 // ClientHttpError represents an HTTP error response.
@@ -231,67 +134,4 @@ func NewSimpleClient(server string, opts ...ClientOption) (*SimpleClient, error)
 		return nil, err
 	}
 	return &SimpleClient{Client: inner}, nil
-}
-
-// ListLanguages makes a GET request to /media/videos/languages and returns the parsed response.
-// List available subtitle languages
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
-func (c *SimpleClient) ListLanguages(ctx context.Context, reqEditors ...RequestEditorFn) ([]models.InternalVideosHandlerSubtitlesLanguageResponse, error) {
-	var result []models.InternalVideosHandlerSubtitlesLanguageResponse
-	resp, err := c.Client.ListLanguages(ctx, reqEditors...)
-	if err != nil {
-		return result, err
-	}
-	defer resp.Body.Close()
-
-	rawBody, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return result, err
-	}
-
-	if resp.StatusCode >= 200 && resp.StatusCode < 300 {
-		if err := json.Unmarshal(rawBody, &result); err != nil {
-			return result, err
-		}
-		return result, nil
-	}
-
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
-		StatusCode: resp.StatusCode,
-		RawBody:    rawBody,
-	}
-}
-
-// Get makes a GET request to /media/videos/{videoId} and returns the parsed response.
-// Get a video
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GithubComRixlhqAPIInternalErrorsErrorResponse].
-func (c *SimpleClient) Get(ctx context.Context, videoId string, reqEditors ...RequestEditorFn) (models.Video, error) {
-	var result models.Video
-	resp, err := c.Client.Get(ctx, videoId, reqEditors...)
-	if err != nil {
-		return result, err
-	}
-	defer resp.Body.Close()
-
-	rawBody, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return result, err
-	}
-
-	if resp.StatusCode >= 200 && resp.StatusCode < 300 {
-		if err := json.Unmarshal(rawBody, &result); err != nil {
-			return result, err
-		}
-		return result, nil
-	}
-
-	// Parse error response
-	var errBody models.GithubComRixlhqAPIInternalErrorsErrorResponse
-	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
-	return result, &ClientHttpError[models.GithubComRixlhqAPIInternalErrorsErrorResponse]{
-		StatusCode: resp.StatusCode,
-		Body:       errBody,
-		RawBody:    rawBody,
-	}
 }

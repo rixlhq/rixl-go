@@ -11,266 +11,1314 @@ import (
 	"sync"
 )
 
-// #/components/schemas/AudioTrack
-type AudioTrack struct {
-	CreatedAt    *string `form:"created_at,omitempty" json:"created_at,omitempty"`
-	Format       *string `form:"format,omitempty" json:"format,omitempty"`
-	ID           *string `form:"id,omitempty" json:"id,omitempty"`
-	Label        *string `form:"label,omitempty" json:"label,omitempty"`
-	LanguageCode *string `form:"language_code,omitempty" json:"language_code,omitempty"`
-	Name         *string `form:"name,omitempty" json:"name,omitempty"`
-	Size         *int    `form:"size,omitempty" json:"size,omitempty"`
-	URL          *string `form:"url,omitempty" json:"url,omitempty"`
-	VideoID      *string `form:"video_id,omitempty" json:"video_id,omitempty"`
+// #/components/schemas/analyticsv1.AnalyticsEvent
+type Analyticsv1AnalyticsEvent struct {
+	Timestamp *float32 `form:"timestamp,omitempty" json:"timestamp,omitempty"`
 }
 
 // ApplyDefaults sets default values for fields that are nil.
-func (s *AudioTrack) ApplyDefaults() {
+func (s *Analyticsv1AnalyticsEvent) ApplyDefaults() {
 }
 
-// #/components/schemas/AudioTrackDelete
-type AudioTrackDelete struct {
+// #/components/schemas/analyticsv1.CountryCount
+type Analyticsv1CountryCount struct {
+	Count   *int    `form:"count,omitempty" json:"count,omitempty"`
+	Country *string `form:"country,omitempty" json:"country,omitempty"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *Analyticsv1CountryCount) ApplyDefaults() {
+}
+
+// #/components/schemas/analyticsv1.DashboardPoint
+type Analyticsv1DashboardPoint struct {
+	Timestamp   *string `form:"timestamp,omitempty" json:"timestamp,omitempty"`
+	UniqueUsers *int    `form:"unique_users,omitempty" json:"unique_users,omitempty"`
+	Views       *int    `form:"views,omitempty" json:"views,omitempty"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *Analyticsv1DashboardPoint) ApplyDefaults() {
+}
+
+// #/components/schemas/analyticsv1.DashboardStatsResponse
+type Analyticsv1DashboardStatsResponse struct {
+	Points []Analyticsv1DashboardPoint `form:"points,omitempty" json:"points,omitempty"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *Analyticsv1DashboardStatsResponse) ApplyDefaults() {
+}
+
+// #/components/schemas/analyticsv1.DashboardStatsResponse/properties/points
+type Analyticsv1DashboardStatsResponsePoints = []Analyticsv1DashboardPoint
+
+// #/components/schemas/analyticsv1.DateRange
+type Analyticsv1DateRange struct {
+	End   *string `form:"end,omitempty" json:"end,omitempty"`
+	Start *string `form:"start,omitempty" json:"start,omitempty"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *Analyticsv1DateRange) ApplyDefaults() {
+}
+
+// #/components/schemas/analyticsv1.EventCount
+type Analyticsv1EventCount struct {
+	Count     *int    `form:"count,omitempty" json:"count,omitempty"`
+	EventType *string `form:"event_type,omitempty" json:"event_type,omitempty"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *Analyticsv1EventCount) ApplyDefaults() {
+}
+
+// #/components/schemas/analyticsv1.FeedStats
+type Analyticsv1FeedStats struct {
+	AvgTimePerVisitMs *float32 `form:"avg_time_per_visit_ms,omitempty" json:"avg_time_per_visit_ms,omitempty"`
+	FeedID            *string  `form:"feed_id,omitempty" json:"feed_id,omitempty"`
+	TotalPosts        *int     `form:"total_posts,omitempty" json:"total_posts,omitempty"`
+	TotalViews        *int     `form:"total_views,omitempty" json:"total_views,omitempty"`
+	TotalWatchTimeMs  *float32 `form:"total_watch_time_ms,omitempty" json:"total_watch_time_ms,omitempty"`
+	UniqueViewers     *int     `form:"unique_viewers,omitempty" json:"unique_viewers,omitempty"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *Analyticsv1FeedStats) ApplyDefaults() {
+}
+
+// #/components/schemas/analyticsv1.FunnelAnalytics
+type Analyticsv1FunnelAnalytics struct {
+	AverageTimeHours *float32                      `form:"average_time_hours,omitempty" json:"average_time_hours,omitempty"`
+	CompletedUsers   *int                          `form:"completed_users,omitempty" json:"completed_users,omitempty"`
+	CompletionRate   *float32                      `form:"completion_rate,omitempty" json:"completion_rate,omitempty"`
+	Steps            []Analyticsv1FunnelStepResult `form:"steps,omitempty" json:"steps,omitempty"`
+	TotalUsers       *int                          `form:"total_users,omitempty" json:"total_users,omitempty"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *Analyticsv1FunnelAnalytics) ApplyDefaults() {
+}
+
+// #/components/schemas/analyticsv1.FunnelAnalytics/properties/steps
+type Analyticsv1FunnelAnalyticsSteps = []Analyticsv1FunnelStepResult
+
+// #/components/schemas/analyticsv1.FunnelRequest
+type Analyticsv1FunnelRequest struct {
+	Range      *Analyticsv1DateRange   `form:"range,omitempty" json:"range,omitempty"`
+	Steps      []Analyticsv1FunnelStep `form:"steps,omitempty" json:"steps,omitempty"`
+	TimeWindow *int                    `form:"time_window,omitempty" json:"time_window,omitempty"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *Analyticsv1FunnelRequest) ApplyDefaults() {
+	if s.Range != nil {
+		s.Range.ApplyDefaults()
+	}
+}
+
+// #/components/schemas/analyticsv1.FunnelRequest/properties/steps
+type Analyticsv1FunnelRequestSteps = []Analyticsv1FunnelStep
+
+// #/components/schemas/analyticsv1.FunnelStep
+type Analyticsv1FunnelStep struct {
+	EventType *string           `form:"event_type,omitempty" json:"event_type,omitempty"`
+	Filters   map[string]string `form:"filters,omitempty" json:"filters,omitempty"`
+	Name      *string           `form:"name,omitempty" json:"name,omitempty"`
+	PageType  *string           `form:"page_type,omitempty" json:"page_type,omitempty"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *Analyticsv1FunnelStep) ApplyDefaults() {
+}
+
+// #/components/schemas/analyticsv1.FunnelStep/properties/filters
+type Analyticsv1FunnelStepFilters = map[string]string
+
+// #/components/schemas/analyticsv1.FunnelStepResult
+type Analyticsv1FunnelStepResult struct {
+	ConversionRate *float32 `form:"conversion_rate,omitempty" json:"conversion_rate,omitempty"`
+	DropoffRate    *float32 `form:"dropoff_rate,omitempty" json:"dropoff_rate,omitempty"`
+	StepName       *string  `form:"step_name,omitempty" json:"step_name,omitempty"`
+	UserCount      *int     `form:"user_count,omitempty" json:"user_count,omitempty"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *Analyticsv1FunnelStepResult) ApplyDefaults() {
+}
+
+// #/components/schemas/analyticsv1.GetPostStatsResponse
+type Analyticsv1GetPostStatsResponse struct {
+	PostID        *string `form:"post_id,omitempty" json:"post_id,omitempty"`
+	TotalViews    *int    `form:"total_views,omitempty" json:"total_views,omitempty"`
+	UniqueViewers *int    `form:"unique_viewers,omitempty" json:"unique_viewers,omitempty"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *Analyticsv1GetPostStatsResponse) ApplyDefaults() {
+}
+
+// #/components/schemas/analyticsv1.HotSegment
+type Analyticsv1HotSegment struct {
+	EndSecond   *int     `form:"end_second,omitempty" json:"end_second,omitempty"`
+	Multiplier  *float32 `form:"multiplier,omitempty" json:"multiplier,omitempty"`
+	StartSecond *int     `form:"start_second,omitempty" json:"start_second,omitempty"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *Analyticsv1HotSegment) ApplyDefaults() {
+}
+
+// #/components/schemas/analyticsv1.HotSegmentsResponse
+type Analyticsv1HotSegmentsResponse struct {
+	Segments []Analyticsv1HotSegment `form:"segments,omitempty" json:"segments,omitempty"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *Analyticsv1HotSegmentsResponse) ApplyDefaults() {
+}
+
+// #/components/schemas/analyticsv1.HotSegmentsResponse/properties/segments
+type Analyticsv1HotSegmentsResponseSegments = []Analyticsv1HotSegment
+
+// #/components/schemas/analyticsv1.PostStats
+type Analyticsv1PostStats struct {
+	AvgWatchTimeMs   *float32       `form:"avg_watch_time_ms,omitempty" json:"avg_watch_time_ms,omitempty"`
+	CompletionRate   *float32       `form:"completion_rate,omitempty" json:"completion_rate,omitempty"`
+	Completions      *int           `form:"completions,omitempty" json:"completions,omitempty"`
+	ContentType      *string        `form:"content_type,omitempty" json:"content_type,omitempty"`
+	FeedID           *string        `form:"feed_id,omitempty" json:"feed_id,omitempty"`
+	PostID           *string        `form:"post_id,omitempty" json:"post_id,omitempty"`
+	Starts           *int           `form:"starts,omitempty" json:"starts,omitempty"`
+	TotalViews       *int           `form:"total_views,omitempty" json:"total_views,omitempty"`
+	TotalWatchTimeMs *int           `form:"total_watch_time_ms,omitempty" json:"total_watch_time_ms,omitempty"`
+	UniqueViewers    *int           `form:"unique_viewers,omitempty" json:"unique_viewers,omitempty"`
+	ViewsByPage      map[string]int `form:"views_by_page,omitempty" json:"views_by_page,omitempty"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *Analyticsv1PostStats) ApplyDefaults() {
+}
+
+// #/components/schemas/analyticsv1.PostStats/properties/views_by_page
+type Analyticsv1PostStatsViewsByPage = map[string]int
+
+// #/components/schemas/analyticsv1.RealtimeStats
+type Analyticsv1RealtimeStats struct {
+	ActiveUsers     *int                      `form:"active_users,omitempty" json:"active_users,omitempty"`
+	EventsPerMinute *int                      `form:"events_per_minute,omitempty" json:"events_per_minute,omitempty"`
+	RecentEvents    []Analyticsv1RecentEvent  `form:"recent_events,omitempty" json:"recent_events,omitempty"`
+	Timestamp       *string                   `form:"timestamp,omitempty" json:"timestamp,omitempty"`
+	TopCountries    []Analyticsv1CountryCount `form:"top_countries,omitempty" json:"top_countries,omitempty"`
+	TopEvents       []Analyticsv1EventCount   `form:"top_events,omitempty" json:"top_events,omitempty"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *Analyticsv1RealtimeStats) ApplyDefaults() {
+}
+
+// #/components/schemas/analyticsv1.RealtimeStats/properties/recent_events
+type Analyticsv1RealtimeStatsRecentEvents = []Analyticsv1RecentEvent
+
+// #/components/schemas/analyticsv1.RealtimeStats/properties/top_countries
+type Analyticsv1RealtimeStatsTopCountries = []Analyticsv1CountryCount
+
+// #/components/schemas/analyticsv1.RealtimeStats/properties/top_events
+type Analyticsv1RealtimeStatsTopEvents = []Analyticsv1EventCount
+
+// #/components/schemas/analyticsv1.RecentEvent
+type Analyticsv1RecentEvent struct {
+	ContentID *string `form:"content_id,omitempty" json:"content_id,omitempty"`
+	EventType *string `form:"event_type,omitempty" json:"event_type,omitempty"`
+	Timestamp *string `form:"timestamp,omitempty" json:"timestamp,omitempty"`
+	UserID    *string `form:"user_id,omitempty" json:"user_id,omitempty"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *Analyticsv1RecentEvent) ApplyDefaults() {
+}
+
+// #/components/schemas/analyticsv1.RetentionAnalytics
+type Analyticsv1RetentionAnalytics struct {
+	Cohorts []Analyticsv1RetentionCohort `form:"cohorts,omitempty" json:"cohorts,omitempty"`
+	Period  *string                      `form:"period,omitempty" json:"period,omitempty"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *Analyticsv1RetentionAnalytics) ApplyDefaults() {
+}
+
+// #/components/schemas/analyticsv1.RetentionAnalytics/properties/cohorts
+type Analyticsv1RetentionAnalyticsCohorts = []Analyticsv1RetentionCohort
+
+// #/components/schemas/analyticsv1.RetentionCohort
+type Analyticsv1RetentionCohort struct {
+	CohortDate    *string   `form:"cohort_date,omitempty" json:"cohort_date,omitempty"`
+	CohortSize    *int      `form:"cohort_size,omitempty" json:"cohort_size,omitempty"`
+	RetentionData []float32 `form:"retention_data,omitempty" json:"retention_data,omitempty"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *Analyticsv1RetentionCohort) ApplyDefaults() {
+}
+
+// #/components/schemas/analyticsv1.TopFeedsResponse
+type Analyticsv1TopFeedsResponse struct {
+	Feeds []Analyticsv1FeedStats `form:"feeds,omitempty" json:"feeds,omitempty"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *Analyticsv1TopFeedsResponse) ApplyDefaults() {
+}
+
+// #/components/schemas/analyticsv1.TopFeedsResponse/properties/feeds
+type Analyticsv1TopFeedsResponseFeeds = []Analyticsv1FeedStats
+
+// #/components/schemas/analyticsv1.TopPostsResponse
+type Analyticsv1TopPostsResponse struct {
+	Posts []Analyticsv1PostStats `form:"posts,omitempty" json:"posts,omitempty"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *Analyticsv1TopPostsResponse) ApplyDefaults() {
+}
+
+// #/components/schemas/analyticsv1.TopPostsResponse/properties/posts
+type Analyticsv1TopPostsResponsePosts = []Analyticsv1PostStats
+
+// #/components/schemas/analyticsv1.TopVideosResponse
+type Analyticsv1TopVideosResponse struct {
+	Videos []Analyticsv1VideoStats `form:"videos,omitempty" json:"videos,omitempty"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *Analyticsv1TopVideosResponse) ApplyDefaults() {
+}
+
+// #/components/schemas/analyticsv1.TopVideosResponse/properties/videos
+type Analyticsv1TopVideosResponseVideos = []Analyticsv1VideoStats
+
+// #/components/schemas/analyticsv1.TrackEventsRequest
+type Analyticsv1TrackEventsRequest struct {
+	Country *string                     `form:"country,omitempty" json:"country,omitempty"`
+	Events  []Analyticsv1AnalyticsEvent `form:"events,omitempty" json:"events,omitempty"`
+	UserID  *string                     `form:"user_id,omitempty" json:"user_id,omitempty"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *Analyticsv1TrackEventsRequest) ApplyDefaults() {
+}
+
+// #/components/schemas/analyticsv1.TrackEventsRequest/properties/events
+type Analyticsv1TrackEventsRequestEvents = []Analyticsv1AnalyticsEvent
+
+// #/components/schemas/analyticsv1.VideoHeatmap
+type Analyticsv1VideoHeatmap struct {
+	Data            []float32 `form:"data,omitempty" json:"data,omitempty"`
+	TotalDurationMs *int      `form:"total_duration_ms,omitempty" json:"total_duration_ms,omitempty"`
+	VideoID         *string   `form:"video_id,omitempty" json:"video_id,omitempty"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *Analyticsv1VideoHeatmap) ApplyDefaults() {
+}
+
+// #/components/schemas/analyticsv1.VideoStats
+type Analyticsv1VideoStats struct {
+	AvgWatchTimeMs   *float32 `form:"avg_watch_time_ms,omitempty" json:"avg_watch_time_ms,omitempty"`
+	CompletionRate   *float32 `form:"completion_rate,omitempty" json:"completion_rate,omitempty"`
+	Completions      *int     `form:"completions,omitempty" json:"completions,omitempty"`
+	Starts           *int     `form:"starts,omitempty" json:"starts,omitempty"`
+	TotalViews       *int     `form:"total_views,omitempty" json:"total_views,omitempty"`
+	TotalWatchTimeMs *float32 `form:"total_watch_time_ms,omitempty" json:"total_watch_time_ms,omitempty"`
+	UniqueViewers    *int     `form:"unique_viewers,omitempty" json:"unique_viewers,omitempty"`
+	VideoID          *string  `form:"video_id,omitempty" json:"video_id,omitempty"`
+	Watches          *int     `form:"watches,omitempty" json:"watches,omitempty"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *Analyticsv1VideoStats) ApplyDefaults() {
+}
+
+// #/components/schemas/apikeysv1.ApiKey
+type Apikeysv1APIKey struct {
+	CreatedAt   *string `form:"created_at,omitempty" json:"created_at,omitempty"`
+	ExpiringAt  *string `form:"expiring_at,omitempty" json:"expiring_at,omitempty"`
+	ID          *string `form:"id,omitempty" json:"id,omitempty"`
+	LastUsed    *string `form:"last_used,omitempty" json:"last_used,omitempty"`
+	Name        *string `form:"name,omitempty" json:"name,omitempty"`
+	OrgID       *string `form:"org_id,omitempty" json:"org_id,omitempty"`
+	ProjectID   *string `form:"project_id,omitempty" json:"project_id,omitempty"`
+	ProjectName *string `form:"project_name,omitempty" json:"project_name,omitempty"`
+	Secret      *string `form:"secret,omitempty" json:"secret,omitempty"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *Apikeysv1APIKey) ApplyDefaults() {
+}
+
+// #/components/schemas/apikeysv1.CreateApiKeyResponse
+type Apikeysv1CreateAPIKeyResponse struct {
+	APIKey *Apikeysv1APIKey `form:"api_key,omitempty" json:"api_key,omitempty"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *Apikeysv1CreateAPIKeyResponse) ApplyDefaults() {
+	if s.APIKey != nil {
+		s.APIKey.ApplyDefaults()
+	}
+}
+
+// #/components/schemas/apikeysv1.DeleteApiKeyResponse
+type Apikeysv1DeleteAPIKeyResponse struct {
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *Apikeysv1DeleteAPIKeyResponse) ApplyDefaults() {
+}
+
+// #/components/schemas/apikeysv1.ListApiKeysResponse
+type Apikeysv1ListAPIKeysResponse struct {
+	APIKeys []Apikeysv1APIKey `form:"api_keys,omitempty" json:"api_keys,omitempty"`
+	Total   *int              `form:"total,omitempty" json:"total,omitempty"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *Apikeysv1ListAPIKeysResponse) ApplyDefaults() {
+}
+
+// #/components/schemas/apikeysv1.ListApiKeysResponse/properties/api_keys
+type Apikeysv1ListAPIKeysResponseAPIKeys = []Apikeysv1APIKey
+
+// #/components/schemas/apikeysv1.RotateApiKeyResponse
+type Apikeysv1RotateAPIKeyResponse struct {
+	APIKey *Apikeysv1APIKey `form:"api_key,omitempty" json:"api_key,omitempty"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *Apikeysv1RotateAPIKeyResponse) ApplyDefaults() {
+	if s.APIKey != nil {
+		s.APIKey.ApplyDefaults()
+	}
+}
+
+// #/components/schemas/authv1.AcceptInvitationResponse
+type Authv1AcceptInvitationResponse struct {
 	Message *string `form:"message,omitempty" json:"message,omitempty"`
-	Status  *string `form:"status,omitempty" json:"status,omitempty"`
+	OrgID   *string `form:"org_id,omitempty" json:"org_id,omitempty"`
+	OrgName *string `form:"org_name,omitempty" json:"org_name,omitempty"`
+	Role    *string `form:"role,omitempty" json:"role,omitempty"`
 }
 
 // ApplyDefaults sets default values for fields that are nil.
-func (s *AudioTrackDelete) ApplyDefaults() {
+func (s *Authv1AcceptInvitationResponse) ApplyDefaults() {
 }
 
-// #/components/schemas/Chapter
-type Chapter struct {
-	DurationLabel *string  `form:"duration_label,omitempty" json:"duration_label,omitempty"`
-	EndTimeSec    *float32 `form:"end_time_sec,omitempty" json:"end_time_sec,omitempty"`
-	StartTimeSec  *float32 `form:"start_time_sec,omitempty" json:"start_time_sec,omitempty"`
-	Title         *string  `form:"title,omitempty" json:"title,omitempty"`
-}
-
-// ApplyDefaults sets default values for fields that are nil.
-func (s *Chapter) ApplyDefaults() {
-}
-
-// #/components/schemas/File
-type File struct {
-	CreatedAt *string     `form:"created_at,omitempty" json:"created_at,omitempty"`
-	Format    *string     `form:"format,omitempty" json:"format,omitempty"`
-	ID        *string     `form:"id,omitempty" json:"id,omitempty"`
-	Name      *string     `form:"name,omitempty" json:"name,omitempty"`
-	ProjectID *string     `form:"project_id,omitempty" json:"project_id,omitempty"`
-	Size      *int        `form:"size,omitempty" json:"size,omitempty"`
-	Status    *FileStatus `form:"status,omitempty" json:"status,omitempty"`
-	UpdatedAt *string     `form:"updated_at,omitempty" json:"updated_at,omitempty"`
-	URL       *string     `form:"url,omitempty" json:"url,omitempty"`
+// #/components/schemas/authv1.AutoJoinSetting
+type Authv1AutoJoinSetting struct {
+	Enabled *bool `form:"enabled,omitempty" json:"enabled,omitempty"`
+	Present *bool `form:"present,omitempty" json:"present,omitempty"`
 }
 
 // ApplyDefaults sets default values for fields that are nil.
-func (s *File) ApplyDefaults() {
+func (s *Authv1AutoJoinSetting) ApplyDefaults() {
 }
 
-// #/components/schemas/FileStatus
-type FileStatus string
-
-const (
-	FileStatusUploading  FileStatus = "uploading"
-	FileStatusUploaded   FileStatus = "uploaded"
-	FileStatusProcessing FileStatus = "processing"
-	FileStatusPreparing  FileStatus = "preparing"
-	FileStatusReady      FileStatus = "ready"
-	FileStatusError      FileStatus = "error"
-)
-
-// #/components/schemas/Image
-type Image struct {
-	AttachedToVideo *bool   `form:"attached_to_video,omitempty" json:"attached_to_video,omitempty"`
-	File            *File   `form:"file,omitempty" json:"file,omitempty"`
-	Height          *int    `form:"height,omitempty" json:"height,omitempty"`
-	ID              *string `form:"id,omitempty" json:"id,omitempty"`
-	Thumbhash       *string `form:"thumbhash,omitempty" json:"thumbhash,omitempty"`
-	Width           *int    `form:"width,omitempty" json:"width,omitempty"`
+// #/components/schemas/authv1.BlogSubscriptionResponse
+type Authv1BlogSubscriptionResponse struct {
+	Subscribed   *bool   `form:"subscribed,omitempty" json:"subscribed,omitempty"`
+	SubscribedAt *string `form:"subscribed_at,omitempty" json:"subscribed_at,omitempty"`
 }
 
 // ApplyDefaults sets default values for fields that are nil.
-func (s *Image) ApplyDefaults() {
-	if s.File != nil {
-		s.File.ApplyDefaults()
-	}
+func (s *Authv1BlogSubscriptionResponse) ApplyDefaults() {
 }
 
-// #/components/schemas/Post
-type Post struct {
-	CreatedAt   *string                                        `form:"created_at,omitempty" json:"created_at,omitempty"`
-	CreatorID   *string                                        `form:"creator_id,omitempty" json:"creator_id,omitempty"`
-	Description *string                                        `form:"description,omitempty" json:"description,omitempty"`
-	FeedID      *string                                        `form:"feed_id,omitempty" json:"feed_id,omitempty"`
-	ID          *string                                        `form:"id,omitempty" json:"id,omitempty"`
-	Image       *Image                                         `form:"image,omitempty" json:"image,omitempty"`
-	PlanType    *GithubComRixlhqAPIDBSqlcPlanType              `form:"plan_type,omitempty" json:"plan_type,omitempty"`
-	Type        *PostType                                      `form:"type,omitempty" json:"type,omitempty"`
-	UpdatedAt   *string                                        `form:"updated_at,omitempty" json:"updated_at,omitempty"`
-	Video       *GithubComRixlhqAPIInternalVideosVideoResponse `form:"video,omitempty" json:"video,omitempty"`
+// #/components/schemas/authv1.CheckMembershipResponse
+type Authv1CheckMembershipResponse struct {
+	IsMember *bool `form:"is_member,omitempty" json:"is_member,omitempty"`
 }
 
 // ApplyDefaults sets default values for fields that are nil.
-func (s *Post) ApplyDefaults() {
-	if s.Image != nil {
-		s.Image.ApplyDefaults()
-	}
-	if s.Video != nil {
-		s.Video.ApplyDefaults()
-	}
+func (s *Authv1CheckMembershipResponse) ApplyDefaults() {
 }
 
-// #/components/schemas/PostType
-type PostType string
+// #/components/schemas/authv1.DomainResponse
+type Authv1DomainResponse struct {
+	AutoJoin          *bool   `form:"auto_join,omitempty" json:"auto_join,omitempty"`
+	Domain            *string `form:"domain,omitempty" json:"domain,omitempty"`
+	ExpiresAt         *string `form:"expires_at,omitempty" json:"expires_at,omitempty"`
+	ID                *string `form:"id,omitempty" json:"id,omitempty"`
+	Message           *string `form:"message,omitempty" json:"message,omitempty"`
+	Present           *bool   `form:"present,omitempty" json:"present,omitempty"`
+	Status            *string `form:"status,omitempty" json:"status,omitempty"`
+	VerificationToken *string `form:"verification_token,omitempty" json:"verification_token,omitempty"`
+	VerifiedAt        *string `form:"verified_at,omitempty" json:"verified_at,omitempty"`
+}
 
-const (
-	PostTypeImage PostType = "image"
-	PostTypeVideo PostType = "video"
-)
+// ApplyDefaults sets default values for fields that are nil.
+func (s *Authv1DomainResponse) ApplyDefaults() {
+}
 
-// #/components/schemas/Subtitle
-type Subtitle struct {
+// #/components/schemas/authv1.EmailStatusResponse
+type Authv1EmailStatusResponse struct {
+	Email    *string `form:"email,omitempty" json:"email,omitempty"`
+	HasEmail *bool   `form:"has_email,omitempty" json:"has_email,omitempty"`
+	Verified *bool   `form:"verified,omitempty" json:"verified,omitempty"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *Authv1EmailStatusResponse) ApplyDefaults() {
+}
+
+// #/components/schemas/authv1.GetInternalMembershipInfoResponse
+type Authv1GetInternalMembershipInfoResponse struct {
+	Email *string `form:"email,omitempty" json:"email,omitempty"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *Authv1GetInternalMembershipInfoResponse) ApplyDefaults() {
+}
+
+// #/components/schemas/authv1.ListAttachmentsResponse
+type Authv1ListAttachmentsResponse struct {
+	Attachments []Authv1PolicyAttachment `form:"attachments,omitempty" json:"attachments,omitempty"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *Authv1ListAttachmentsResponse) ApplyDefaults() {
+}
+
+// #/components/schemas/authv1.ListAttachmentsResponse/properties/attachments
+type Authv1ListAttachmentsResponseAttachments = []Authv1PolicyAttachment
+
+// #/components/schemas/authv1.ListMembershipsResponse
+type Authv1ListMembershipsResponse struct {
+	Memberships []Authv1Membership `form:"memberships,omitempty" json:"memberships,omitempty"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *Authv1ListMembershipsResponse) ApplyDefaults() {
+}
+
+// #/components/schemas/authv1.ListMembershipsResponse/properties/memberships
+type Authv1ListMembershipsResponseMemberships = []Authv1Membership
+
+// #/components/schemas/authv1.ListOrgMembersResponse
+type Authv1ListOrgMembersResponse struct {
+	Members []Authv1OrgMember `form:"members,omitempty" json:"members,omitempty"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *Authv1ListOrgMembersResponse) ApplyDefaults() {
+}
+
+// #/components/schemas/authv1.ListOrgMembersResponse/properties/members
+type Authv1ListOrgMembersResponseMembers = []Authv1OrgMember
+
+// #/components/schemas/authv1.ListPasskeysResponse
+type Authv1ListPasskeysResponse struct {
+	Passkeys []Authv1Passkey `form:"passkeys,omitempty" json:"passkeys,omitempty"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *Authv1ListPasskeysResponse) ApplyDefaults() {
+}
+
+// #/components/schemas/authv1.ListPasskeysResponse/properties/passkeys
+type Authv1ListPasskeysResponsePasskeys = []Authv1Passkey
+
+// #/components/schemas/authv1.ListPoliciesResponse
+type Authv1ListPoliciesResponse struct {
+	Policies []Authv1Policy `form:"policies,omitempty" json:"policies,omitempty"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *Authv1ListPoliciesResponse) ApplyDefaults() {
+}
+
+// #/components/schemas/authv1.ListPoliciesResponse/properties/policies
+type Authv1ListPoliciesResponsePolicies = []Authv1Policy
+
+// #/components/schemas/authv1.ListProvidersResponse
+type Authv1ListProvidersResponse struct {
+	Providers []Authv1Provider `form:"providers,omitempty" json:"providers,omitempty"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *Authv1ListProvidersResponse) ApplyDefaults() {
+}
+
+// #/components/schemas/authv1.ListProvidersResponse/properties/providers
+type Authv1ListProvidersResponseProviders = []Authv1Provider
+
+// #/components/schemas/authv1.LoginResponse
+type Authv1LoginResponse struct {
+	AccessToken    *string `form:"access_token,omitempty" json:"access_token,omitempty"`
+	Email          *string `form:"email,omitempty" json:"email,omitempty"`
+	ExpiresIn      *int    `form:"expires_in,omitempty" json:"expires_in,omitempty"`
+	RefreshToken   *string `form:"refresh_token,omitempty" json:"refresh_token,omitempty"`
+	RequiresAction *string `form:"requires_action,omitempty" json:"requires_action,omitempty"`
+	SessionID      *string `form:"session_id,omitempty" json:"session_id,omitempty"`
+	// "ok" | "otp_required" | "email_not_verified"
+	Status    *string `form:"status,omitempty" json:"status,omitempty"`
+	TokenType *string `form:"token_type,omitempty" json:"token_type,omitempty"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *Authv1LoginResponse) ApplyDefaults() {
+}
+
+// #/components/schemas/authv1.MemberPoliciesResponse
+type Authv1MemberPoliciesResponse struct {
+	Permissions []string       `form:"permissions,omitempty" json:"permissions,omitempty"`
+	Policies    []Authv1Policy `form:"policies,omitempty" json:"policies,omitempty"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *Authv1MemberPoliciesResponse) ApplyDefaults() {
+}
+
+// #/components/schemas/authv1.MemberPoliciesResponse/properties/policies
+type Authv1MemberPoliciesResponsePolicies = []Authv1Policy
+
+// #/components/schemas/authv1.Membership
+type Authv1Membership struct {
+	ID                    *string `form:"id,omitempty" json:"id,omitempty"`
+	JoinedAt              *string `form:"joined_at,omitempty" json:"joined_at,omitempty"`
+	OrgID                 *string `form:"org_id,omitempty" json:"org_id,omitempty"`
+	OrganizationFirstName *string `form:"organization_first_name,omitempty" json:"organization_first_name,omitempty"`
+	OrganizationLastName  *string `form:"organization_last_name,omitempty" json:"organization_last_name,omitempty"`
+	OrganizationUsername  *string `form:"organization_username,omitempty" json:"organization_username,omitempty"`
+	Role                  *string `form:"role,omitempty" json:"role,omitempty"`
+	State                 *string `form:"state,omitempty" json:"state,omitempty"`
+	UserID                *string `form:"user_id,omitempty" json:"user_id,omitempty"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *Authv1Membership) ApplyDefaults() {
+}
+
+// #/components/schemas/authv1.MembershipMutation
+type Authv1MembershipMutation struct {
+	JoinedAt *string `form:"joined_at,omitempty" json:"joined_at,omitempty"`
+	OrgID    *string `form:"org_id,omitempty" json:"org_id,omitempty"`
+	OrgName  *string `form:"org_name,omitempty" json:"org_name,omitempty"`
+	Role     *string `form:"role,omitempty" json:"role,omitempty"`
+	State    *string `form:"state,omitempty" json:"state,omitempty"`
+	UserID   *string `form:"user_id,omitempty" json:"user_id,omitempty"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *Authv1MembershipMutation) ApplyDefaults() {
+}
+
+// #/components/schemas/authv1.OTPStatusResponse
+type Authv1OTPStatusResponse struct {
+	CreatedAt *string `form:"created_at,omitempty" json:"created_at,omitempty"`
+	IsSetup   *bool   `form:"is_setup,omitempty" json:"is_setup,omitempty"`
+	Message   *string `form:"message,omitempty" json:"message,omitempty"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *Authv1OTPStatusResponse) ApplyDefaults() {
+}
+
+// #/components/schemas/authv1.OrgMember
+type Authv1OrgMember struct {
+	FirstName           *string `form:"first_name,omitempty" json:"first_name,omitempty"`
+	ID                  *string `form:"id,omitempty" json:"id,omitempty"`
+	InvitationExpiresAt *string `form:"invitation_expires_at,omitempty" json:"invitation_expires_at,omitempty"`
+	JoinedAt            *string `form:"joined_at,omitempty" json:"joined_at,omitempty"`
+	LastName            *string `form:"last_name,omitempty" json:"last_name,omitempty"`
+	OrgID               *string `form:"org_id,omitempty" json:"org_id,omitempty"`
+	Role                *string `form:"role,omitempty" json:"role,omitempty"`
+	State               *string `form:"state,omitempty" json:"state,omitempty"`
+	UserID              *string `form:"user_id,omitempty" json:"user_id,omitempty"`
+	Username            *string `form:"username,omitempty" json:"username,omitempty"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *Authv1OrgMember) ApplyDefaults() {
+}
+
+// #/components/schemas/authv1.Passkey
+type Authv1Passkey struct {
+	Aaguid       *string  `form:"aaguid,omitempty" json:"aaguid,omitempty"`
+	BackupState  *bool    `form:"backup_state,omitempty" json:"backup_state,omitempty"`
+	CreatedAt    *string  `form:"created_at,omitempty" json:"created_at,omitempty"`
+	CredentialID *string  `form:"credential_id,omitempty" json:"credential_id,omitempty"`
+	ID           *string  `form:"id,omitempty" json:"id,omitempty"`
+	LastUsedAt   *string  `form:"last_used_at,omitempty" json:"last_used_at,omitempty"`
+	Name         *string  `form:"name,omitempty" json:"name,omitempty"`
+	Transports   []string `form:"transports,omitempty" json:"transports,omitempty"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *Authv1Passkey) ApplyDefaults() {
+}
+
+// #/components/schemas/authv1.PasskeyBeginResponse
+type Authv1PasskeyBeginResponse struct {
+	Options   []int   `form:"options,omitempty" json:"options,omitempty"`
+	SessionID *string `form:"session_id,omitempty" json:"session_id,omitempty"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *Authv1PasskeyBeginResponse) ApplyDefaults() {
+}
+
+// #/components/schemas/authv1.PasskeyRegisterFinishResponse
+type Authv1PasskeyRegisterFinishResponse struct {
+	Name      *string `form:"name,omitempty" json:"name,omitempty"`
+	PasskeyID *string `form:"passkey_id,omitempty" json:"passkey_id,omitempty"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *Authv1PasskeyRegisterFinishResponse) ApplyDefaults() {
+}
+
+// #/components/schemas/authv1.PermissionOffset
+type Authv1PermissionOffset struct {
+	Name   *string `form:"name,omitempty" json:"name,omitempty"`
+	Offset *int    `form:"offset,omitempty" json:"offset,omitempty"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *Authv1PermissionOffset) ApplyDefaults() {
+}
+
+// #/components/schemas/authv1.PermissionRegistryResponse
+type Authv1PermissionRegistryResponse struct {
+	Permissions []Authv1PermissionOffset `form:"permissions,omitempty" json:"permissions,omitempty"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *Authv1PermissionRegistryResponse) ApplyDefaults() {
+}
+
+// #/components/schemas/authv1.PermissionRegistryResponse/properties/permissions
+type Authv1PermissionRegistryResponsePermissions = []Authv1PermissionOffset
+
+// #/components/schemas/authv1.Policy
+type Authv1Policy struct {
+	CreatedAt   *string  `form:"created_at,omitempty" json:"created_at,omitempty"`
+	CreatedBy   *string  `form:"created_by,omitempty" json:"created_by,omitempty"`
+	Description *string  `form:"description,omitempty" json:"description,omitempty"`
+	ID          *string  `form:"id,omitempty" json:"id,omitempty"`
+	Name        *string  `form:"name,omitempty" json:"name,omitempty"`
+	OrgID       *string  `form:"org_id,omitempty" json:"org_id,omitempty"`
+	Permissions []string `form:"permissions,omitempty" json:"permissions,omitempty"`
+	UpdatedAt   *string  `form:"updated_at,omitempty" json:"updated_at,omitempty"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *Authv1Policy) ApplyDefaults() {
+}
+
+// #/components/schemas/authv1.PolicyAttachment
+type Authv1PolicyAttachment struct {
 	CreatedAt    *string `form:"created_at,omitempty" json:"created_at,omitempty"`
 	ID           *string `form:"id,omitempty" json:"id,omitempty"`
-	Label        *string `form:"label,omitempty" json:"label,omitempty"`
-	LanguageCode *string `form:"language_code,omitempty" json:"language_code,omitempty"`
-	Name         *string `form:"name,omitempty" json:"name,omitempty"`
-	Size         *int    `form:"size,omitempty" json:"size,omitempty"`
-	URL          *string `form:"url,omitempty" json:"url,omitempty"`
-	VideoID      *string `form:"video_id,omitempty" json:"video_id,omitempty"`
+	IdentityID   *string `form:"identity_id,omitempty" json:"identity_id,omitempty"`
+	IdentityType *string `form:"identity_type,omitempty" json:"identity_type,omitempty"`
+	PolicyID     *string `form:"policy_id,omitempty" json:"policy_id,omitempty"`
 }
 
 // ApplyDefaults sets default values for fields that are nil.
-func (s *Subtitle) ApplyDefaults() {
+func (s *Authv1PolicyAttachment) ApplyDefaults() {
 }
 
-// #/components/schemas/SubtitleDelete
-type SubtitleDelete struct {
-	Message *string `form:"message,omitempty" json:"message,omitempty"`
-	Status  *string `form:"status,omitempty" json:"status,omitempty"`
-}
-
-// ApplyDefaults sets default values for fields that are nil.
-func (s *SubtitleDelete) ApplyDefaults() {
-}
-
-// #/components/schemas/UpdateChaptersRequest
-type UpdateChaptersRequest struct {
-	Chapters []GithubComRixlhqAPIInternalVideosTypesChapterInput `form:"chapters,omitempty" json:"chapters,omitempty"`
+// #/components/schemas/authv1.Provider
+type Authv1Provider struct {
+	EmailAddress *string `form:"email_address,omitempty" json:"email_address,omitempty"`
+	FirstName    *string `form:"first_name,omitempty" json:"first_name,omitempty"`
+	ImageURL     *string `form:"image_url,omitempty" json:"image_url,omitempty"`
+	LastName     *string `form:"last_name,omitempty" json:"last_name,omitempty"`
+	Provider     *string `form:"provider,omitempty" json:"provider,omitempty"`
+	Username     *string `form:"username,omitempty" json:"username,omitempty"`
 }
 
 // ApplyDefaults sets default values for fields that are nil.
-func (s *UpdateChaptersRequest) ApplyDefaults() {
+func (s *Authv1Provider) ApplyDefaults() {
 }
 
-// #/components/schemas/UpdateChaptersRequest/properties/chapters
-type UpdateChaptersRequestChapters = []GithubComRixlhqAPIInternalVideosTypesChapterInput
-
-// #/components/schemas/UpdateChaptersResponse
-type UpdateChaptersResponse struct {
-	Chapters []Chapter `form:"chapters,omitempty" json:"chapters,omitempty"`
-	VideoID  *string   `form:"video_id,omitempty" json:"video_id,omitempty"`
-}
-
-// ApplyDefaults sets default values for fields that are nil.
-func (s *UpdateChaptersResponse) ApplyDefaults() {
-}
-
-// #/components/schemas/UpdateChaptersResponse/properties/chapters
-type UpdateChaptersResponseChapters = []Chapter
-
-// #/components/schemas/Video
-type Video struct {
-	Bitrate   *int                              `form:"bitrate,omitempty" json:"bitrate,omitempty"`
-	Chapters  []Chapter                         `form:"chapters,omitempty" json:"chapters,omitempty"`
-	Codec     *string                           `form:"codec,omitempty" json:"codec,omitempty"`
-	Duration  *float32                          `form:"duration,omitempty" json:"duration,omitempty"`
-	File      *File                             `form:"file,omitempty" json:"file,omitempty"`
-	Framerate *string                           `form:"framerate,omitempty" json:"framerate,omitempty"`
-	Hdr       *bool                             `form:"hdr,omitempty" json:"hdr,omitempty"`
-	Height    *int                              `form:"height,omitempty" json:"height,omitempty"`
-	ID        *string                           `form:"id,omitempty" json:"id,omitempty"`
-	PlanType  *GithubComRixlhqAPIDBSqlcPlanType `form:"plan_type,omitempty" json:"plan_type,omitempty"`
-	Poster    *Image                            `form:"poster,omitempty" json:"poster,omitempty"`
-	Width     *int                              `form:"width,omitempty" json:"width,omitempty"`
+// #/components/schemas/authv1.RegisterResponse
+type Authv1RegisterResponse struct {
+	EmailVerificationSent *bool   `form:"email_verification_sent,omitempty" json:"email_verification_sent,omitempty"`
+	Message               *string `form:"message,omitempty" json:"message,omitempty"`
+	UserID                *string `form:"user_id,omitempty" json:"user_id,omitempty"`
+	VerificationID        *string `form:"verification_id,omitempty" json:"verification_id,omitempty"`
 }
 
 // ApplyDefaults sets default values for fields that are nil.
-func (s *Video) ApplyDefaults() {
-	if s.File != nil {
-		s.File.ApplyDefaults()
+func (s *Authv1RegisterResponse) ApplyDefaults() {
+}
+
+// #/components/schemas/authv1.ResendVerificationResponse
+type Authv1ResendVerificationResponse struct {
+	CodeSent       *bool   `form:"code_sent,omitempty" json:"code_sent,omitempty"`
+	Message        *string `form:"message,omitempty" json:"message,omitempty"`
+	VerificationID *string `form:"verification_id,omitempty" json:"verification_id,omitempty"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *Authv1ResendVerificationResponse) ApplyDefaults() {
+}
+
+// #/components/schemas/authv1.SendBlogBroadcastResponse
+type Authv1SendBlogBroadcastResponse struct {
+	BroadcastID *string `form:"broadcast_id,omitempty" json:"broadcast_id,omitempty"`
+	ScheduledAt *string `form:"scheduled_at,omitempty" json:"scheduled_at,omitempty"`
+	SentAt      *string `form:"sent_at,omitempty" json:"sent_at,omitempty"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *Authv1SendBlogBroadcastResponse) ApplyDefaults() {
+}
+
+// #/components/schemas/authv1.SetupOTPResponse
+type Authv1SetupOTPResponse struct {
+	QrCodeURL *string `form:"qr_code_url,omitempty" json:"qr_code_url,omitempty"`
+	Secret    *string `form:"secret,omitempty" json:"secret,omitempty"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *Authv1SetupOTPResponse) ApplyDefaults() {
+}
+
+// #/components/schemas/authv1.StatusResponse
+type Authv1StatusResponse struct {
+	Status *string `form:"status,omitempty" json:"status,omitempty"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *Authv1StatusResponse) ApplyDefaults() {
+}
+
+// #/components/schemas/authv1.TokenResponse
+type Authv1TokenResponse struct {
+	AccessToken    *string `form:"access_token,omitempty" json:"access_token,omitempty"`
+	ExpiresIn      *int    `form:"expires_in,omitempty" json:"expires_in,omitempty"`
+	RefreshToken   *string `form:"refresh_token,omitempty" json:"refresh_token,omitempty"`
+	RequiresAction *string `form:"requires_action,omitempty" json:"requires_action,omitempty"`
+	TokenType      *string `form:"token_type,omitempty" json:"token_type,omitempty"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *Authv1TokenResponse) ApplyDefaults() {
+}
+
+// #/components/schemas/authv1.UpdateNameResponse
+type Authv1UpdateNameResponse struct {
+	FirstName *string `form:"first_name,omitempty" json:"first_name,omitempty"`
+	LastName  *string `form:"last_name,omitempty" json:"last_name,omitempty"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *Authv1UpdateNameResponse) ApplyDefaults() {
+}
+
+// #/components/schemas/authv1.UpdateOrgNameResponse
+type Authv1UpdateOrgNameResponse struct {
+	FirstName *string `form:"first_name,omitempty" json:"first_name,omitempty"`
+	LastName  *string `form:"last_name,omitempty" json:"last_name,omitempty"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *Authv1UpdateOrgNameResponse) ApplyDefaults() {
+}
+
+// #/components/schemas/authv1.UpdateOrgUsernameResponse
+type Authv1UpdateOrgUsernameResponse struct {
+	Username *string `form:"username,omitempty" json:"username,omitempty"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *Authv1UpdateOrgUsernameResponse) ApplyDefaults() {
+}
+
+// #/components/schemas/authv1.UpdateUsernameResponse
+type Authv1UpdateUsernameResponse struct {
+	Username *string `form:"username,omitempty" json:"username,omitempty"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *Authv1UpdateUsernameResponse) ApplyDefaults() {
+}
+
+// #/components/schemas/authv1.UserInfo
+type Authv1UserInfo struct {
+	ActiveOrgID   *string `form:"active_org_id,omitempty" json:"active_org_id,omitempty"`
+	CountryCode   *string `form:"country_code,omitempty" json:"country_code,omitempty"`
+	Email         *string `form:"email,omitempty" json:"email,omitempty"`
+	EmailVerified *bool   `form:"email_verified,omitempty" json:"email_verified,omitempty"`
+	FirstName     *string `form:"first_name,omitempty" json:"first_name,omitempty"`
+	ID            *string `form:"id,omitempty" json:"id,omitempty"`
+	ImageURL      *string `form:"image_url,omitempty" json:"image_url,omitempty"`
+	LanguageCode  *string `form:"language_code,omitempty" json:"language_code,omitempty"`
+	LastName      *string `form:"last_name,omitempty" json:"last_name,omitempty"`
+	Username      *string `form:"username,omitempty" json:"username,omitempty"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *Authv1UserInfo) ApplyDefaults() {
+}
+
+// #/components/schemas/authv1.VerificationSentResponse
+type Authv1VerificationSentResponse struct {
+	CanResendAt    *string `form:"can_resend_at,omitempty" json:"can_resend_at,omitempty"`
+	CodeSent       *bool   `form:"code_sent,omitempty" json:"code_sent,omitempty"`
+	Message        *string `form:"message,omitempty" json:"message,omitempty"`
+	VerificationID *string `form:"verification_id,omitempty" json:"verification_id,omitempty"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *Authv1VerificationSentResponse) ApplyDefaults() {
+}
+
+// #/components/schemas/authv1.VerifyEmailResponse
+type Authv1VerifyEmailResponse struct {
+	Email    *string              `form:"email,omitempty" json:"email,omitempty"`
+	Message  *string              `form:"message,omitempty" json:"message,omitempty"`
+	Tokens   *Authv1TokenResponse `form:"tokens,omitempty" json:"tokens,omitempty"`
+	Verified *bool                `form:"verified,omitempty" json:"verified,omitempty"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *Authv1VerifyEmailResponse) ApplyDefaults() {
+	if s.Tokens != nil {
+		s.Tokens.ApplyDefaults()
 	}
-	if s.Poster != nil {
-		s.Poster.ApplyDefaults()
-	}
 }
 
-// #/components/schemas/Video/properties/chapters
-type VideoChapters = []Chapter
-
-// #/components/schemas/VideoUploadInitRequest
-type VideoUploadInitRequest struct {
-	FileName     string                                `form:"file_name" json:"file_name"`
-	ImageFormat  *string                               `form:"image_format,omitempty" json:"image_format,omitempty"`
-	VideoQuality *GithubComRixlhqAPIDBSqlcVideoQuality `form:"video_quality,omitempty" json:"video_quality,omitempty"`
-}
-
-// ApplyDefaults sets default values for fields that are nil.
-func (s *VideoUploadInitRequest) ApplyDefaults() {
-}
-
-// #/components/schemas/github_com_rixlhq_api_db_sqlc.PlanType
-type GithubComRixlhqAPIDBSqlcPlanType string
-
-const (
-	PlanTypeFree       GithubComRixlhqAPIDBSqlcPlanType = "free"
-	PlanTypePro        GithubComRixlhqAPIDBSqlcPlanType = "pro"
-	PlanTypeCustom     GithubComRixlhqAPIDBSqlcPlanType = "custom"
-	PlanTypePayAsYouGo GithubComRixlhqAPIDBSqlcPlanType = "pay_as_you_go"
-)
-
-// #/components/schemas/github_com_rixlhq_api_db_sqlc.VideoQuality
-type GithubComRixlhqAPIDBSqlcVideoQuality string
-
-const (
-	VideoQualityBasic  GithubComRixlhqAPIDBSqlcVideoQuality = "basic"
-	VideoQualityShorts GithubComRixlhqAPIDBSqlcVideoQuality = "shorts"
-	VideoQualityPro    GithubComRixlhqAPIDBSqlcVideoQuality = "pro"
-)
-
-// #/components/schemas/github_com_rixlhq_api_internal_errors.ErrorResponse
-// Standard error response returned by the API
-type GithubComRixlhqAPIInternalErrorsErrorResponse struct {
-	// HTTP status code
-	Code *int `form:"code,omitempty" json:"code,omitempty"`
-	// Optional details about the error
-	Details *string `form:"details,omitempty" json:"details,omitempty"`
-	// Error message describing what went wrong
-	Error *string `form:"error,omitempty" json:"error,omitempty"`
+// #/components/schemas/billingv1.BandwidthUsage
+type Billingv1BandwidthUsage struct {
+	CreatedAt           *string `form:"created_at,omitempty" json:"created_at,omitempty"`
+	DataSource          *string `form:"data_source,omitempty" json:"data_source,omitempty"`
+	ImageBandwidthBytes *int    `form:"image_bandwidth_bytes,omitempty" json:"image_bandwidth_bytes,omitempty"`
+	ImageRequests       *int    `form:"image_requests,omitempty" json:"image_requests,omitempty"`
+	OrgID               *string `form:"org_id,omitempty" json:"org_id,omitempty"`
+	SnapshotDate        *string `form:"snapshot_date,omitempty" json:"snapshot_date,omitempty"`
+	SnapshotType        *string `form:"snapshot_type,omitempty" json:"snapshot_type,omitempty"`
+	TotalBandwidthBytes *int    `form:"total_bandwidth_bytes,omitempty" json:"total_bandwidth_bytes,omitempty"`
+	TotalRequests       *int    `form:"total_requests,omitempty" json:"total_requests,omitempty"`
+	UniqueVisitors      *int    `form:"unique_visitors,omitempty" json:"unique_visitors,omitempty"`
+	VideoBandwidthBytes *int    `form:"video_bandwidth_bytes,omitempty" json:"video_bandwidth_bytes,omitempty"`
+	VideoRequests       *int    `form:"video_requests,omitempty" json:"video_requests,omitempty"`
 }
 
 // ApplyDefaults sets default values for fields that are nil.
-func (s *GithubComRixlhqAPIInternalErrorsErrorResponse) ApplyDefaults() {
+func (s *Billingv1BandwidthUsage) ApplyDefaults() {
 }
 
-// #/components/schemas/github_com_rixlhq_api_internal_feeds_types.CreateFeedRequest
-type GithubComRixlhqAPIInternalFeedsTypesCreateFeedRequest struct {
-	AllowImages *bool   `form:"allow_images,omitempty" json:"allow_images,omitempty"`
-	AllowVideos *bool   `form:"allow_videos,omitempty" json:"allow_videos,omitempty"`
+// #/components/schemas/billingv1.BillingAddress
+type Billingv1BillingAddress struct {
+	City       *string `form:"city,omitempty" json:"city,omitempty"`
+	Country    *string `form:"country,omitempty" json:"country,omitempty"`
+	Email      *string `form:"email,omitempty" json:"email,omitempty"`
+	Line1      *string `form:"line1,omitempty" json:"line1,omitempty"`
+	Line2      *string `form:"line2,omitempty" json:"line2,omitempty"`
+	Name       *string `form:"name,omitempty" json:"name,omitempty"`
+	Phone      *string `form:"phone,omitempty" json:"phone,omitempty"`
+	PostalCode *string `form:"postal_code,omitempty" json:"postal_code,omitempty"`
+	State      *string `form:"state,omitempty" json:"state,omitempty"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *Billingv1BillingAddress) ApplyDefaults() {
+}
+
+// #/components/schemas/billingv1.CreateSubscriptionResponse
+type Billingv1CreateSubscriptionResponse struct {
+	CancelAtPeriodEnd    *bool   `form:"cancel_at_period_end,omitempty" json:"cancel_at_period_end,omitempty"`
+	CurrentPeriodEnd     *string `form:"current_period_end,omitempty" json:"current_period_end,omitempty"`
+	ID                   *string `form:"id,omitempty" json:"id,omitempty"`
+	OrgID                *string `form:"org_id,omitempty" json:"org_id,omitempty"`
+	PlanID               *string `form:"plan_id,omitempty" json:"plan_id,omitempty"`
+	Status               *string `form:"status,omitempty" json:"status,omitempty"`
+	StripeCustomerID     *string `form:"stripe_customer_id,omitempty" json:"stripe_customer_id,omitempty"`
+	StripeSubscriptionID *string `form:"stripe_subscription_id,omitempty" json:"stripe_subscription_id,omitempty"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *Billingv1CreateSubscriptionResponse) ApplyDefaults() {
+}
+
+// #/components/schemas/billingv1.GetBandwidthUsageHistoryResponse
+type Billingv1GetBandwidthUsageHistoryResponse struct {
+	Total  *int                      `form:"total,omitempty" json:"total,omitempty"`
+	Usages []Billingv1BandwidthUsage `form:"usages,omitempty" json:"usages,omitempty"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *Billingv1GetBandwidthUsageHistoryResponse) ApplyDefaults() {
+}
+
+// #/components/schemas/billingv1.GetBandwidthUsageHistoryResponse/properties/usages
+type Billingv1GetBandwidthUsageHistoryResponseUsages = []Billingv1BandwidthUsage
+
+// #/components/schemas/billingv1.GetPlanResponse
+type Billingv1GetPlanResponse struct {
+	Currency    *string `form:"currency,omitempty" json:"currency,omitempty"`
 	Description *string `form:"description,omitempty" json:"description,omitempty"`
-	HasComments *bool   `form:"has_comments,omitempty" json:"has_comments,omitempty"`
-	HasLikes    *bool   `form:"has_likes,omitempty" json:"has_likes,omitempty"`
-	HasShares   *bool   `form:"has_shares,omitempty" json:"has_shares,omitempty"`
-	Name        string  `form:"name" json:"name"`
-	ProjectID   string  `form:"project_id" json:"project_id"`
+	ID          *string `form:"id,omitempty" json:"id,omitempty"`
+	Interval    *string `form:"interval,omitempty" json:"interval,omitempty"`
+	Name        *string `form:"name,omitempty" json:"name,omitempty"`
+	Price       *string `form:"price,omitempty" json:"price,omitempty"`
 }
 
 // ApplyDefaults sets default values for fields that are nil.
-func (s *GithubComRixlhqAPIInternalFeedsTypesCreateFeedRequest) ApplyDefaults() {
+func (s *Billingv1GetPlanResponse) ApplyDefaults() {
 }
 
-// #/components/schemas/github_com_rixlhq_api_internal_feeds_types.FeedResponse
-type GithubComRixlhqAPIInternalFeedsTypesFeedResponse struct {
+// #/components/schemas/billingv1.GetStorageUsageHistoryResponse
+type Billingv1GetStorageUsageHistoryResponse struct {
+	Total  *int                    `form:"total,omitempty" json:"total,omitempty"`
+	Usages []Billingv1StorageUsage `form:"usages,omitempty" json:"usages,omitempty"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *Billingv1GetStorageUsageHistoryResponse) ApplyDefaults() {
+}
+
+// #/components/schemas/billingv1.GetStorageUsageHistoryResponse/properties/usages
+type Billingv1GetStorageUsageHistoryResponseUsages = []Billingv1StorageUsage
+
+// #/components/schemas/billingv1.GetSubscriptionHistoryResponse
+type Billingv1GetSubscriptionHistoryResponse struct {
+	Items []Billingv1SubscriptionHistoryItem `form:"items,omitempty" json:"items,omitempty"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *Billingv1GetSubscriptionHistoryResponse) ApplyDefaults() {
+}
+
+// #/components/schemas/billingv1.GetSubscriptionHistoryResponse/properties/items
+type Billingv1GetSubscriptionHistoryResponseItem = []Billingv1SubscriptionHistoryItem
+
+// #/components/schemas/billingv1.HostedCheckoutSessionResponse
+type Billingv1HostedCheckoutSessionResponse struct {
+	Amount     *float32 `form:"amount,omitempty" json:"amount,omitempty"`
+	Currency   *string  `form:"currency,omitempty" json:"currency,omitempty"`
+	SessionID  *string  `form:"session_id,omitempty" json:"session_id,omitempty"`
+	SessionURL *string  `form:"session_url,omitempty" json:"session_url,omitempty"`
+	Status     *string  `form:"status,omitempty" json:"status,omitempty"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *Billingv1HostedCheckoutSessionResponse) ApplyDefaults() {
+}
+
+// #/components/schemas/billingv1.Invoice
+type Billingv1Invoice struct {
+	Amount         *string `form:"amount,omitempty" json:"amount,omitempty"`
+	CreatedAt      *string `form:"created_at,omitempty" json:"created_at,omitempty"`
+	Currency       *string `form:"currency,omitempty" json:"currency,omitempty"`
+	Description    *string `form:"description,omitempty" json:"description,omitempty"`
+	DueDate        *string `form:"due_date,omitempty" json:"due_date,omitempty"`
+	ID             *string `form:"id,omitempty" json:"id,omitempty"`
+	OrgID          *string `form:"org_id,omitempty" json:"org_id,omitempty"`
+	PaidAt         *string `form:"paid_at,omitempty" json:"paid_at,omitempty"`
+	Status         *string `form:"status,omitempty" json:"status,omitempty"`
+	SubscriptionID *string `form:"subscription_id,omitempty" json:"subscription_id,omitempty"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *Billingv1Invoice) ApplyDefaults() {
+}
+
+// #/components/schemas/billingv1.ListInvoicesResponse
+type Billingv1ListInvoicesResponse struct {
+	Invoices []Billingv1Invoice `form:"invoices,omitempty" json:"invoices,omitempty"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *Billingv1ListInvoicesResponse) ApplyDefaults() {
+}
+
+// #/components/schemas/billingv1.ListInvoicesResponse/properties/invoices
+type Billingv1ListInvoicesResponseInvoices = []Billingv1Invoice
+
+// #/components/schemas/billingv1.ListPaymentMethodsResponse
+type Billingv1ListPaymentMethodsResponse struct {
+	PaymentMethods []Billingv1PaymentMethod `form:"payment_methods,omitempty" json:"payment_methods,omitempty"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *Billingv1ListPaymentMethodsResponse) ApplyDefaults() {
+}
+
+// #/components/schemas/billingv1.ListPaymentMethodsResponse/properties/payment_methods
+type Billingv1ListPaymentMethodsResponsePaymentMethods = []Billingv1PaymentMethod
+
+// #/components/schemas/billingv1.ListPlansResponse
+type Billingv1ListPlansResponse struct {
+	Plans []Billingv1Plan `form:"plans,omitempty" json:"plans,omitempty"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *Billingv1ListPlansResponse) ApplyDefaults() {
+}
+
+// #/components/schemas/billingv1.ListPlansResponse/properties/plans
+type Billingv1ListPlansResponsePlans = []Billingv1Plan
+
+// #/components/schemas/billingv1.PaymentMethod
+type Billingv1PaymentMethod struct {
+	CreatedAt *string `form:"created_at,omitempty" json:"created_at,omitempty"`
+	Details   *string `form:"details,omitempty" json:"details,omitempty"`
+	ID        *string `form:"id,omitempty" json:"id,omitempty"`
+	IsDefault *bool   `form:"is_default,omitempty" json:"is_default,omitempty"`
+	OrgID     *string `form:"org_id,omitempty" json:"org_id,omitempty"`
+	Provider  *string `form:"provider,omitempty" json:"provider,omitempty"`
+	Type      *string `form:"type,omitempty" json:"type,omitempty"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *Billingv1PaymentMethod) ApplyDefaults() {
+}
+
+// #/components/schemas/billingv1.PaymentMethodDetails
+type Billingv1PaymentMethodDetails struct {
+	Brand     *string `form:"brand,omitempty" json:"brand,omitempty"`
+	ExpMonth  *int    `form:"exp_month,omitempty" json:"exp_month,omitempty"`
+	ExpYear   *int    `form:"exp_year,omitempty" json:"exp_year,omitempty"`
+	ID        *string `form:"id,omitempty" json:"id,omitempty"`
+	IsDefault *bool   `form:"is_default,omitempty" json:"is_default,omitempty"`
+	Last4     *string `form:"last4,omitempty" json:"last4,omitempty"`
+	Type      *string `form:"type,omitempty" json:"type,omitempty"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *Billingv1PaymentMethodDetails) ApplyDefaults() {
+}
+
+// #/components/schemas/billingv1.PaymentMethodIdResponse
+type Billingv1PaymentMethodIDResponse struct {
+	PaymentMethodID *string `form:"payment_method_id,omitempty" json:"payment_method_id,omitempty"`
+	SetupIntentID   *string `form:"setup_intent_id,omitempty" json:"setup_intent_id,omitempty"`
+	Status          *string `form:"status,omitempty" json:"status,omitempty"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *Billingv1PaymentMethodIDResponse) ApplyDefaults() {
+}
+
+// #/components/schemas/billingv1.Plan
+type Billingv1Plan struct {
+	Currency      *string `form:"currency,omitempty" json:"currency,omitempty"`
+	Description   *string `form:"description,omitempty" json:"description,omitempty"`
+	ID            *string `form:"id,omitempty" json:"id,omitempty"`
+	Interval      *string `form:"interval,omitempty" json:"interval,omitempty"`
+	IntervalCount *int    `form:"interval_count,omitempty" json:"interval_count,omitempty"`
+	Name          *string `form:"name,omitempty" json:"name,omitempty"`
+	PlanType      *string `form:"plan_type,omitempty" json:"plan_type,omitempty"`
+	Price         *string `form:"price,omitempty" json:"price,omitempty"`
+	SortOrder     *int    `form:"sort_order,omitempty" json:"sort_order,omitempty"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *Billingv1Plan) ApplyDefaults() {
+}
+
+// #/components/schemas/billingv1.PlanTaxCalculationResponse
+type Billingv1PlanTaxCalculationResponse struct {
+	AmountTotal        *int                     `form:"amount_total,omitempty" json:"amount_total,omitempty"`
+	BaseAmount         *int                     `form:"base_amount,omitempty" json:"base_amount,omitempty"`
+	BillingAddress     *Billingv1BillingAddress `form:"billing_address,omitempty" json:"billing_address,omitempty"`
+	BillingCycle       *string                  `form:"billing_cycle,omitempty" json:"billing_cycle,omitempty"`
+	CalculatedAt       *string                  `form:"calculated_at,omitempty" json:"calculated_at,omitempty"`
+	CalculationID      *string                  `form:"calculation_id,omitempty" json:"calculation_id,omitempty"`
+	Currency           *string                  `form:"currency,omitempty" json:"currency,omitempty"`
+	PlanID             *string                  `form:"plan_id,omitempty" json:"plan_id,omitempty"`
+	PlanName           *string                  `form:"plan_name,omitempty" json:"plan_name,omitempty"`
+	TaxAmountExclusive *int                     `form:"tax_amount_exclusive,omitempty" json:"tax_amount_exclusive,omitempty"`
+	TaxAmountInclusive *int                     `form:"tax_amount_inclusive,omitempty" json:"tax_amount_inclusive,omitempty"`
+	TaxPercentage      *float32                 `form:"tax_percentage,omitempty" json:"tax_percentage,omitempty"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *Billingv1PlanTaxCalculationResponse) ApplyDefaults() {
+	if s.BillingAddress != nil {
+		s.BillingAddress.ApplyDefaults()
+	}
+}
+
+// #/components/schemas/billingv1.SalesLead
+type Billingv1SalesLead struct {
+	Company   *string `form:"company,omitempty" json:"company,omitempty"`
+	CreatedAt *string `form:"created_at,omitempty" json:"created_at,omitempty"`
+	Email     *string `form:"email,omitempty" json:"email,omitempty"`
+	FirstName *string `form:"first_name,omitempty" json:"first_name,omitempty"`
+	ID        *string `form:"id,omitempty" json:"id,omitempty"`
+	JobTitle  *string `form:"job_title,omitempty" json:"job_title,omitempty"`
+	LastName  *string `form:"last_name,omitempty" json:"last_name,omitempty"`
+	Message   *string `form:"message,omitempty" json:"message,omitempty"`
+	OrgID     *string `form:"org_id,omitempty" json:"org_id,omitempty"`
+	Phone     *string `form:"phone,omitempty" json:"phone,omitempty"`
+	Status    *string `form:"status,omitempty" json:"status,omitempty"`
+	UserID    *string `form:"user_id,omitempty" json:"user_id,omitempty"`
+	Website   *string `form:"website,omitempty" json:"website,omitempty"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *Billingv1SalesLead) ApplyDefaults() {
+}
+
+// #/components/schemas/billingv1.SetupIntentResponse
+type Billingv1SetupIntentResponse struct {
+	ClientSecret  *string `form:"client_secret,omitempty" json:"client_secret,omitempty"`
+	SetupIntentID *string `form:"setup_intent_id,omitempty" json:"setup_intent_id,omitempty"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *Billingv1SetupIntentResponse) ApplyDefaults() {
+}
+
+// #/components/schemas/billingv1.StorageUsage
+type Billingv1StorageUsage struct {
+	ImageFileCount    *int    `form:"image_file_count,omitempty" json:"image_file_count,omitempty"`
+	ImageStorageBytes *int    `form:"image_storage_bytes,omitempty" json:"image_storage_bytes,omitempty"`
+	LastUpdated       *string `form:"last_updated,omitempty" json:"last_updated,omitempty"`
+	MaxImageCount     *int    `form:"max_image_count,omitempty" json:"max_image_count,omitempty"`
+	MaxProjectCount   *int    `form:"max_project_count,omitempty" json:"max_project_count,omitempty"`
+	MaxVideoCount     *int    `form:"max_video_count,omitempty" json:"max_video_count,omitempty"`
+	OrgID             *string `form:"org_id,omitempty" json:"org_id,omitempty"`
+	ProjectCount      *int    `form:"project_count,omitempty" json:"project_count,omitempty"`
+	SnapshotDate      *string `form:"snapshot_date,omitempty" json:"snapshot_date,omitempty"`
+	TotalFileCount    *int    `form:"total_file_count,omitempty" json:"total_file_count,omitempty"`
+	TotalStorageBytes *int    `form:"total_storage_bytes,omitempty" json:"total_storage_bytes,omitempty"`
+	TotalVideoMinutes *string `form:"total_video_minutes,omitempty" json:"total_video_minutes,omitempty"`
+	VideoFileCount    *int    `form:"video_file_count,omitempty" json:"video_file_count,omitempty"`
+	VideoStorageBytes *int    `form:"video_storage_bytes,omitempty" json:"video_storage_bytes,omitempty"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *Billingv1StorageUsage) ApplyDefaults() {
+}
+
+// #/components/schemas/billingv1.Subscription
+type Billingv1Subscription struct {
+	CancelAtPeriodEnd *bool   `form:"cancel_at_period_end,omitempty" json:"cancel_at_period_end,omitempty"`
+	Currency          *string `form:"currency,omitempty" json:"currency,omitempty"`
+	CurrentPeriodEnd  *string `form:"current_period_end,omitempty" json:"current_period_end,omitempty"`
+	ExpiringSoon      *bool   `form:"expiring_soon,omitempty" json:"expiring_soon,omitempty"`
+	ID                *string `form:"id,omitempty" json:"id,omitempty"`
+	OrgID             *string `form:"org_id,omitempty" json:"org_id,omitempty"`
+	PlanID            *string `form:"plan_id,omitempty" json:"plan_id,omitempty"`
+	PlanName          *string `form:"plan_name,omitempty" json:"plan_name,omitempty"`
+	PlanType          *string `form:"plan_type,omitempty" json:"plan_type,omitempty"`
+	Price             *string `form:"price,omitempty" json:"price,omitempty"`
+	Status            *string `form:"status,omitempty" json:"status,omitempty"`
+	TrialsEndingSoon  *bool   `form:"trials_ending_soon,omitempty" json:"trials_ending_soon,omitempty"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *Billingv1Subscription) ApplyDefaults() {
+}
+
+// #/components/schemas/billingv1.SubscriptionHistoryItem
+type Billingv1SubscriptionHistoryItem struct {
+	CancelAtPeriodEnd *bool   `form:"cancel_at_period_end,omitempty" json:"cancel_at_period_end,omitempty"`
+	CreatedAt         *string `form:"created_at,omitempty" json:"created_at,omitempty"`
+	Currency          *string `form:"currency,omitempty" json:"currency,omitempty"`
+	CurrentPeriodEnd  *string `form:"current_period_end,omitempty" json:"current_period_end,omitempty"`
+	EndDate           *string `form:"end_date,omitempty" json:"end_date,omitempty"`
+	ID                *string `form:"id,omitempty" json:"id,omitempty"`
+	OrgID             *string `form:"org_id,omitempty" json:"org_id,omitempty"`
+	PlanID            *string `form:"plan_id,omitempty" json:"plan_id,omitempty"`
+	PlanName          *string `form:"plan_name,omitempty" json:"plan_name,omitempty"`
+	Price             *string `form:"price,omitempty" json:"price,omitempty"`
+	StartDate         *string `form:"start_date,omitempty" json:"start_date,omitempty"`
+	Status            *string `form:"status,omitempty" json:"status,omitempty"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *Billingv1SubscriptionHistoryItem) ApplyDefaults() {
+}
+
+// #/components/schemas/billingv1.UpgradeSubscriptionResponse
+type Billingv1UpgradeSubscriptionResponse struct {
+	ClientSecret *string `form:"client_secret,omitempty" json:"client_secret,omitempty"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *Billingv1UpgradeSubscriptionResponse) ApplyDefaults() {
+}
+
+// #/components/schemas/clientauthv1.ClientCredential
+type Clientauthv1ClientCredential struct {
+	Alg        *string `form:"alg,omitempty" json:"alg,omitempty"`
+	ClientID   *string `form:"client_id,omitempty" json:"client_id,omitempty"`
+	CreatedAt  *string `form:"created_at,omitempty" json:"created_at,omitempty"`
+	ID         *string `form:"id,omitempty" json:"id,omitempty"`
+	Kid        *string `form:"kid,omitempty" json:"kid,omitempty"`
+	LastUsedAt *string `form:"last_used_at,omitempty" json:"last_used_at,omitempty"`
+	Name       *string `form:"name,omitempty" json:"name,omitempty"`
+	Status     *string `form:"status,omitempty" json:"status,omitempty"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *Clientauthv1ClientCredential) ApplyDefaults() {
+}
+
+// #/components/schemas/clientauthv1.CreateClientCredentialResponse
+type Clientauthv1CreateClientCredentialResponse struct {
+	ClientSecret *string                       `form:"client_secret,omitempty" json:"client_secret,omitempty"`
+	Credential   *Clientauthv1ClientCredential `form:"credential,omitempty" json:"credential,omitempty"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *Clientauthv1CreateClientCredentialResponse) ApplyDefaults() {
+	if s.Credential != nil {
+		s.Credential.ApplyDefaults()
+	}
+}
+
+// #/components/schemas/clientauthv1.ListClientCredentialsResponse
+type Clientauthv1ListClientCredentialsResponse struct {
+	Credentials []Clientauthv1ClientCredential `form:"credentials,omitempty" json:"credentials,omitempty"`
+	Total       *int                           `form:"total,omitempty" json:"total,omitempty"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *Clientauthv1ListClientCredentialsResponse) ApplyDefaults() {
+}
+
+// #/components/schemas/clientauthv1.ListClientCredentialsResponse/properties/credentials
+type Clientauthv1ListClientCredentialsResponseCredentials = []Clientauthv1ClientCredential
+
+// #/components/schemas/clientauthv1.MintClientTokenResponse
+type Clientauthv1MintClientTokenResponse struct {
+	AccessToken *string `form:"access_token,omitempty" json:"access_token,omitempty"`
+	ExpiresAt   *string `form:"expires_at,omitempty" json:"expires_at,omitempty"`
+	ExpiresIn   *int    `form:"expires_in,omitempty" json:"expires_in,omitempty"`
+	TokenType   *string `form:"token_type,omitempty" json:"token_type,omitempty"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *Clientauthv1MintClientTokenResponse) ApplyDefaults() {
+}
+
+// #/components/schemas/clientauthv1.RevokeClientCredentialResponse
+type Clientauthv1RevokeClientCredentialResponse struct {
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *Clientauthv1RevokeClientCredentialResponse) ApplyDefaults() {
+}
+
+// #/components/schemas/feedsv1.DeleteFeedResponse
+type Feedsv1DeleteFeedResponse struct {
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *Feedsv1DeleteFeedResponse) ApplyDefaults() {
+}
+
+// #/components/schemas/feedsv1.Feed
+type Feedsv1Feed struct {
 	AllowImages *bool   `form:"allow_images,omitempty" json:"allow_images,omitempty"`
 	AllowVideos *bool   `form:"allow_videos,omitempty" json:"allow_videos,omitempty"`
 	CreatedAt   *string `form:"created_at,omitempty" json:"created_at,omitempty"`
@@ -285,11 +1333,965 @@ type GithubComRixlhqAPIInternalFeedsTypesFeedResponse struct {
 }
 
 // ApplyDefaults sets default values for fields that are nil.
-func (s *GithubComRixlhqAPIInternalFeedsTypesFeedResponse) ApplyDefaults() {
+func (s *Feedsv1Feed) ApplyDefaults() {
 }
 
-// #/components/schemas/github_com_rixlhq_api_internal_feeds_types.UpdateFeedRequest
-type GithubComRixlhqAPIInternalFeedsTypesUpdateFeedRequest struct {
+// #/components/schemas/feedsv1.ListFeedsResponse
+type Feedsv1ListFeedsResponse struct {
+	Feeds []Feedsv1Feed `form:"feeds,omitempty" json:"feeds,omitempty"`
+	Total *int          `form:"total,omitempty" json:"total,omitempty"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *Feedsv1ListFeedsResponse) ApplyDefaults() {
+}
+
+// #/components/schemas/feedsv1.ListFeedsResponse/properties/feeds
+type Feedsv1ListFeedsResponseFeeds = []Feedsv1Feed
+
+// #/components/schemas/gateway.addEmailBody
+type GatewayAddEmailBody struct {
+	Email string `form:"email" json:"email"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *GatewayAddEmailBody) ApplyDefaults() {
+}
+
+// #/components/schemas/gateway.attachPolicyBody
+type GatewayAttachPolicyBody struct {
+	IdentityID   string `form:"identity_id" json:"identity_id"`
+	IdentityType string `form:"identity_type" json:"identity_type"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *GatewayAttachPolicyBody) ApplyDefaults() {
+}
+
+// #/components/schemas/gateway.autoJoinBody
+type GatewayAutoJoinBody struct {
+	Enabled *bool `form:"enabled,omitempty" json:"enabled,omitempty"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *GatewayAutoJoinBody) ApplyDefaults() {
+}
+
+// #/components/schemas/gateway.billingAddressBody
+type GatewayBillingAddressBody struct {
+	City       *string `form:"city,omitempty" json:"city,omitempty"`
+	Country    *string `form:"country,omitempty" json:"country,omitempty"`
+	Email      *string `form:"email,omitempty" json:"email,omitempty"`
+	Line1      *string `form:"line1,omitempty" json:"line1,omitempty"`
+	Line2      *string `form:"line2,omitempty" json:"line2,omitempty"`
+	Name       *string `form:"name,omitempty" json:"name,omitempty"`
+	Phone      *string `form:"phone,omitempty" json:"phone,omitempty"`
+	PostalCode *string `form:"postal_code,omitempty" json:"postal_code,omitempty"`
+	State      *string `form:"state,omitempty" json:"state,omitempty"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *GatewayBillingAddressBody) ApplyDefaults() {
+}
+
+// #/components/schemas/gateway.calculateTaxBody
+type GatewayCalculateTaxBody struct {
+	Amount         *float32                   `form:"amount,omitempty" json:"amount,omitempty"`
+	BillingAddress *GatewayBillingAddressBody `form:"billing_address,omitempty" json:"billing_address,omitempty"`
+	BillingCycle   *string                    `form:"billing_cycle,omitempty" json:"billing_cycle,omitempty"`
+	Currency       *string                    `form:"currency,omitempty" json:"currency,omitempty"`
+	IntervalCount  *int                       `form:"interval_count,omitempty" json:"interval_count,omitempty"`
+	LineItems      []GatewayTaxLineItemBody   `form:"line_items,omitempty" json:"line_items,omitempty"`
+	Metadata       map[string]string          `form:"metadata,omitempty" json:"metadata,omitempty"`
+	PlanID         *string                    `form:"plan_id,omitempty" json:"plan_id,omitempty"`
+	PlanName       *string                    `form:"plan_name,omitempty" json:"plan_name,omitempty"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *GatewayCalculateTaxBody) ApplyDefaults() {
+	if s.BillingAddress != nil {
+		s.BillingAddress.ApplyDefaults()
+	}
+}
+
+// #/components/schemas/gateway.calculateTaxBody/properties/line_items
+type GatewayCalculateTaxBodyLineItems = []GatewayTaxLineItemBody
+
+// #/components/schemas/gateway.calculateTaxBody/properties/metadata
+type GatewayCalculateTaxBodyMetadata = map[string]string
+
+// #/components/schemas/gateway.changeEmailBody
+type GatewayChangeEmailBody struct {
+	NewEmail string `form:"new_email" json:"new_email"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *GatewayChangeEmailBody) ApplyDefaults() {
+}
+
+// #/components/schemas/gateway.chapterBody
+type GatewayChapterBody struct {
+	StartTimeSec *float32 `form:"start_time_sec,omitempty" json:"start_time_sec,omitempty"`
+	Title        string   `form:"title" json:"title"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *GatewayChapterBody) ApplyDefaults() {
+}
+
+// #/components/schemas/gateway.checkoutBody
+type GatewayCheckoutBody struct {
+	CancelURL     *string `form:"cancel_url,omitempty" json:"cancel_url,omitempty"`
+	StripePriceID *string `form:"stripe_price_id,omitempty" json:"stripe_price_id,omitempty"`
+	SuccessURL    *string `form:"success_url,omitempty" json:"success_url,omitempty"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *GatewayCheckoutBody) ApplyDefaults() {
+}
+
+// #/components/schemas/gateway.completeTrackItem
+type GatewayCompleteTrackItem struct {
+	ID        string `form:"id" json:"id"`
+	ObjectKey string `form:"object_key" json:"object_key"`
+	Size      *int   `form:"size,omitempty" json:"size,omitempty"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *GatewayCompleteTrackItem) ApplyDefaults() {
+}
+
+// #/components/schemas/gateway.completeTrackUploadBody
+type GatewayCompleteTrackUploadBody struct {
+	Items []GatewayCompleteTrackItem `form:"items" json:"items"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *GatewayCompleteTrackUploadBody) ApplyDefaults() {
+}
+
+// #/components/schemas/gateway.completeTrackUploadBody/properties/items
+type GatewayCompleteTrackUploadBodyItem = []GatewayCompleteTrackItem
+
+// #/components/schemas/gateway.completeUploadBody
+type GatewayCompleteUploadBody struct {
+	PostID string `form:"post_id" json:"post_id"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *GatewayCompleteUploadBody) ApplyDefaults() {
+}
+
+// #/components/schemas/gateway.connectProviderBody
+type GatewayConnectProviderBody struct {
+	Provider string `form:"provider" json:"provider"`
+	Token    string `form:"token" json:"token"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *GatewayConnectProviderBody) ApplyDefaults() {
+}
+
+// #/components/schemas/gateway.connectProviderBody/properties/provider
+type GatewayConnectProviderBodyProvider string
+
+const (
+	Google       GatewayConnectProviderBodyProvider = "google"
+	Apple        GatewayConnectProviderBodyProvider = "apple"
+	Microsoft    GatewayConnectProviderBodyProvider = "microsoft"
+	TgAuthResult GatewayConnectProviderBodyProvider = "tgAuthResult"
+)
+
+// #/components/schemas/gateway.contactSalesBody
+type GatewayContactSalesBody struct {
+	Company   string  `form:"company" json:"company"`
+	Email     string  `form:"email" json:"email"`
+	FirstName string  `form:"first_name" json:"first_name"`
+	JobTitle  *string `form:"job_title,omitempty" json:"job_title,omitempty"`
+	LastName  string  `form:"last_name" json:"last_name"`
+	Message   *string `form:"message,omitempty" json:"message,omitempty"`
+	Phone     string  `form:"phone" json:"phone"`
+	Website   *string `form:"website,omitempty" json:"website,omitempty"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *GatewayContactSalesBody) ApplyDefaults() {
+}
+
+// #/components/schemas/gateway.createDomainBody
+type GatewayCreateDomainBody struct {
+	Domain string `form:"domain" json:"domain"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *GatewayCreateDomainBody) ApplyDefaults() {
+}
+
+// #/components/schemas/gateway.createImageUploadBody
+type GatewayCreateImageUploadBody struct {
+	Format *string `form:"format,omitempty" json:"format,omitempty"`
+	Name   string  `form:"name" json:"name"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *GatewayCreateImageUploadBody) ApplyDefaults() {
+}
+
+// #/components/schemas/gateway.createPostBody
+type GatewayCreatePostBody struct {
+	CreatorID   *string `form:"creator_id,omitempty" json:"creator_id,omitempty"`
+	Description *string `form:"description,omitempty" json:"description,omitempty"`
+	ImageID     *string `form:"image_id,omitempty" json:"image_id,omitempty"`
+	Type        string  `form:"type" json:"type"`
+	VideoID     *string `form:"video_id,omitempty" json:"video_id,omitempty"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *GatewayCreatePostBody) ApplyDefaults() {
+}
+
+// #/components/schemas/gateway.createPostBody/properties/type
+type GatewayCreatePostBodyType string
+
+const (
+	GatewayCreatePostBodyTypeVideo GatewayCreatePostBodyType = "video"
+	GatewayCreatePostBodyTypeImage GatewayCreatePostBodyType = "image"
+)
+
+// #/components/schemas/gateway.createSubscriptionBody
+type GatewayCreateSubscriptionBody struct {
+	BillingAddress  *GatewayBillingAddressBody `form:"billing_address,omitempty" json:"billing_address,omitempty"`
+	PaymentMethodID *string                    `form:"payment_method_id,omitempty" json:"payment_method_id,omitempty"`
+	StripePriceID   *string                    `form:"stripe_price_id,omitempty" json:"stripe_price_id,omitempty"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *GatewayCreateSubscriptionBody) ApplyDefaults() {
+	if s.BillingAddress != nil {
+		s.BillingAddress.ApplyDefaults()
+	}
+}
+
+// #/components/schemas/gateway.createVideoUploadBody
+type GatewayCreateVideoUploadBody struct {
+	ImageFormat  *string `form:"image_format,omitempty" json:"image_format,omitempty"`
+	Name         string  `form:"name" json:"name"`
+	VideoQuality *string `form:"video_quality,omitempty" json:"video_quality,omitempty"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *GatewayCreateVideoUploadBody) ApplyDefaults() {
+}
+
+// #/components/schemas/gateway.emailBody
+type GatewayEmailBody struct {
+	Email string `form:"email" json:"email"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *GatewayEmailBody) ApplyDefaults() {
+}
+
+// #/components/schemas/gateway.initTrackUploadBody
+type GatewayInitTrackUploadBody struct {
+	Items []GatewayTrackUploadItem `form:"items" json:"items"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *GatewayInitTrackUploadBody) ApplyDefaults() {
+}
+
+// #/components/schemas/gateway.initTrackUploadBody/properties/items
+type GatewayInitTrackUploadBodyItem = []GatewayTrackUploadItem
+
+// #/components/schemas/gateway.initUploadBody
+type GatewayInitUploadBody struct {
+	ContentType  string  `form:"content_type" json:"content_type"`
+	CreatorID    *string `form:"creator_id,omitempty" json:"creator_id,omitempty"`
+	Description  *string `form:"description,omitempty" json:"description,omitempty"`
+	FileName     string  `form:"file_name" json:"file_name"`
+	Format       string  `form:"format" json:"format"`
+	ImageFormat  *string `form:"image_format,omitempty" json:"image_format,omitempty"`
+	VideoQuality *string `form:"video_quality,omitempty" json:"video_quality,omitempty"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *GatewayInitUploadBody) ApplyDefaults() {
+}
+
+// #/components/schemas/gateway.initUploadBody/properties/content_type
+type GatewayInitUploadBodyContentType string
+
+const (
+	GatewayInitUploadBodyContentTypeImage GatewayInitUploadBodyContentType = "image"
+	GatewayInitUploadBodyContentTypeVideo GatewayInitUploadBodyContentType = "video"
+)
+
+// #/components/schemas/gateway.inviteMemberBody
+type GatewayInviteMemberBody struct {
+	Role     string `form:"role" json:"role"`
+	Username string `form:"username" json:"username"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *GatewayInviteMemberBody) ApplyDefaults() {
+}
+
+// #/components/schemas/gateway.inviteMemberBody/properties/role
+type GatewayInviteMemberBodyRole string
+
+const (
+	GatewayInviteMemberBodyRoleAdmin  GatewayInviteMemberBodyRole = "admin"
+	GatewayInviteMemberBodyRoleMember GatewayInviteMemberBodyRole = "member"
+)
+
+// #/components/schemas/gateway.membershipStateBody
+type GatewayMembershipStateBody struct {
+	State string `form:"state" json:"state"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *GatewayMembershipStateBody) ApplyDefaults() {
+}
+
+// #/components/schemas/gateway.membershipStateBody/properties/state
+type GatewayMembershipStateBodyState string
+
+const (
+	Accepted GatewayMembershipStateBodyState = "accepted"
+	Declined GatewayMembershipStateBodyState = "declined"
+)
+
+// #/components/schemas/gateway.passkeyLoginFinishBody
+type GatewayPasskeyLoginFinishBody struct {
+	Credential []int  `form:"credential,omitempty" json:"credential,omitempty"`
+	SessionID  string `form:"session_id" json:"session_id"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *GatewayPasskeyLoginFinishBody) ApplyDefaults() {
+}
+
+// #/components/schemas/gateway.passkeyRegisterFinishBody
+type GatewayPasskeyRegisterFinishBody struct {
+	Credential []int   `form:"credential,omitempty" json:"credential,omitempty"`
+	Name       *string `form:"name,omitempty" json:"name,omitempty"`
+	SessionID  string  `form:"session_id" json:"session_id"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *GatewayPasskeyRegisterFinishBody) ApplyDefaults() {
+}
+
+// #/components/schemas/gateway.policyBody
+type GatewayPolicyBody struct {
+	Description *string  `form:"description,omitempty" json:"description,omitempty"`
+	Name        string   `form:"name" json:"name"`
+	Permissions []string `form:"permissions" json:"permissions"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *GatewayPolicyBody) ApplyDefaults() {
+}
+
+// #/components/schemas/gateway.registerBody
+type GatewayRegisterBody struct {
+	Email           string `form:"email" json:"email"`
+	Password        string `form:"password" json:"password"`
+	SubscribeToBlog *bool  `form:"subscribe_to_blog,omitempty" json:"subscribe_to_blog,omitempty"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *GatewayRegisterBody) ApplyDefaults() {
+}
+
+// #/components/schemas/gateway.registerOrLoginBody
+type GatewayRegisterOrLoginBody struct {
+	Email    string `form:"email" json:"email"`
+	Password string `form:"password" json:"password"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *GatewayRegisterOrLoginBody) ApplyDefaults() {
+}
+
+// #/components/schemas/gateway.renamePasskeyBody
+type GatewayRenamePasskeyBody struct {
+	Name string `form:"name" json:"name"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *GatewayRenamePasskeyBody) ApplyDefaults() {
+}
+
+// #/components/schemas/gateway.resendInviteBody
+type GatewayResendInviteBody struct {
+	UserID string `form:"user_id" json:"user_id"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *GatewayResendInviteBody) ApplyDefaults() {
+}
+
+// #/components/schemas/gateway.resetPasswordBody
+type GatewayResetPasswordBody struct {
+	NewPassword string `form:"new_password" json:"new_password"`
+	Token       string `form:"token" json:"token"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *GatewayResetPasswordBody) ApplyDefaults() {
+}
+
+// #/components/schemas/gateway.sendBlogBroadcastBody
+type GatewaySendBlogBroadcastBody struct {
+	Category    *string `form:"category,omitempty" json:"category,omitempty"`
+	CommitSha   *string `form:"commit_sha,omitempty" json:"commit_sha,omitempty"`
+	Description string  `form:"description" json:"description"`
+	PublishedAt *string `form:"published_at,omitempty" json:"published_at,omitempty"`
+	ReadMoreURL string  `form:"read_more_url" json:"read_more_url"`
+	Slug        *string `form:"slug,omitempty" json:"slug,omitempty"`
+	Title       string  `form:"title" json:"title"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *GatewaySendBlogBroadcastBody) ApplyDefaults() {
+}
+
+// #/components/schemas/gateway.taxLineItemBody
+type GatewayTaxLineItemBody struct {
+	Amount    *int    `form:"amount,omitempty" json:"amount,omitempty"`
+	Reference *string `form:"reference,omitempty" json:"reference,omitempty"`
+	TaxCode   *string `form:"tax_code,omitempty" json:"tax_code,omitempty"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *GatewayTaxLineItemBody) ApplyDefaults() {
+}
+
+// #/components/schemas/gateway.trackUploadItem
+type GatewayTrackUploadItem struct {
+	FileName     string  `form:"file_name" json:"file_name"`
+	Format       string  `form:"format" json:"format"`
+	Label        *string `form:"label,omitempty" json:"label,omitempty"`
+	LanguageCode string  `form:"language_code" json:"language_code"`
+	Size         *int    `form:"size,omitempty" json:"size,omitempty"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *GatewayTrackUploadItem) ApplyDefaults() {
+}
+
+// #/components/schemas/gateway.unsubscribeBlogByEmailBody
+type GatewayUnsubscribeBlogByEmailBody struct {
+	Email  string `form:"email" json:"email"`
+	UserID string `form:"user_id" json:"user_id"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *GatewayUnsubscribeBlogByEmailBody) ApplyDefaults() {
+}
+
+// #/components/schemas/gateway.updateChaptersBody
+type GatewayUpdateChaptersBody struct {
+	Chapters []GatewayChapterBody `form:"chapters,omitempty" json:"chapters,omitempty"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *GatewayUpdateChaptersBody) ApplyDefaults() {
+}
+
+// #/components/schemas/gateway.updateChaptersBody/properties/chapters
+type GatewayUpdateChaptersBodyChapters = []GatewayChapterBody
+
+// #/components/schemas/gateway.updateInvoiceStatusBody
+type GatewayUpdateInvoiceStatusBody struct {
+	Status *string `form:"status,omitempty" json:"status,omitempty"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *GatewayUpdateInvoiceStatusBody) ApplyDefaults() {
+}
+
+// #/components/schemas/gateway.updateNameBody
+type GatewayUpdateNameBody struct {
+	FullName string `form:"full_name" json:"full_name"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *GatewayUpdateNameBody) ApplyDefaults() {
+}
+
+// #/components/schemas/gateway.updateOrgNameBody
+type GatewayUpdateOrgNameBody struct {
+	FullName string `form:"full_name" json:"full_name"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *GatewayUpdateOrgNameBody) ApplyDefaults() {
+}
+
+// #/components/schemas/gateway.updateOrgUsernameBody
+type GatewayUpdateOrgUsernameBody struct {
+	Username string `form:"username" json:"username"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *GatewayUpdateOrgUsernameBody) ApplyDefaults() {
+}
+
+// #/components/schemas/gateway.updateRoleBody
+type GatewayUpdateRoleBody struct {
+	Role string `form:"role" json:"role"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *GatewayUpdateRoleBody) ApplyDefaults() {
+}
+
+// #/components/schemas/gateway.updateRoleBody/properties/role
+type GatewayUpdateRoleBodyRole string
+
+const (
+	GatewayUpdateRoleBodyRoleAdmin  GatewayUpdateRoleBodyRole = "admin"
+	GatewayUpdateRoleBodyRoleMember GatewayUpdateRoleBodyRole = "member"
+)
+
+// #/components/schemas/gateway.updateUsernameBody
+type GatewayUpdateUsernameBody struct {
+	Username string `form:"username" json:"username"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *GatewayUpdateUsernameBody) ApplyDefaults() {
+}
+
+// #/components/schemas/gateway.updateVisibilityBody
+type GatewayUpdateVisibilityBody struct {
+	Visibility string `form:"visibility" json:"visibility"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *GatewayUpdateVisibilityBody) ApplyDefaults() {
+}
+
+// #/components/schemas/gateway.updateVisibilityBody/properties/visibility
+type GatewayUpdateVisibilityBodyVisibility string
+
+const (
+	Public   GatewayUpdateVisibilityBodyVisibility = "public"
+	Unlisted GatewayUpdateVisibilityBodyVisibility = "unlisted"
+	Private  GatewayUpdateVisibilityBodyVisibility = "private"
+)
+
+// #/components/schemas/gateway.upgradeSubscriptionBody
+type GatewayUpgradeSubscriptionBody struct {
+	StripePriceID *string `form:"stripe_price_id,omitempty" json:"stripe_price_id,omitempty"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *GatewayUpgradeSubscriptionBody) ApplyDefaults() {
+}
+
+// #/components/schemas/gateway.upsertPaymentMethodBody
+type GatewayUpsertPaymentMethodBody struct {
+	PaymentMethodID *string `form:"payment_method_id,omitempty" json:"payment_method_id,omitempty"`
+	SetAsDefault    *bool   `form:"set_as_default,omitempty" json:"set_as_default,omitempty"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *GatewayUpsertPaymentMethodBody) ApplyDefaults() {
+}
+
+// #/components/schemas/gateway.verifyEmailBody
+type GatewayVerifyEmailBody struct {
+	Code           string `form:"code" json:"code"`
+	VerificationID string `form:"verification_id" json:"verification_id"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *GatewayVerifyEmailBody) ApplyDefaults() {
+}
+
+// #/components/schemas/gateway.verifyOTPBody
+type GatewayVerifyOTPBody struct {
+	Code string `form:"code" json:"code"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *GatewayVerifyOTPBody) ApplyDefaults() {
+}
+
+// #/components/schemas/gateway.verifyTOTPLoginBody
+type GatewayVerifyTOTPLoginBody struct {
+	Code      string `form:"code" json:"code"`
+	SessionID string `form:"session_id" json:"session_id"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *GatewayVerifyTOTPLoginBody) ApplyDefaults() {
+}
+
+// #/components/schemas/imagesv1.DeleteResult
+type Imagesv1DeleteResult struct {
+	Deleted *bool   `form:"deleted,omitempty" json:"deleted,omitempty"`
+	ID      *string `form:"id,omitempty" json:"id,omitempty"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *Imagesv1DeleteResult) ApplyDefaults() {
+}
+
+// #/components/schemas/imagesv1.GetImageResponse
+type Imagesv1GetImageResponse struct {
+	AttachedToVideo *bool               `form:"attached_to_video,omitempty" json:"attached_to_video,omitempty"`
+	File            *Imagesv1ImageFile  `form:"file,omitempty" json:"file,omitempty"`
+	Height          *int                `form:"height,omitempty" json:"height,omitempty"`
+	ID              *string             `form:"id,omitempty" json:"id,omitempty"`
+	Thumbhash       *string             `form:"thumbhash,omitempty" json:"thumbhash,omitempty"`
+	Visibility      *Imagesv1Visibility `form:"visibility,omitempty" json:"visibility,omitempty"`
+	Width           *int                `form:"width,omitempty" json:"width,omitempty"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *Imagesv1GetImageResponse) ApplyDefaults() {
+	if s.File != nil {
+		s.File.ApplyDefaults()
+	}
+}
+
+// #/components/schemas/imagesv1.ImageFile
+type Imagesv1ImageFile struct {
+	Format    *string `form:"format,omitempty" json:"format,omitempty"`
+	ID        *string `form:"id,omitempty" json:"id,omitempty"`
+	Name      *string `form:"name,omitempty" json:"name,omitempty"`
+	ProjectID *string `form:"project_id,omitempty" json:"project_id,omitempty"`
+	Size      *int    `form:"size,omitempty" json:"size,omitempty"`
+	Status    *string `form:"status,omitempty" json:"status,omitempty"`
+	URL       *string `form:"url,omitempty" json:"url,omitempty"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *Imagesv1ImageFile) ApplyDefaults() {
+}
+
+// #/components/schemas/imagesv1.ImageSummary
+type Imagesv1ImageSummary struct {
+	CreatedAt  *string             `form:"created_at,omitempty" json:"created_at,omitempty"`
+	Format     *string             `form:"format,omitempty" json:"format,omitempty"`
+	Height     *int                `form:"height,omitempty" json:"height,omitempty"`
+	ID         *string             `form:"id,omitempty" json:"id,omitempty"`
+	Name       *string             `form:"name,omitempty" json:"name,omitempty"`
+	Size       *int                `form:"size,omitempty" json:"size,omitempty"`
+	Thumbhash  *string             `form:"thumbhash,omitempty" json:"thumbhash,omitempty"`
+	URL        *string             `form:"url,omitempty" json:"url,omitempty"`
+	Visibility *Imagesv1Visibility `form:"visibility,omitempty" json:"visibility,omitempty"`
+	Width      *int                `form:"width,omitempty" json:"width,omitempty"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *Imagesv1ImageSummary) ApplyDefaults() {
+}
+
+// #/components/schemas/imagesv1.ImageUploadInit
+type Imagesv1ImageUploadInit struct {
+	ExpiresAt *string `form:"expires_at,omitempty" json:"expires_at,omitempty"`
+	ImageID   *string `form:"image_id,omitempty" json:"image_id,omitempty"`
+	UploadURL *string `form:"upload_url,omitempty" json:"upload_url,omitempty"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *Imagesv1ImageUploadInit) ApplyDefaults() {
+}
+
+// #/components/schemas/imagesv1.ListImagesResponse
+type Imagesv1ListImagesResponse struct {
+	Images []Imagesv1ImageSummary `form:"images,omitempty" json:"images,omitempty"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *Imagesv1ListImagesResponse) ApplyDefaults() {
+}
+
+// #/components/schemas/imagesv1.ListImagesResponse/properties/images
+type Imagesv1ListImagesResponseImages = []Imagesv1ImageSummary
+
+// #/components/schemas/imagesv1.Visibility
+type Imagesv1Visibility int
+
+const (
+	Imagesv1VisibilityVisibility_VISIBILITY_UNSPECIFIED Imagesv1Visibility = 0
+	Imagesv1VisibilityVisibility_VISIBILITY_PUBLIC      Imagesv1Visibility = 1
+	Imagesv1VisibilityVisibility_VISIBILITY_UNLISTED    Imagesv1Visibility = 2
+	Imagesv1VisibilityVisibility_VISIBILITY_PRIVATE     Imagesv1Visibility = 3
+)
+
+// #/components/schemas/postsv1.DeleteResult
+type Postsv1DeleteResult struct {
+	Deleted *bool   `form:"deleted,omitempty" json:"deleted,omitempty"`
+	ID      *string `form:"id,omitempty" json:"id,omitempty"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *Postsv1DeleteResult) ApplyDefaults() {
+}
+
+// #/components/schemas/postsv1.ListPostsResponse
+type Postsv1ListPostsResponse struct {
+	Posts []Postsv1Post `form:"posts,omitempty" json:"posts,omitempty"`
+	Total *int          `form:"total,omitempty" json:"total,omitempty"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *Postsv1ListPostsResponse) ApplyDefaults() {
+}
+
+// #/components/schemas/postsv1.ListPostsResponse/properties/posts
+type Postsv1ListPostsResponsePosts = []Postsv1Post
+
+// #/components/schemas/postsv1.Post
+type Postsv1Post struct {
+	CreatedAt   *string           `form:"created_at,omitempty" json:"created_at,omitempty"`
+	CreatorID   *string           `form:"creator_id,omitempty" json:"creator_id,omitempty"`
+	Description *string           `form:"description,omitempty" json:"description,omitempty"`
+	FeedID      *string           `form:"feed_id,omitempty" json:"feed_id,omitempty"`
+	ID          *string           `form:"id,omitempty" json:"id,omitempty"`
+	Image       *Postsv1PostImage `form:"image,omitempty" json:"image,omitempty"`
+	ImageID     *string           `form:"image_id,omitempty" json:"image_id,omitempty"`
+	Type        *string           `form:"type,omitempty" json:"type,omitempty"`
+	Video       *Postsv1PostVideo `form:"video,omitempty" json:"video,omitempty"`
+	VideoID     *string           `form:"video_id,omitempty" json:"video_id,omitempty"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *Postsv1Post) ApplyDefaults() {
+	if s.Image != nil {
+		s.Image.ApplyDefaults()
+	}
+	if s.Video != nil {
+		s.Video.ApplyDefaults()
+	}
+}
+
+// #/components/schemas/postsv1.PostFile
+type Postsv1PostFile struct {
+	Format    *string `form:"format,omitempty" json:"format,omitempty"`
+	ID        *string `form:"id,omitempty" json:"id,omitempty"`
+	Name      *string `form:"name,omitempty" json:"name,omitempty"`
+	ProjectID *string `form:"project_id,omitempty" json:"project_id,omitempty"`
+	Size      *int    `form:"size,omitempty" json:"size,omitempty"`
+	Status    *string `form:"status,omitempty" json:"status,omitempty"`
+	URL       *string `form:"url,omitempty" json:"url,omitempty"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *Postsv1PostFile) ApplyDefaults() {
+}
+
+// #/components/schemas/postsv1.PostImage
+type Postsv1PostImage struct {
+	AttachedToVideo *bool            `form:"attached_to_video,omitempty" json:"attached_to_video,omitempty"`
+	File            *Postsv1PostFile `form:"file,omitempty" json:"file,omitempty"`
+	Height          *int             `form:"height,omitempty" json:"height,omitempty"`
+	ID              *string          `form:"id,omitempty" json:"id,omitempty"`
+	Thumbhash       *string          `form:"thumbhash,omitempty" json:"thumbhash,omitempty"`
+	Width           *int             `form:"width,omitempty" json:"width,omitempty"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *Postsv1PostImage) ApplyDefaults() {
+	if s.File != nil {
+		s.File.ApplyDefaults()
+	}
+}
+
+// #/components/schemas/postsv1.PostUploadInit
+type Postsv1PostUploadInit struct {
+	ContentID        *string `form:"content_id,omitempty" json:"content_id,omitempty"`
+	ContentUploadURL *string `form:"content_upload_url,omitempty" json:"content_upload_url,omitempty"`
+	PostID           *string `form:"post_id,omitempty" json:"post_id,omitempty"`
+	PosterID         *string `form:"poster_id,omitempty" json:"poster_id,omitempty"`
+	PosterUploadURL  *string `form:"poster_upload_url,omitempty" json:"poster_upload_url,omitempty"`
+	UploadExpires    *int    `form:"upload_expires,omitempty" json:"upload_expires,omitempty"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *Postsv1PostUploadInit) ApplyDefaults() {
+}
+
+// #/components/schemas/postsv1.PostVideo
+type Postsv1PostVideo struct {
+	Bitrate   *int              `form:"bitrate,omitempty" json:"bitrate,omitempty"`
+	Codec     *string           `form:"codec,omitempty" json:"codec,omitempty"`
+	Duration  *float32          `form:"duration,omitempty" json:"duration,omitempty"`
+	File      *Postsv1PostFile  `form:"file,omitempty" json:"file,omitempty"`
+	Framerate *string           `form:"framerate,omitempty" json:"framerate,omitempty"`
+	Hdr       *bool             `form:"hdr,omitempty" json:"hdr,omitempty"`
+	Height    *int              `form:"height,omitempty" json:"height,omitempty"`
+	ID        *string           `form:"id,omitempty" json:"id,omitempty"`
+	Poster    *Postsv1PostImage `form:"poster,omitempty" json:"poster,omitempty"`
+	Width     *int              `form:"width,omitempty" json:"width,omitempty"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *Postsv1PostVideo) ApplyDefaults() {
+	if s.File != nil {
+		s.File.ApplyDefaults()
+	}
+	if s.Poster != nil {
+		s.Poster.ApplyDefaults()
+	}
+}
+
+// #/components/schemas/projectsv1.ListProjectsResponse
+type Projectsv1ListProjectsResponse struct {
+	Projects []Projectsv1Project `form:"projects,omitempty" json:"projects,omitempty"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *Projectsv1ListProjectsResponse) ApplyDefaults() {
+}
+
+// #/components/schemas/projectsv1.ListProjectsResponse/properties/projects
+type Projectsv1ListProjectsResponseProjects = []Projectsv1Project
+
+// #/components/schemas/projectsv1.Project
+type Projectsv1Project struct {
+	CreatedAt    *string  `form:"created_at,omitempty" json:"created_at,omitempty"`
+	CustomDomain *string  `form:"custom_domain,omitempty" json:"custom_domain,omitempty"`
+	ID           *string  `form:"id,omitempty" json:"id,omitempty"`
+	Name         *string  `form:"name,omitempty" json:"name,omitempty"`
+	OrgID        *string  `form:"org_id,omitempty" json:"org_id,omitempty"`
+	Regions      []string `form:"regions,omitempty" json:"regions,omitempty"`
+	UpdatedAt    *string  `form:"updated_at,omitempty" json:"updated_at,omitempty"`
+	VideoQuality *string  `form:"video_quality,omitempty" json:"video_quality,omitempty"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *Projectsv1Project) ApplyDefaults() {
+}
+
+// #/components/schemas/sqlc.VideoQuality
+type SqlcVideoQuality string
+
+const (
+	VideoQualityBasic  SqlcVideoQuality = "basic"
+	VideoQualityShorts SqlcVideoQuality = "shorts"
+	VideoQualityPro    SqlcVideoQuality = "pro"
+)
+
+// #/components/schemas/types.CreateAPIKeyRequest
+type TypesCreateAPIKeyRequest struct {
+	ExpiringAt *string `form:"expiring_at,omitempty" json:"expiring_at,omitempty"`
+	Name       string  `form:"name" json:"name"`
+	ProjectID  string  `form:"project_id" json:"project_id"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *TypesCreateAPIKeyRequest) ApplyDefaults() {
+}
+
+// #/components/schemas/types.CreateClientCredentialRequest
+type TypesCreateClientCredentialRequest struct {
+	Alg  *string `form:"alg,omitempty" json:"alg,omitempty"`
+	Name string  `form:"name" json:"name"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *TypesCreateClientCredentialRequest) ApplyDefaults() {
+}
+
+// #/components/schemas/types.CreateFeedRequest
+type TypesCreateFeedRequest struct {
+	AllowImages *bool   `form:"allow_images,omitempty" json:"allow_images,omitempty"`
+	AllowVideos *bool   `form:"allow_videos,omitempty" json:"allow_videos,omitempty"`
+	Description *string `form:"description,omitempty" json:"description,omitempty"`
+	HasComments *bool   `form:"has_comments,omitempty" json:"has_comments,omitempty"`
+	HasLikes    *bool   `form:"has_likes,omitempty" json:"has_likes,omitempty"`
+	HasShares   *bool   `form:"has_shares,omitempty" json:"has_shares,omitempty"`
+	Name        string  `form:"name" json:"name"`
+	ProjectID   string  `form:"project_id" json:"project_id"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *TypesCreateFeedRequest) ApplyDefaults() {
+}
+
+// #/components/schemas/types.CreateProjectRequest
+type TypesCreateProjectRequest struct {
+	Name         string            `form:"name" json:"name"`
+	Regions      []string          `form:"regions,omitempty" json:"regions,omitempty"`
+	VideoQuality *SqlcVideoQuality `form:"video_quality,omitempty" json:"video_quality,omitempty"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *TypesCreateProjectRequest) ApplyDefaults() {
+}
+
+// #/components/schemas/types.CustomDomainRequest
+type TypesCustomDomainRequest struct {
+	CustomDomain string `form:"custom_domain" json:"custom_domain"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *TypesCustomDomainRequest) ApplyDefaults() {
+}
+
+// #/components/schemas/types.ExchangeRequest
+type TypesExchangeRequest struct {
+	APIKey string `form:"api_key" json:"api_key"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *TypesExchangeRequest) ApplyDefaults() {
+}
+
+// #/components/schemas/types.MintClientTokenRequest
+type TypesMintClientTokenRequest struct {
+	ClientID     string  `form:"client_id" json:"client_id"`
+	ClientSecret string  `form:"client_secret" json:"client_secret"`
+	ProjectID    *string `form:"project_id,omitempty" json:"project_id,omitempty"`
+	Subject      string  `form:"subject" json:"subject"`
+	TTLMinutes   *int    `form:"ttl_minutes,omitempty" json:"ttl_minutes,omitempty"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *TypesMintClientTokenRequest) ApplyDefaults() {
+}
+
+// #/components/schemas/types.MoveProjectRequest
+type TypesMoveProjectRequest struct {
+	TargetOrganizationID string `form:"target_organization_id" json:"target_organization_id"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *TypesMoveProjectRequest) ApplyDefaults() {
+}
+
+// #/components/schemas/types.RefreshRequest
+type TypesRefreshRequest struct {
+	RefreshToken string `form:"refresh_token" json:"refresh_token"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *TypesRefreshRequest) ApplyDefaults() {
+}
+
+// #/components/schemas/types.TokenResponse
+type TypesTokenResponse struct {
+	AccessToken  *string `form:"access_token,omitempty" json:"access_token,omitempty"`
+	ExpiresAt    *string `form:"expires_at,omitempty" json:"expires_at,omitempty"`
+	ExpiresIn    *int    `form:"expires_in,omitempty" json:"expires_in,omitempty"`
+	RefreshToken *string `form:"refresh_token,omitempty" json:"refresh_token,omitempty"`
+	TokenType    *string `form:"token_type,omitempty" json:"token_type,omitempty"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *TypesTokenResponse) ApplyDefaults() {
+}
+
+// #/components/schemas/types.UpdateFeedRequest
+type TypesUpdateFeedRequest struct {
 	AllowImages *bool   `form:"allow_images,omitempty" json:"allow_images,omitempty"`
 	AllowVideos *bool   `form:"allow_videos,omitempty" json:"allow_videos,omitempty"`
 	Description *string `form:"description,omitempty" json:"description,omitempty"`
@@ -300,206 +2302,255 @@ type GithubComRixlhqAPIInternalFeedsTypesUpdateFeedRequest struct {
 }
 
 // ApplyDefaults sets default values for fields that are nil.
-func (s *GithubComRixlhqAPIInternalFeedsTypesUpdateFeedRequest) ApplyDefaults() {
+func (s *TypesUpdateFeedRequest) ApplyDefaults() {
 }
 
-// #/components/schemas/github_com_rixlhq_api_internal_videos.VideoResponse
-type GithubComRixlhqAPIInternalVideosVideoResponse struct {
-	Bitrate   *int                              `form:"bitrate,omitempty" json:"bitrate,omitempty"`
-	Chapters  []Chapter                         `form:"chapters,omitempty" json:"chapters,omitempty"`
-	Codec     *string                           `form:"codec,omitempty" json:"codec,omitempty"`
-	Duration  *float32                          `form:"duration,omitempty" json:"duration,omitempty"`
-	File      *File                             `form:"file,omitempty" json:"file,omitempty"`
-	Framerate *string                           `form:"framerate,omitempty" json:"framerate,omitempty"`
-	Hdr       *bool                             `form:"hdr,omitempty" json:"hdr,omitempty"`
-	Height    *int                              `form:"height,omitempty" json:"height,omitempty"`
-	ID        *string                           `form:"id,omitempty" json:"id,omitempty"`
-	PlanType  *GithubComRixlhqAPIDBSqlcPlanType `form:"plan_type,omitempty" json:"plan_type,omitempty"`
-	Poster    *Image                            `form:"poster,omitempty" json:"poster,omitempty"`
-	Width     *int                              `form:"width,omitempty" json:"width,omitempty"`
+// #/components/schemas/types.UpdateProjectNameRequest
+type TypesUpdateProjectNameRequest struct {
+	Name string `form:"name" json:"name"`
 }
 
 // ApplyDefaults sets default values for fields that are nil.
-func (s *GithubComRixlhqAPIInternalVideosVideoResponse) ApplyDefaults() {
-	if s.File != nil {
-		s.File.ApplyDefaults()
-	}
-	if s.Poster != nil {
-		s.Poster.ApplyDefaults()
-	}
+func (s *TypesUpdateProjectNameRequest) ApplyDefaults() {
 }
 
-// #/components/schemas/github_com_rixlhq_api_internal_videos.VideoResponse/properties/chapters
-type GithubComRixlhqAPIInternalVideosVideoResponseChapters = []Chapter
-
-// #/components/schemas/github_com_rixlhq_api_internal_videos_handler_upload.CompleteRequest
-type GithubComRixlhqAPIInternalVideosHandlerUploadCompleteRequest struct {
-	VideoID *string `form:"video_id,omitempty" json:"video_id,omitempty"`
+// #/components/schemas/types.UpdateVideoQualityRequest
+type TypesUpdateVideoQualityRequest struct {
+	VideoQuality SqlcVideoQuality `form:"video_quality" json:"video_quality"`
 }
 
 // ApplyDefaults sets default values for fields that are nil.
-func (s *GithubComRixlhqAPIInternalVideosHandlerUploadCompleteRequest) ApplyDefaults() {
+func (s *TypesUpdateVideoQualityRequest) ApplyDefaults() {
 }
 
-// #/components/schemas/github_com_rixlhq_api_internal_videos_handler_upload.InitResponse
-type GithubComRixlhqAPIInternalVideosHandlerUploadInitResponse struct {
-	PosterID           *string `form:"poster_id,omitempty" json:"poster_id,omitempty"`
-	PosterPresignedURL *string `form:"poster_presigned_url,omitempty" json:"poster_presigned_url,omitempty"`
-	UploadExpires      *int    `form:"upload_expires,omitempty" json:"upload_expires,omitempty"`
-	VideoID            *string `form:"video_id,omitempty" json:"video_id,omitempty"`
-	VideoPresignedURL  *string `form:"video_presigned_url,omitempty" json:"video_presigned_url,omitempty"`
+// #/components/schemas/videosv1.AudioTrack
+type Videosv1AudioTrack struct {
+	Codec        *string `form:"codec,omitempty" json:"codec,omitempty"`
+	ID           *string `form:"id,omitempty" json:"id,omitempty"`
+	Label        *string `form:"label,omitempty" json:"label,omitempty"`
+	LanguageCode *string `form:"language_code,omitempty" json:"language_code,omitempty"`
+	VideoID      *string `form:"video_id,omitempty" json:"video_id,omitempty"`
 }
 
 // ApplyDefaults sets default values for fields that are nil.
-func (s *GithubComRixlhqAPIInternalVideosHandlerUploadInitResponse) ApplyDefaults() {
+func (s *Videosv1AudioTrack) ApplyDefaults() {
 }
 
-// #/components/schemas/github_com_rixlhq_api_internal_videos_types.ChapterInput
-type GithubComRixlhqAPIInternalVideosTypesChapterInput struct {
+// #/components/schemas/videosv1.Chapter
+type Videosv1Chapter struct {
 	StartTimeSec *float32 `form:"start_time_sec,omitempty" json:"start_time_sec,omitempty"`
 	Title        *string  `form:"title,omitempty" json:"title,omitempty"`
 }
 
 // ApplyDefaults sets default values for fields that are nil.
-func (s *GithubComRixlhqAPIInternalVideosTypesChapterInput) ApplyDefaults() {
+func (s *Videosv1Chapter) ApplyDefaults() {
 }
 
-// #/components/schemas/internal_images_handler.completeRequest
-type InternalImagesHandlerCompleteRequest struct {
-	AttachedToVideo *bool   `form:"attached_to_video,omitempty" json:"attached_to_video,omitempty"`
-	ImageID         *string `form:"image_id,omitempty" json:"image_id,omitempty"`
-}
-
-// ApplyDefaults sets default values for fields that are nil.
-func (s *InternalImagesHandlerCompleteRequest) ApplyDefaults() {
-}
-
-// #/components/schemas/internal_images_handler.initResponse
-type InternalImagesHandlerInitResponse struct {
-	ImageID       *string `form:"image_id,omitempty" json:"image_id,omitempty"`
-	PresignedURL  *string `form:"presigned_url,omitempty" json:"presigned_url,omitempty"`
-	UploadExpires *int    `form:"upload_expires,omitempty" json:"upload_expires,omitempty"`
+// #/components/schemas/videosv1.DeleteResult
+type Videosv1DeleteResult struct {
+	Deleted *bool   `form:"deleted,omitempty" json:"deleted,omitempty"`
+	ID      *string `form:"id,omitempty" json:"id,omitempty"`
 }
 
 // ApplyDefaults sets default values for fields that are nil.
-func (s *InternalImagesHandlerInitResponse) ApplyDefaults() {
+func (s *Videosv1DeleteResult) ApplyDefaults() {
 }
 
-// #/components/schemas/internal_images_handler.uploadInitRequest
-type InternalImagesHandlerUploadInitRequest struct {
-	Format *string `form:"format,omitempty" json:"format,omitempty"`
-	Name   *string `form:"name,omitempty" json:"name,omitempty"`
+// #/components/schemas/videosv1.GetVideoResponse
+type Videosv1GetVideoResponse struct {
+	Bitrate    *int                `form:"bitrate,omitempty" json:"bitrate,omitempty"`
+	Codec      *string             `form:"codec,omitempty" json:"codec,omitempty"`
+	Duration   *float32            `form:"duration,omitempty" json:"duration,omitempty"`
+	Framerate  *string             `form:"framerate,omitempty" json:"framerate,omitempty"`
+	Hdr        *bool               `form:"hdr,omitempty" json:"hdr,omitempty"`
+	Height     *int                `form:"height,omitempty" json:"height,omitempty"`
+	ID         *string             `form:"id,omitempty" json:"id,omitempty"`
+	Visibility *Videosv1Visibility `form:"visibility,omitempty" json:"visibility,omitempty"`
+	Width      *int                `form:"width,omitempty" json:"width,omitempty"`
 }
 
 // ApplyDefaults sets default values for fields that are nil.
-func (s *InternalImagesHandlerUploadInitRequest) ApplyDefaults() {
+func (s *Videosv1GetVideoResponse) ApplyDefaults() {
 }
 
-// #/components/schemas/internal_videos_handler_subtitles.languageResponse
-type InternalVideosHandlerSubtitlesLanguageResponse struct {
+// #/components/schemas/videosv1.Language
+type Videosv1Language struct {
 	Code *string `form:"code,omitempty" json:"code,omitempty"`
 	Name *string `form:"name,omitempty" json:"name,omitempty"`
 }
 
 // ApplyDefaults sets default values for fields that are nil.
-func (s *InternalVideosHandlerSubtitlesLanguageResponse) ApplyDefaults() {
+func (s *Videosv1Language) ApplyDefaults() {
 }
 
-// #/components/schemas/pagination.PaginatedResponse-Image
-type PaginationPaginatedResponseImage struct {
-	// Data contains the slice of items for the current request.
-	Data       []Image               `form:"data,omitempty" json:"data,omitempty"`
-	Pagination *PaginationPagination `form:"pagination,omitempty" json:"pagination,omitempty"`
-}
-
-// ApplyDefaults sets default values for fields that are nil.
-func (s *PaginationPaginatedResponseImage) ApplyDefaults() {
-	if s.Pagination != nil {
-		s.Pagination.ApplyDefaults()
-	}
-}
-
-// #/components/schemas/pagination.PaginatedResponse-Image/properties/data
-// Data contains the slice of items for the current request.
-type PaginationPaginatedResponseImageData = []Image
-
-// #/components/schemas/pagination.PaginatedResponse-Post
-type PaginationPaginatedResponsePost struct {
-	// Data contains the slice of items for the current request.
-	Data       []Post                `form:"data,omitempty" json:"data,omitempty"`
-	Pagination *PaginationPagination `form:"pagination,omitempty" json:"pagination,omitempty"`
+// #/components/schemas/videosv1.ListAudioTracksResponse
+type Videosv1ListAudioTracksResponse struct {
+	AudioTracks []Videosv1AudioTrack `form:"audio_tracks,omitempty" json:"audio_tracks,omitempty"`
 }
 
 // ApplyDefaults sets default values for fields that are nil.
-func (s *PaginationPaginatedResponsePost) ApplyDefaults() {
-	if s.Pagination != nil {
-		s.Pagination.ApplyDefaults()
-	}
+func (s *Videosv1ListAudioTracksResponse) ApplyDefaults() {
 }
 
-// #/components/schemas/pagination.PaginatedResponse-Post/properties/data
-// Data contains the slice of items for the current request.
-type PaginationPaginatedResponsePostData = []Post
+// #/components/schemas/videosv1.ListAudioTracksResponse/properties/audio_tracks
+type Videosv1ListAudioTracksResponseAudioTracks = []Videosv1AudioTrack
 
-// #/components/schemas/pagination.PaginatedResponse-Video
-type PaginationPaginatedResponseVideo struct {
-	// Data contains the slice of items for the current request.
-	Data       []Video               `form:"data,omitempty" json:"data,omitempty"`
-	Pagination *PaginationPagination `form:"pagination,omitempty" json:"pagination,omitempty"`
+// #/components/schemas/videosv1.ListLanguagesResponse
+type Videosv1ListLanguagesResponse struct {
+	Languages []Videosv1Language `form:"languages,omitempty" json:"languages,omitempty"`
 }
 
 // ApplyDefaults sets default values for fields that are nil.
-func (s *PaginationPaginatedResponseVideo) ApplyDefaults() {
-	if s.Pagination != nil {
-		s.Pagination.ApplyDefaults()
-	}
+func (s *Videosv1ListLanguagesResponse) ApplyDefaults() {
 }
 
-// #/components/schemas/pagination.PaginatedResponse-Video/properties/data
-// Data contains the slice of items for the current request.
-type PaginationPaginatedResponseVideoData = []Video
+// #/components/schemas/videosv1.ListLanguagesResponse/properties/languages
+type Videosv1ListLanguagesResponseLanguages = []Videosv1Language
 
-// #/components/schemas/pagination.PaginatedResponse-github_com_rixlhq_api_internal_feeds_types_FeedResponse
-type PaginationPaginatedResponseGithubComRixlhqAPIInternalFeedsTypesFeedResponse struct {
-	// Data contains the slice of items for the current request.
-	Data       []GithubComRixlhqAPIInternalFeedsTypesFeedResponse `form:"data,omitempty" json:"data,omitempty"`
-	Pagination *PaginationPagination                              `form:"pagination,omitempty" json:"pagination,omitempty"`
+// #/components/schemas/videosv1.ListSubtitlesResponse
+type Videosv1ListSubtitlesResponse struct {
+	Subtitles []Videosv1Subtitle `form:"subtitles,omitempty" json:"subtitles,omitempty"`
 }
 
 // ApplyDefaults sets default values for fields that are nil.
-func (s *PaginationPaginatedResponseGithubComRixlhqAPIInternalFeedsTypesFeedResponse) ApplyDefaults() {
-	if s.Pagination != nil {
-		s.Pagination.ApplyDefaults()
-	}
+func (s *Videosv1ListSubtitlesResponse) ApplyDefaults() {
 }
 
-// #/components/schemas/pagination.PaginatedResponse-github_com_rixlhq_api_internal_feeds_types_FeedResponse/properties/data
-// Data contains the slice of items for the current request.
-type PaginationPaginatedResponseGithubComRixlhqAPIInternalFeedsTypesFeedResponseData = []GithubComRixlhqAPIInternalFeedsTypesFeedResponse
+// #/components/schemas/videosv1.ListSubtitlesResponse/properties/subtitles
+type Videosv1ListSubtitlesResponseSubtitles = []Videosv1Subtitle
 
-// #/components/schemas/pagination.Pagination
-type PaginationPagination struct {
-	// Maximum number of items to return in a single request.
-	Limit *int `form:"limit,omitempty" json:"limit,omitempty"`
-	// Starting point of the result set.
-	Offset *int `form:"offset,omitempty" json:"offset,omitempty"`
-	// The total number of available items in the full list.
-	Total *int `form:"total,omitempty" json:"total,omitempty"`
+// #/components/schemas/videosv1.ListVideosResponse
+type Videosv1ListVideosResponse struct {
+	Videos []Videosv1VideoSummary `form:"videos,omitempty" json:"videos,omitempty"`
 }
 
 // ApplyDefaults sets default values for fields that are nil.
-func (s *PaginationPagination) ApplyDefaults() {
-	if s.Limit == nil {
-		v := 25
-		s.Limit = &v
-	}
-	if s.Offset == nil {
-		v := 0
-		s.Offset = &v
-	}
+func (s *Videosv1ListVideosResponse) ApplyDefaults() {
 }
 
-// #/paths//media/feeds/get/requestBody/content/application/json/schema
+// #/components/schemas/videosv1.ListVideosResponse/properties/videos
+type Videosv1ListVideosResponseVideos = []Videosv1VideoSummary
+
+// #/components/schemas/videosv1.Subtitle
+type Videosv1Subtitle struct {
+	Format       *string `form:"format,omitempty" json:"format,omitempty"`
+	ID           *string `form:"id,omitempty" json:"id,omitempty"`
+	Label        *string `form:"label,omitempty" json:"label,omitempty"`
+	LanguageCode *string `form:"language_code,omitempty" json:"language_code,omitempty"`
+	VideoID      *string `form:"video_id,omitempty" json:"video_id,omitempty"`
+	VttPath      *string `form:"vtt_path,omitempty" json:"vtt_path,omitempty"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *Videosv1Subtitle) ApplyDefaults() {
+}
+
+// #/components/schemas/videosv1.TrackUploadInit
+type Videosv1TrackUploadInit struct {
+	ExpiresAt *string                     `form:"expires_at,omitempty" json:"expires_at,omitempty"`
+	Targets   []Videosv1TrackUploadTarget `form:"targets,omitempty" json:"targets,omitempty"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *Videosv1TrackUploadInit) ApplyDefaults() {
+}
+
+// #/components/schemas/videosv1.TrackUploadInit/properties/targets
+type Videosv1TrackUploadInitTargets = []Videosv1TrackUploadTarget
+
+// #/components/schemas/videosv1.TrackUploadTarget
+type Videosv1TrackUploadTarget struct {
+	ID           *string `form:"id,omitempty" json:"id,omitempty"`
+	LanguageCode *string `form:"language_code,omitempty" json:"language_code,omitempty"`
+	ObjectKey    *string `form:"object_key,omitempty" json:"object_key,omitempty"`
+	UploadURL    *string `form:"upload_url,omitempty" json:"upload_url,omitempty"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *Videosv1TrackUploadTarget) ApplyDefaults() {
+}
+
+// #/components/schemas/videosv1.UploadAck
+type Videosv1UploadAck struct {
+	Count *int  `form:"count,omitempty" json:"count,omitempty"`
+	Ok    *bool `form:"ok,omitempty" json:"ok,omitempty"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *Videosv1UploadAck) ApplyDefaults() {
+}
+
+// #/components/schemas/videosv1.UploadVideoThumbnailResponse
+type Videosv1UploadVideoThumbnailResponse struct {
+	ThumbnailURL *string `form:"thumbnail_url,omitempty" json:"thumbnail_url,omitempty"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *Videosv1UploadVideoThumbnailResponse) ApplyDefaults() {
+}
+
+// #/components/schemas/videosv1.VideoChapters
+type Videosv1VideoChapters struct {
+	Chapters []Videosv1Chapter `form:"chapters,omitempty" json:"chapters,omitempty"`
+	VideoID  *string           `form:"video_id,omitempty" json:"video_id,omitempty"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *Videosv1VideoChapters) ApplyDefaults() {
+}
+
+// #/components/schemas/videosv1.VideoChapters/properties/chapters
+type Videosv1VideoChaptersChapters = []Videosv1Chapter
+
+// #/components/schemas/videosv1.VideoSummary
+type Videosv1VideoSummary struct {
+	Codec      *string             `form:"codec,omitempty" json:"codec,omitempty"`
+	CreatedAt  *string             `form:"created_at,omitempty" json:"created_at,omitempty"`
+	Duration   *float32            `form:"duration,omitempty" json:"duration,omitempty"`
+	Height     *int                `form:"height,omitempty" json:"height,omitempty"`
+	ID         *string             `form:"id,omitempty" json:"id,omitempty"`
+	Name       *string             `form:"name,omitempty" json:"name,omitempty"`
+	Size       *int                `form:"size,omitempty" json:"size,omitempty"`
+	Visibility *Videosv1Visibility `form:"visibility,omitempty" json:"visibility,omitempty"`
+	Width      *int                `form:"width,omitempty" json:"width,omitempty"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *Videosv1VideoSummary) ApplyDefaults() {
+}
+
+// #/components/schemas/videosv1.VideoUploadInit
+type Videosv1VideoUploadInit struct {
+	ExpiresAt       *string `form:"expires_at,omitempty" json:"expires_at,omitempty"`
+	PosterID        *string `form:"poster_id,omitempty" json:"poster_id,omitempty"`
+	PosterUploadURL *string `form:"poster_upload_url,omitempty" json:"poster_upload_url,omitempty"`
+	VideoID         *string `form:"video_id,omitempty" json:"video_id,omitempty"`
+	VideoUploadURL  *string `form:"video_upload_url,omitempty" json:"video_upload_url,omitempty"`
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *Videosv1VideoUploadInit) ApplyDefaults() {
+}
+
+// #/components/schemas/videosv1.Visibility
+type Videosv1Visibility int
+
+const (
+	Videosv1VisibilityVisibility_VISIBILITY_UNSPECIFIED Videosv1Visibility = 0
+	Videosv1VisibilityVisibility_VISIBILITY_PUBLIC      Videosv1Visibility = 1
+	Videosv1VisibilityVisibility_VISIBILITY_UNLISTED    Videosv1Visibility = 2
+	Videosv1VisibilityVisibility_VISIBILITY_PRIVATE     Videosv1Visibility = 3
+)
+
+// #/paths//billing/webhooks/stripe/post/requestBody/content/application/json/schema
+type PostBillingWebhooksStripeRequest struct {
+}
+
+// ApplyDefaults sets default values for fields that are nil.
+func (s *PostBillingWebhooksStripeRequest) ApplyDefaults() {
+}
+
+// #/paths//projects/{projectId}/feeds/get/requestBody/content/application/json/schema
 type ListFeedsJSONRequest struct {
 }
 
@@ -507,7 +2558,7 @@ type ListFeedsJSONRequest struct {
 func (s *ListFeedsJSONRequest) ApplyDefaults() {
 }
 
-// #/paths//media/feeds/{feedId}/delete/requestBody/content/application/json/schema
+// #/paths//projects/{projectId}/feeds/{feedId}/delete/requestBody/content/application/json/schema
 type DeleteFeedJSONRequest struct {
 }
 
@@ -515,95 +2566,288 @@ type DeleteFeedJSONRequest struct {
 func (s *DeleteFeedJSONRequest) ApplyDefaults() {
 }
 
-// #/paths//media/feeds/{feedId}/delete/responses/200/content/application/json/schema
-type DeleteFeedJSONResponse = map[string]string
+// #/paths//projects/{projectId}/feeds/{feedId}/get/requestBody/content/application/json/schema
+type GetFeedJSONRequest struct {
+}
 
-// #/paths//media/images/{imageId}/delete/responses/200/content/application/json/schema
-type DeleteImageJSONResponse = map[string]string
-
-// #/paths//media/videos/languages/get/responses/200/content/application/json/schema
-type ListLanguagesJSONResponse = []InternalVideosHandlerSubtitlesLanguageResponse
+// ApplyDefaults sets default values for fields that are nil.
+func (s *GetFeedJSONRequest) ApplyDefaults() {
+}
 
 // Base64-encoded, gzip-compressed OpenAPI spec.
 var openAPISpecJSON = []string{
-	"H4sIAAAAAAAC/+xde3PbOJL/358C5bs5z7gsWZKlxFFt9s6J44l2khnHch63V1cKRLZEjEmABkDbSu6+",
-	"+xYefEmkSMnOxHY0VVNW+Gg0uhv96242QYcFIaNApehvISQcDwKsfyJ0FLmEnXPsXJh/IxRyFgKXBER8",
-	"BCGHA5bgjrBMjyEENzgIfeij7U6r02u0O41O+7zd6bda/Vbrn9uZK+UshD4SkhM6TQ5PGA9KCAbhQdXd",
-	"xC2884A+vXp20Q06YRUBH4/BL6QxDDElwqsmQKcRnsLIYS4UEgLReDWsIkNxUHy3MGyMsFJRs4ZIBPlS",
-	"TKnT6h72nj5ZuJ9QCVPgyfGIFwvEkzIU/f19x6VNTm78JmH7mquRVJYj9kPO/gRHjoi7f0VcYOqHnnwj",
-	"1UedGcQ3F3Jxc0g7Ye/q2cXT5WTMITZWHM3Z+DH4IGGZpQcgBJ4Wi1HTQXrKyNWU3EqVSCwjUUiNXaw4",
-	"jZceDiXwZdy7EceSMDoqN+7tVqff6VUuTqDuSJIARgKcQjrtbm+BBo2CccachMRcLqfSqqIhifSLtTGg",
-	"kjM3ctR8V5TkCfHh1u6u1W602ufa193W3eErMlnT352EV2+uZ8dvL6O1/QzjZEoo9pt/hjCtopKu9EJa",
-	"Ly67s4N3Lw4Oh2s7q3ZNZ7W4tP6dw6SPdv5tP8W7fQt2+0rlQ33HTtGgHLA7S/1g6N69/qucKwnwFITx",
-	"rw4L9lNR7tdVcqGhD3NyAhoF8e8GikKfYTclEB9JHFtDKdwBIbLXhBxCzLNHsuJrIOCc8a1SLm8aiomG",
-	"w4IgDknMfym3rxSFviGEPByGQMHdQxPiAyICOYzzKJQFN54m3PYRFgKkvjziHKj0Z5nJoD+klzGmlMKZ",
-	"mko/GUrPDEmGHEZFFEDBHe+tyPpWeGhCFG5nwGH+Ws2evTjHn5nqgqiuMFerV6SKK6BYei6jzCJBFZ6c",
-	"V/CcfAqOv0qUPggyAFrkXrGU2PHAHUk20ohfuC4m2BewYO9jxnzAqcOfkDw8VPmAdPV7QKaeLHFBh61K",
-	"/1PiAU+HvcHb39jJm6DKIUgvCsYeFl4xD++c4et3Z9TrPjv40HUHXhc+eW2ve/GP94MqytfElSVUn3Wq",
-	"ZrbgRE6ZkH85WmqijJfhzMuzw5o444JwOAlVlFBI6e0M4WsQLAAUMiErURzALWPq5Lgu+N3adkgwF6Qu",
-	"s3u9IFPDD31MR5pqzfunRHrReOSwYKTQybsc4ZCM3PFIXPpO89TH9HwWQiGuTjika3iVMZXRlVLVTuPb",
-	"ovWCX1pdQGpZcYp94+NE84P6cwYiZFQk8ypcbecZQeUBW+s9+VdWDuVAu4ge8RiDHLX46IeE6jAa5+Lv",
-	"v6w0ULI+esGzi8Owc/X0cv3k/hWd+neT3NPG+/WTezBsjEQ0Fk3B5S3C5U73ThN7YZVektWrWTdSRdTh",
-	"/dtk9bFx3i6nj6l8j4T+vXZcNq0XZ3AZQQXS2kuzwxMJQe7AHbgqjQ6iaTkb0DCSOwtzw5zjWeZoRMll",
-	"BAPNTi54q5y38YjfeOJ2uFvM41sZ8ocs1BTNfkwkxzJnv8XL/J6ISblMp18ZmNlaVb+qBLR+iD/hOIBi",
-	"0c0x47m8X5lrLGYMdTKD4jLK94rBVIwLfM3IcSGvqJU/aPs2qeiAElnDzymNj0qhM5g19EJsBmG3Vpw8",
-	"WlJ6+zOc1oOvywj7RM7uRl9aJO8MxUKdCY9xKewZDpcR4eCmAVwioDKZ1zOX4hgzYy+6/JP8diIhWZCe",
-	"wrMRFqMZi0bTtaJQy8VJdrz44Glm3PjYy/z4yaV4diT+m0W/shpTz0q+ePpjLIiT/CuniKw4VplpdtAX",
-	"OfLZM8P8UNlTsTQq0FvXy0RTl2LmYTWbB6OhxNTF3LUVNm6vRRxkxCm4aDxD0gN0dDpYhspzoXFuiNfn",
-	"56c2WtIXFll5t1VdZnFBYuKL0nH+0H+xH1+I8JhFUnOfrUPmxj33QE1ILWwXDY4REYgyia6wTyoDQE20",
-	"lBst+jjgtKfGhE7RtYclugYq0TVndFr8QEMzoJc7VFUiaq74xDQmAG4S1+mU7QTAreGLse+z65EpTldD",
-	"pLnaRJHVV5fUZooRGovRYsm4FKqxGPnkAmpeKjzM61w7j0krPCIpuHTRr2dceiND5w50brRdHWl/S3UX",
-	"lwpWqdrdX8uoEfPdrfGU1b3u2FeYXG3jK76Jr1jqAFbVWlGVcZNVbrLKR5pV1itkeZi6PvCRedjafMkU",
-	"8xJq+LKltZ4Pg2cfPr27+fjp3d163mKuTdZcvaKNFka3frhk6YQcBJlScEe3aF1IR/3PT42j4EvjyJ8y",
-	"TqQXPD/6OOw2Xr89etkYvj7q9J78h7ngJQcXqCTYf3702+Do1aejt6dvXv3UOem0Or3W4UH7p85JJBqA",
-	"hWyo3+Lgp84JvhbdkQ2cLZ1jLOF5fM95u3XQarX+ac+9ugkJB/H84EmrZQ8N9VRfA3aBi+ceS+ioE1hG",
-	"HJ6PO51DdwzOodNutQ6dw5bTftKBdqfdgm6vdeA6ANhtQ9ftur1eNXor3Y7AcFJc2n/SbT171uvUyJLu",
-	"xFpjMvUVbzGnSPHpoBvF394jLBbklzmC8sa7ej12dfhOODSLP/ZZygzquti77AMxhb5bur7akyQ1PfKd",
-	"cKVIbzzxmgvyaa897rrPnh4+PWh3J+4TF//Vzrm2UUUrlchvVdJeVlvXXDUriZRPay6ISZ4nN+Nn6rWe",
-	"+M3VFtfNqBfYDPGUUJ0iNE/Nz7Qw0qhsXXOxxKXFv2MsMXIYlZhQoSuQwicOIDYx+ZJSmj5sG/7iSl9z",
-	"/cRqLpReI61K5VE3fF+UIGF0p0wo6SVaeIkM5ua+mp6qWtLum5oUvz+eliofbN83NWmGfzw91S8HjuqW",
-	"ke+bZteslP8gtpBhsUiZPgmIzGtzgiNf9lGnV8bcW3xDgiiwqUaqWsnsQ0ZEKMJIEDr1oUjBmQa3bIQV",
-	"GLoLhwm1hytTZTaZCCieTqtsNkOVUBE6RSEjVKrZGEGLyJdIQDHjvUIGq3N5yST2SxfPuQfmioxo8RUm",
-	"Ph77YIVMqOZvEvk+8km5XNdicM6eBDgRJ3I2VDYcW81RSH6D2VGU1vVycxjYdYeOTgfoAmbadAXwK+JA",
-	"Q7KG/YkcFgQRJY4xVkuJ0D7ydHKwlYkC0afG0emg8RvMcmxizYg+9AIwT2uUeZnOQkDb5oJtNGG+z67N",
-	"Q3CMRIgdQJi66B8fz5FkF1DFiZo24+QLzryZluMGbsz0j5mj5ZXjZXt7y/Rrql+ETjSAamfpWKOFABO/",
-	"j0QUhozL/4pzva2Ug7PBpzdoaM5vxf2fSY6YJIciuSLHwf819D27uy8i4rsIo5BdA59EvikPIbgJgROg",
-	"DqAJZwFitOFCoCQkJAccqHUiGXJnFAfEQYI5BPu6cV6gayK9dNkfnQ6au7tbejjNs8kZhB0ofVtnDxE6",
-	"BaF9nRpo6rOxfuTvkyvgMyQYmrEIuYzuSOThK7VEjJY+qgHHEfElobHIjKfkmAqHuZq6kIzjqVGzkDxy",
-	"VJbpogBcgg3ne+iPiGt7DfAFCEQkAiz0m0GWC+SRqdewbUL2VqU3BWBYIuFgHxRPCuoS9LQW4/vojEw9",
-	"KdAZKOO3fajFapPAA9Fgk3iZbMUVHCND07NxBVwYe+o0W9tbLASKQ9JHB812s7UVYulp09vXfO7rKRqO",
-	"pqlvzFnFGyKkQNiPNRmjDXYkuYL4uaVRcAZhLCkFKvrAwO1rl6RQNu51CTHHAWQfMTXmxw5I2g+Rvtac",
-	"oo9aipcR8Fk+NzTQldbFNM5WI9ltQWaO/T804mwtefm1jH2Wv3MJ/2u5cgu7L5g7y2be2mazo+Aw9K0X",
-	"3v9T5OOZIq4Kww6UtBllQovtTqu1nb21YPSq8cs4WDXWun1EXBqq/fFbOuPu95rxGs1jpRN6gV10Nten",
-	"tN1ttR/+zN5TbPE78zLAdrd18PCndsL4mLgupFXz7d5jMMYknBwq6OToVabvLw5PU2QxYZ6OTdH//G98",
-	"WRQEmM8MzBmEiyM3PM2+d5ucCTMlqBw3prtOIIwoXGtSKKIuFKFlITo6SXfeX+Cl7yhnXugo3JkbJ2+H",
-	"Sia2XXPelGI9zDdBVhNImmmQ5BEshZz76abqFCEKLM3dQMsGWjbQcv+hxSxXZBLKpeiSzcr2v6o/A/f/",
-	"zWVu7m3HfFlVnxJ2gLgIVANxDM0M4lQmZNoBD44XU5qTLrhng87Bpze53Eblm3OpjZnVcu9dpP+SNsrH",
-	"nMZg1yXmJYfTgupsxTPSJRPZpCkbLHkYWNJtdR/+vH5nEp2wiLobjCzFSINhdTCyvFJ5BpITuDL7uQjz",
-	"nEmR26tdnHyYMNi4iydw6G9j/ne0u3tsC4u7u5lBP3d6nx9uGbbyIZ6e+zlThqWsBFAnfl6R5x+pezu9",
-	"PXUT+mxqtJ+VXJV8CiSIPrc+38vq70Mpx863zzzuoCV+D3RivAti3FhHxh89VgQRBkGyL+7mK3NzLr2q",
-	"RhcVI4R5qU0gTBHcEKGdwoo5U5S8F7fJmb5RUXHh1cOlRUVztV01tykuLiW0QpGx9TiKjJuccJMTbnLC",
-	"TU74/XJC45DXrpvuf1VBQ1JArcwasQ4yTGuTxoDxDBEpUujOxQFTeBzZogqxC5k77QlZjzkj5juKTu4R",
-	"ov5Y2UcJPD5CX5s4mF9B2lW/hnexGxWL/a/2V31PM5fMxP2m4JAJceIdkOtXrV7MXppbHoVDsnMp5O/l",
-	"E17TJyU62VTYNhW2TYVtU2ErqrDtxW5C/96U2+bLbeNZLKA6+Jjd/qk62PZ985J85qUv7PvAd0RFZ3m6",
-	"iwB1kWDG79gG/1KI1K/L1m47/z3164bF1LH/bB0D6rT2lBdVDvSXWzvpGi62iCdxQcKUoxp8VLq9Goyc",
-	"EPBdPTrjUpnIz+n2bnt6nD29afleZp+yas4E4/JWmDxU3DDuAkc/Y+Hs6bM1JMLd7KeFHlyOUv1W+4/n",
-	"3cu9+Kbad7+nduQ4IARygRJwfyTwLamMlTaqz0FnHjELwTpBwBxa73/Vf+t0GQ7ZRNrzCFPDgXL/g2P0",
-	"c4D5hX41Dov4ewq/LOk4zH5+pBKM9cXZbLAk47MTeZhlqE2n322dPpk3k42zf5jO/lGUHI3TokyiySN8",
-	"yHOCiQ+ufQVa4UH261SrYNnx4u0lqFUnpcyAknluo/ExU1ld1texwvOcBURKvynXjm7q1ScfNFqttDHV",
-	"Bn428LPpLNhAz/fIojLb0RSgz68g60EPQjcNXSgyD0byGZTZvXE/3v60X/GSsL1Mp232S8B2uxNd0DS1",
-	"NH3WuBQODuNu8QvDlpbm1Hxn6Ts3+dXcG7ain08Lxd5CGC34LsoqTX1V1O5/Z98PCqlWUWjMMl9o38Dq",
-	"poR3D/Ke2KFZF75G6pMAgXHzOTq1KncWdwiNt+grxZwBJZJgn3zRPW7xltLo/dmb5MP1Kk+K06cJMftV",
-	"LeCNGur+Y83Cbsp10IbEIsJ3hTgVFO8/6tTZAn0DShtQ2oDSfQElkvr5tWEpgxUrA5PZ/33/q/67St+1",
-	"2fXxW5ft9CbPhWW7DwekZtujndrjK9st7ID9Y7jzq3mb2LjyTdnuu8zLeKdN2a5e2c5iRiEsaUkuK9xZ",
-	"nIq/SlLRsqiG84nQXc22zRBclNxstrCOP3VS1n/4Jr78e/n+gm3zV0gBan/ZZaekKWF+9/xidMn3uKSb",
-	"m8fjpVJfpnhjYqK/1cjvo4xDkn4facvcOhci7MR7X8/tYZ3ufC2au7t/G/O/q/91/yvCHEwXIbjIYb4P",
-	"jqJlOGQT/X6V0N2IJutW5qKLvIRO0RVwSRwcb7DtYM4iAb4wG1MTELor2TIhSQA+oSBMIPQKO555eyv5",
-	"osKMRdxuQP2zoci4CeN+0cVlFV5hoclJvcu1xC6WuKm0ZuIb09K7KBWb1DLqwJ7d7RuFwCfgSH+GMJ1d",
-	"e8AhI5uzwac3OztCt5L6PpkCtd8gSLb2RiEJ9XwQptiffQHLv2FcsRvv1G123VaCY6EkAfaR3Wx7K24D",
-	"VqwwHmDqQBN9BLuduOkq1nWWGyKTzcIdTJOtu3E8CxT6eDbGzoXZaT3d6Rz0PuNK9hkxWUtblNOxpTvB",
-	"Qu5lJGS+2qSEbj/UlZcUwpFkAda24JtpxTuimyhcT9zWEvYsNaV3u9v3npbCuRcF49dYeGgK1Dqgpt5j",
-	"nKTPMpS5mp3G0RXBSEncbqr+8vj3pBDkAvZRJJSnTkSRmb+N/P8VAAD//7pobdxfmgAA",
+	"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",
 }
 
 // decodeOpenAPISpec decodes and decompresses the embedded spec.
