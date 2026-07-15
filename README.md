@@ -40,6 +40,22 @@ func main() {
 
 `sdk.New(apiKey, opts...)` returns a Client with three resource fields — `client.Feeds`, `client.Images`, `client.Videos` — each a typed client whose methods return parsed models and a Go error.
 
+## Uploading files
+
+Uploads are two steps: ask the API for a presigned upload URL, then send the
+bytes straight to storage with `client.Upload` / `client.UploadFile`.
+
+```go
+// 1. Obtain a presigned upload_url from the relevant API call, then:
+err := client.UploadFile(ctx, uploadURL, "avatar.png")
+// or stream from any reader with a known size:
+err = client.Upload(ctx, uploadURL, reader, size, sdk.WithContentType("image/png"))
+```
+
+`UploadFile` derives the `Content-Type` from the file extension; pass
+`sdk.WithContentType` to override it. The API completes the upload asynchronously
+once storage confirms the object, so no explicit "complete" call is required.
+
 ## Configuration
 
 ```go

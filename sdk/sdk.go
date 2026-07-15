@@ -19,6 +19,8 @@ type Client struct {
 	Feeds  *feeds.SimpleClient
 	Images *images.SimpleClient
 	Videos *videos.SimpleClient
+
+	httpClient *http.Client
 }
 
 func New(apiKey string, opts ...Option) (*Client, error) {
@@ -43,7 +45,12 @@ func New(apiKey string, opts ...Option) (*Client, error) {
 		return nil, err
 	}
 
-	return &Client{Feeds: feedsCli, Images: imagesCli, Videos: videosCli}, nil
+	httpClient := cfg.httpClient
+	if httpClient == nil {
+		httpClient = http.DefaultClient
+	}
+
+	return &Client{Feeds: feedsCli, Images: imagesCli, Videos: videosCli, httpClient: httpClient}, nil
 }
 
 type Option func(*config)
