@@ -41,10 +41,11 @@ jobs:
     if: ${{ needs.release-please.outputs.releases_created == 'true' }}
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v7
       - name: Setup Go
         uses: actions/setup-go@v7
         with:
-          go-version: '1.26.2'
+          go-version-file: "go.mod"
       - name: Warm pkg.go.dev
         run: |
           tag='${{ needs.release-please.outputs.tag_name }}'
