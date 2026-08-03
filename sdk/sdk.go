@@ -16,9 +16,10 @@ import (
 const baseURL = "https://api.rixl.com"
 
 type Client struct {
-	Feeds  *feeds.SimpleClient
-	Images *images.SimpleClient
-	Videos *videos.SimpleClient
+	Feeds       *feeds.SimpleClient
+	Images      *images.SimpleClient
+	Videos      *videos.SimpleClient
+	Credentials *CredentialsClient
 
 	httpClient *http.Client
 }
@@ -53,7 +54,13 @@ func New(apiKey string, opts ...Option) (*Client, error) {
 		httpClient = http.DefaultClient
 	}
 
-	return &Client{Feeds: feedsCli, Images: imagesCli, Videos: videosCli, httpClient: httpClient}, nil
+	return &Client{
+		Feeds:       feedsCli,
+		Images:      imagesCli,
+		Videos:      videosCli,
+		Credentials: &CredentialsClient{baseURL: baseURL, httpClient: httpClient, editors: cfg.editors},
+		httpClient:  httpClient,
+	}, nil
 }
 
 type Option func(*config)

@@ -16,15 +16,21 @@ const mintPath = "/platform/clientauth/v1/token"
 
 const refreshLeeway = 60 * time.Second
 
+// ClientCredentials is a client ID/secret pair that mints short-lived tokens
+// scoped to one of your end users.
 type ClientCredentials struct {
 	ClientID     string
 	ClientSecret string
-	Subject      string
-	ProjectID    string
-	TTL          time.Duration
-	Scopes       []Scope
-	BaseURL      string
-	HTTPClient   *http.Client
+	// Subject is your own identifier for the end user the token acts for.
+	Subject   string
+	ProjectID string
+	// TTL is the requested token lifetime, 1-15 minutes. Defaults to 15.
+	TTL time.Duration
+	// Scopes are the permissions the credential is expected to hold. They are
+	// validated locally; the API grants whatever the credential's policies allow.
+	Scopes     []Scope
+	BaseURL    string
+	HTTPClient *http.Client
 }
 
 func (cc ClientCredentials) validate() error {
@@ -45,6 +51,7 @@ func (cc ClientCredentials) validate() error {
 	return nil
 }
 
+// TokenSource mints and caches client tokens. It is safe for concurrent use.
 type TokenSource struct {
 	creds ClientCredentials
 
@@ -53,6 +60,7 @@ type TokenSource struct {
 	expires time.Time
 }
 
+// NewTokenSource validates creds and returns a token source that mints lazily.
 func NewTokenSource(creds ClientCredentials) (*TokenSource, error) {
 	if err := creds.validate(); err != nil {
 		return nil, err
@@ -66,12 +74,14 @@ func NewTokenSource(creds ClientCredentials) (*TokenSource, error) {
 	return &TokenSource{creds: creds}, nil
 }
 
+// Scopes returns the scopes the credential is expected to hold.
 func (ts *TokenSource) Scopes() []Scope {
 	out := make([]Scope, len(ts.creds.Scopes))
 	copy(out, ts.creds.Scopes)
 	return out
 }
 
+// Token returns a cached token, re-minting when it nears expiry.
 func (ts *TokenSource) Token(ctx context.Context) (string, error) {
 	ts.mu.Lock()
 	defer ts.mu.Unlock()
@@ -160,6 +170,8 @@ func (ts *TokenSource) mint(ctx context.Context) (string, time.Time, error) {
 	return out.AccessToken, expires, nil
 }
 
+// WithClientCredentials authenticates requests with tokens minted from creds,
+// replacing any API key passed to New. Invalid credentials are reported by New.
 func WithClientCredentials(creds ClientCredentials) Option {
 	return func(c *config) { c.creds = &creds }
 }
@@ -180,6 +192,8 @@ func resolveCredentials(cfg *config) error {
 	return nil
 }
 
+// WithTokenSource authenticates requests with tokens from ts, letting several
+// clients share one cached token.
 func WithTokenSource(ts *TokenSource) Option {
 	return func(c *config) {
 		c.editors = []editorFn{tokenSourceEditor(ts)}
