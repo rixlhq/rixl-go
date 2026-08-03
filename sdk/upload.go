@@ -23,8 +23,9 @@ func WithContentType(contentType string) UploadOption {
 	return func(c *uploadConfig) { c.contentType = contentType }
 }
 
-// Upload PUTs body to a presigned upload URL obtained from the RIXL API. size
-// must be the exact number of bytes in body. Upload does not close body.
+// Upload PUTs body to a presigned upload URL. size must be the exact number of
+// bytes in body. If body implements io.Closer, http.Client.Do closes it; wrap
+// with io.NopCloser to keep a caller-owned reader open.
 func (c *Client) Upload(ctx context.Context, presignedURL string, body io.Reader, size int64, opts ...UploadOption) error {
 	cfg := uploadConfig{}
 	for _, opt := range opts {
@@ -47,7 +48,7 @@ func (c *Client) Upload(ctx context.Context, presignedURL string, body io.Reader
 	if err != nil {
 		return fmt.Errorf("upload to presigned url: %w", err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
 		snippet, _ := io.ReadAll(io.LimitReader(resp.Body, 2048))
@@ -63,7 +64,8 @@ func (c *Client) UploadFile(ctx context.Context, presignedURL, path string, opts
 	if err != nil {
 		return fmt.Errorf("open upload file: %w", err)
 	}
-	defer f.Close()
+
+	defer func() { _ = f.Close() }()
 
 	info, err := f.Stat()
 	if err != nil {
