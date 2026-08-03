@@ -13,7 +13,11 @@ import (
 	"time"
 )
 
-const credentialsPath = "/platform/clientauth/v1/credentials"
+const (
+	credentialsPath = "/platform/clientauth/v1/credentials"
+	// algEdDSA is the only signing algorithm the API accepts.
+	algEdDSA = "EdDSA"
+)
 
 // CredentialStatus is the lifecycle state of a client credential.
 type CredentialStatus string
@@ -53,7 +57,7 @@ type ListCredentialsParams struct {
 }
 
 // CreateCredentialParams describes a credential to create. Alg defaults to
-// EdDSA when empty; it is the only algorithm the API accepts.
+// EdDSA when empty.
 type CreateCredentialParams struct {
 	OrgID string
 	Name  string
@@ -110,8 +114,8 @@ func (c *CredentialsClient) Create(ctx context.Context, params CreateCredentialP
 	if len(params.Name) > 64 {
 		return nil, fmt.Errorf("credentials: Name must be at most 64 characters, got %d", len(params.Name))
 	}
-	if params.Alg != "" && params.Alg != "EdDSA" {
-		return nil, fmt.Errorf("credentials: Alg must be EdDSA, got %q", params.Alg)
+	if params.Alg != "" && params.Alg != algEdDSA {
+		return nil, fmt.Errorf("credentials: Alg must be %s, got %q", algEdDSA, params.Alg)
 	}
 
 	body := struct {

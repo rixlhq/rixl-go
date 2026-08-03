@@ -27,14 +27,17 @@ func mintServer(t *testing.T, handler func(w http.ResponseWriter, r *http.Reques
 	return srv
 }
 
-func writeToken(w http.ResponseWriter, token string, ttl time.Duration) {
+func writeToken(t *testing.T, w http.ResponseWriter, token string, ttl time.Duration) {
+	t.Helper()
 	w.Header().Set("Content-Type", "application/json")
-	_ = json.NewEncoder(w).Encode(mintResponse{
+	if err := json.NewEncoder(w).Encode(mintResponse{
 		AccessToken: token,
 		TokenType:   "Bearer",
 		ExpiresIn:   int64(ttl.Seconds()),
 		ExpiresAt:   time.Now().Add(ttl),
-	})
+	}); err != nil {
+		t.Errorf("encode token: %v", err)
+	}
 }
 
 func testCreds(srv *httptest.Server) ClientCredentials {
@@ -53,7 +56,7 @@ func TestTokenSourceMintsWithExpectedBody(t *testing.T) {
 	var got mintRequest
 	srv := mintServer(t, func(w http.ResponseWriter, _ *http.Request, req mintRequest) {
 		got = req
-		writeToken(w, "tok-1", 15*time.Minute)
+		writeToken(t, w, "tok-1", 15*time.Minute)
 	})
 
 	creds := testCreds(srv)
@@ -90,7 +93,7 @@ func TestTokenSourceOmitsTTLWhenUnset(t *testing.T) {
 	var got mintRequest
 	srv := mintServer(t, func(w http.ResponseWriter, _ *http.Request, req mintRequest) {
 		got = req
-		writeToken(w, "tok", time.Minute)
+		writeToken(t, w, "tok", time.Minute)
 	})
 
 	ts, err := NewTokenSource(testCreds(srv))
@@ -117,7 +120,7 @@ func TestTokenSourceCachesUntilNearExpiry(t *testing.T) {
 		mu.Lock()
 		calls++
 		mu.Unlock()
-		writeToken(w, "tok", 15*time.Minute)
+		writeToken(t, w, "tok", 15*time.Minute)
 	})
 
 	ts, err := NewTokenSource(testCreds(srv))
@@ -140,7 +143,7 @@ func TestTokenSourceRemintsWhenExpiryWithinLeeway(t *testing.T) {
 	calls := 0
 	srv := mintServer(t, func(w http.ResponseWriter, _ *http.Request, _ mintRequest) {
 		calls++
-		writeToken(w, "tok", refreshLeeway/2)
+		writeToken(t, w, "tok", refreshLeeway/2)
 	})
 
 	ts, err := NewTokenSource(testCreds(srv))
@@ -216,11 +219,11 @@ func TestWithClientCredentialsSetsBearerAndReplacesAPIKey(t *testing.T) {
 	var gotAuth, gotAPIKey string
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path == mintPath {
-			writeToken(w, "minted-token", 15*time.Minute)
+			writeToken(t, w, "minted-token", 15*time.Minute)
 			return
 		}
 		gotAuth = r.Header.Get("Authorization")
-		gotAPIKey = r.Header.Get("X-API-Key")
+		gotAPIKey = r.Header.Get("X-Api-Key")
 		w.WriteHeader(http.StatusOK)
 	}))
 	t.Cleanup(srv.Close)
@@ -244,7 +247,7 @@ func TestWithClientCredentialsSetsBearerAndReplacesAPIKey(t *testing.T) {
 		t.Fatalf("editors = %d, want 1 (api key replaced)", len(cfg.editors))
 	}
 
-	req, _ := http.NewRequest(http.MethodGet, srv.URL+"/media/images/v1/images", nil)
+	req, _ := http.NewRequestWithContext(context.Background(), http.MethodGet, srv.URL+"/media/images/v1/images", nil)
 	for _, e := range cfg.editors {
 		if err := e(context.Background(), req); err != nil {
 			t.Fatalf("editor: %v", err)

@@ -25,7 +25,7 @@ func TestCredentialsListSendsPaginationAndAuth(t *testing.T) {
 
 	var gotQuery, gotAPIKey, gotPath string
 	c := newCredentialsClient(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		gotPath, gotQuery, gotAPIKey = r.URL.Path, r.URL.RawQuery, r.Header.Get("X-API-Key")
+		gotPath, gotQuery, gotAPIKey = r.URL.Path, r.URL.RawQuery, r.Header.Get("X-Api-Key")
 		_ = json.NewEncoder(w).Encode(map[string]any{
 			"credentials": []map[string]any{{"id": "Z9Y8X7W6V5", "client_id": "XyZ9aB8cD1", "status": CredentialStatusActive}},
 			"total":       7,
