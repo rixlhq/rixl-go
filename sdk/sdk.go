@@ -31,6 +31,9 @@ func New(apiKey string, opts ...Option) (*Client, error) {
 	for _, opt := range opts {
 		opt(&cfg)
 	}
+	if err := resolveCredentials(&cfg); err != nil {
+		return nil, err
+	}
 
 	feedsCli, err := feeds.NewSimpleClient(baseURL, feedsOpts(cfg)...)
 	if err != nil {
@@ -75,6 +78,7 @@ type editorFn = func(ctx context.Context, req *http.Request) error
 type config struct {
 	httpClient *http.Client
 	editors    []editorFn
+	creds      *ClientCredentials
 }
 
 func headerEditor(name, value string) editorFn {

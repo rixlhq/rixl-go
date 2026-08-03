@@ -40,6 +40,55 @@ func main() {
 
 `sdk.New(apiKey, opts...)` returns a Client with three resource fields — `client.Feeds`, `client.Images`, `client.Videos` — each a typed client whose methods return parsed models and a Go error.
 
+## Authentication
+
+Two credential types are supported.
+
+**API key** — one long-lived secret for your whole backend, sent as `X-API-Key`:
+
+```go
+client, err := sdk.New("YOUR_RIXL_API_KEY")
+```
+
+**Client auth** — a client ID/secret pair that mints a short-lived token scoped
+to one of your end users. Use this when requests are made on behalf of a
+specific user rather than your backend as a whole:
+
+```go
+client, err := sdk.New("", sdk.WithClientCredentials(sdk.ClientCredentials{
+    ClientID:     os.Getenv("RIXL_CLIENT_ID"),
+    ClientSecret: os.Getenv("RIXL_CLIENT_SECRET"),
+    Subject:      userID,             // your identifier for the end user
+    ProjectID:    os.Getenv("RIXL_PROJECT_ID"), // optional
+    Scopes:       sdk.MediaReadScopes,
+}))
+```
+
+The SDK mints a token on the first API call and re-mints it automatically about
+a minute before it expires — tokens live 15 minutes by default (`TTL`, max 15).
+Share one token across clients with `sdk.NewTokenSource` + `sdk.WithTokenSource`.
+
+### Scopes
+
+Scopes are granted to a credential by the policies attached to it in the RIXL
+dashboard; the mint endpoint does not narrow them per token. Listing them in
+`Scopes` documents what the credential needs and catches typos at construction
+time. The recognised scopes are exported as constants:
+
+| Area | Scopes |
+| --- | --- |
+| Media | `media:images:read` / `:write`, `media:videos:read` / `:write`, `media:files:read` / `:write`, `media:feeds:read` / `:write`, `media:posts:read` / `:write` |
+| Projects | `project:projects:read` / `:write` |
+| Analytics | `analytics:events:read` |
+| Billing | `billing:subscription:read` / `:write` |
+| Credentials | `credentials:apikeys:read` / `:write`, `credentials:clientauth:read` / `:write` |
+| Organisation | `org:members:read` / `:write`, `org:domains:read` / `:write`, `org:policies:read` / `:write` |
+
+In Go: `sdk.ScopeImagesRead`, `sdk.ScopeVideosWrite`, … plus `sdk.AllScopes`,
+`sdk.MediaReadScopes` and `sdk.MediaWriteScopes` for the common bundles.
+`client.Images`, `client.Videos` and `client.Feeds` need the matching
+`media:*:read` scopes; uploads additionally need `media:files:write`.
+
 ## Uploading files
 
 Uploads are two steps: ask the API for a presigned upload URL, then send the
