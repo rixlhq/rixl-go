@@ -25,11 +25,11 @@ func main() {
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
 
-	page, err := client.Images.GetImages(ctx, nil)
+	page, err := client.Images.ListImages(ctx, mustEnv("RIXL_PROJECT_ID"), nil)
 	if err != nil {
 		log.Fatalf("verify: %v", err)
 	}
-	log.Printf("auth ok — listed %d images", len(page.Data))
+	log.Printf("auth ok — listed %d images", len(page.Images))
 }
 
 func buildClient() (*sdk.Client, error) {

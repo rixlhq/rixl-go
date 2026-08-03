@@ -16,15 +16,9 @@ import (
 	oapiCodegenParamsPkg "github.com/rixlhq/rixl-go/sdk/runtime/params"
 )
 
-type listFeedsJSONRequestBody = any
+type CreateFeedJSONRequestBody = any
 
-type createFeedJSONRequestBody = models.TypesCreateFeedRequest
-
-type deleteFeedJSONRequestBody = any
-
-type getFeedJSONRequestBody = any
-
-type updateFeedJSONRequestBody = models.TypesUpdateFeedRequest
+type UpdateFeedJSONRequestBody = any
 
 // RequestEditorFn is the function signature for the RequestEditor callback function.
 type RequestEditorFn func(ctx context.Context, req *http.Request) error
@@ -122,35 +116,32 @@ func (c *Client) applyEditors(ctx context.Context, req *http.Request, additional
 
 // ClientInterface is the interface specification for the client.
 type ClientInterface interface {
-	// ListFeedsWithBody makes a GET request to /projects/{projectId}/feeds
-	ListFeedsWithBody(ctx context.Context, projectId string, params *ListFeedsParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
-	ListFeeds(ctx context.Context, projectId string, params *ListFeedsParams, body listFeedsJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
-	// CreateFeedWithBody makes a POST request to /projects/{projectId}/feeds
+	// ListFeeds makes a GET request to /feeds/v1/projects/{project_id}/feeds
+	ListFeeds(ctx context.Context, projectId string, params *ListFeedsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// CreateFeedWithBody makes a POST request to /feeds/v1/projects/{project_id}/feeds
 	CreateFeedWithBody(ctx context.Context, projectId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
-	CreateFeed(ctx context.Context, projectId string, body createFeedJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
-	// DeleteFeedWithBody makes a DELETE request to /projects/{projectId}/feeds/{feedId}
-	DeleteFeedWithBody(ctx context.Context, projectId string, feedId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
-	DeleteFeed(ctx context.Context, projectId string, feedId string, body deleteFeedJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
-	// GetFeedWithBody makes a GET request to /projects/{projectId}/feeds/{feedId}
-	GetFeedWithBody(ctx context.Context, projectId string, feedId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
-	GetFeed(ctx context.Context, projectId string, feedId string, body getFeedJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
-	// UpdateFeedWithBody makes a PUT request to /projects/{projectId}/feeds/{feedId}
+	CreateFeed(ctx context.Context, projectId string, body CreateFeedJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// DeleteFeed makes a DELETE request to /feeds/v1/projects/{project_id}/feeds/{feed_id}
+	DeleteFeed(ctx context.Context, projectId string, feedId string, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// GetFeed makes a GET request to /feeds/v1/projects/{project_id}/feeds/{feed_id}
+	GetFeed(ctx context.Context, projectId string, feedId string, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// UpdateFeedWithBody makes a PUT request to /feeds/v1/projects/{project_id}/feeds/{feed_id}
 	UpdateFeedWithBody(ctx context.Context, projectId string, feedId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
-	UpdateFeed(ctx context.Context, projectId string, feedId string, body updateFeedJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+	UpdateFeed(ctx context.Context, projectId string, feedId string, body UpdateFeedJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 }
 
 // ListFeedsParams defines parameters for ListFeeds.
 type ListFeedsParams struct {
-	// limit (optional)
-	Limit *int `form:"limit" json:"limit"`
-	// offset (optional)
-	Offset *int `form:"offset" json:"offset"`
+	// pagination.limit (optional)
+	PaginationLimit *int32 `form:"pagination.limit" json:"pagination.limit"`
+	// pagination.offset (optional)
+	PaginationOffset *int32 `form:"pagination.offset" json:"pagination.offset"`
 }
 
-// ListFeedsWithBody makes a GET request to /projects/{projectId}/feeds
-// List feeds
-func (c *Client) ListFeedsWithBody(ctx context.Context, projectId string, params *ListFeedsParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewListFeedsRequestWithBody(c.Server, projectId, params, contentType, body)
+// ListFeeds makes a GET request to /feeds/v1/projects/{project_id}/feeds
+// ListFeeds
+func (c *Client) ListFeeds(ctx context.Context, projectId string, params *ListFeedsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListFeedsRequest(c.Server, projectId, params)
 	if err != nil {
 		return nil, err
 	}
@@ -161,21 +152,8 @@ func (c *Client) ListFeedsWithBody(ctx context.Context, projectId string, params
 	return c.Client.Do(req)
 }
 
-// ListFeeds makes a GET request to /projects/{projectId}/feeds with application/json body
-func (c *Client) ListFeeds(ctx context.Context, projectId string, params *ListFeedsParams, body listFeedsJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewListFeedsRequest(c.Server, projectId, params, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-// CreateFeedWithBody makes a POST request to /projects/{projectId}/feeds
-// Create a feed
+// CreateFeedWithBody makes a POST request to /feeds/v1/projects/{project_id}/feeds
+// CreateFeed
 func (c *Client) CreateFeedWithBody(ctx context.Context, projectId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewCreateFeedRequestWithBody(c.Server, projectId, contentType, body)
 	if err != nil {
@@ -188,8 +166,8 @@ func (c *Client) CreateFeedWithBody(ctx context.Context, projectId string, conte
 	return c.Client.Do(req)
 }
 
-// CreateFeed makes a POST request to /projects/{projectId}/feeds with application/json body
-func (c *Client) CreateFeed(ctx context.Context, projectId string, body createFeedJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+// CreateFeed makes a POST request to /feeds/v1/projects/{project_id}/feeds with application/json body
+func (c *Client) CreateFeed(ctx context.Context, projectId string, body CreateFeedJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewCreateFeedRequest(c.Server, projectId, body)
 	if err != nil {
 		return nil, err
@@ -201,10 +179,10 @@ func (c *Client) CreateFeed(ctx context.Context, projectId string, body createFe
 	return c.Client.Do(req)
 }
 
-// DeleteFeedWithBody makes a DELETE request to /projects/{projectId}/feeds/{feedId}
-// Delete a feed
-func (c *Client) DeleteFeedWithBody(ctx context.Context, projectId string, feedId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewDeleteFeedRequestWithBody(c.Server, projectId, feedId, contentType, body)
+// DeleteFeed makes a DELETE request to /feeds/v1/projects/{project_id}/feeds/{feed_id}
+// DeleteFeed
+func (c *Client) DeleteFeed(ctx context.Context, projectId string, feedId string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewDeleteFeedRequest(c.Server, projectId, feedId)
 	if err != nil {
 		return nil, err
 	}
@@ -215,9 +193,10 @@ func (c *Client) DeleteFeedWithBody(ctx context.Context, projectId string, feedI
 	return c.Client.Do(req)
 }
 
-// DeleteFeed makes a DELETE request to /projects/{projectId}/feeds/{feedId} with application/json body
-func (c *Client) DeleteFeed(ctx context.Context, projectId string, feedId string, body deleteFeedJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewDeleteFeedRequest(c.Server, projectId, feedId, body)
+// GetFeed makes a GET request to /feeds/v1/projects/{project_id}/feeds/{feed_id}
+// GetFeed
+func (c *Client) GetFeed(ctx context.Context, projectId string, feedId string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetFeedRequest(c.Server, projectId, feedId)
 	if err != nil {
 		return nil, err
 	}
@@ -228,35 +207,8 @@ func (c *Client) DeleteFeed(ctx context.Context, projectId string, feedId string
 	return c.Client.Do(req)
 }
 
-// GetFeedWithBody makes a GET request to /projects/{projectId}/feeds/{feedId}
-// Get a feed
-func (c *Client) GetFeedWithBody(ctx context.Context, projectId string, feedId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewGetFeedRequestWithBody(c.Server, projectId, feedId, contentType, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-// GetFeed makes a GET request to /projects/{projectId}/feeds/{feedId} with application/json body
-func (c *Client) GetFeed(ctx context.Context, projectId string, feedId string, body getFeedJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewGetFeedRequest(c.Server, projectId, feedId, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-// UpdateFeedWithBody makes a PUT request to /projects/{projectId}/feeds/{feedId}
-// Update a feed
+// UpdateFeedWithBody makes a PUT request to /feeds/v1/projects/{project_id}/feeds/{feed_id}
+// UpdateFeed
 func (c *Client) UpdateFeedWithBody(ctx context.Context, projectId string, feedId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewUpdateFeedRequestWithBody(c.Server, projectId, feedId, contentType, body)
 	if err != nil {
@@ -269,8 +221,8 @@ func (c *Client) UpdateFeedWithBody(ctx context.Context, projectId string, feedI
 	return c.Client.Do(req)
 }
 
-// UpdateFeed makes a PUT request to /projects/{projectId}/feeds/{feedId} with application/json body
-func (c *Client) UpdateFeed(ctx context.Context, projectId string, feedId string, body updateFeedJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+// UpdateFeed makes a PUT request to /feeds/v1/projects/{project_id}/feeds/{feed_id} with application/json body
+func (c *Client) UpdateFeed(ctx context.Context, projectId string, feedId string, body UpdateFeedJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewUpdateFeedRequest(c.Server, projectId, feedId, body)
 	if err != nil {
 		return nil, err
@@ -282,23 +234,12 @@ func (c *Client) UpdateFeed(ctx context.Context, projectId string, feedId string
 	return c.Client.Do(req)
 }
 
-// NewListFeedsRequest creates a GET request for /projects/{projectId}/feeds with application/json body
-func NewListFeedsRequest(server string, projectId string, params *ListFeedsParams, body listFeedsJSONRequestBody) (*http.Request, error) {
-	var bodyReader io.Reader
-	buf, err := json.Marshal(body)
-	if err != nil {
-		return nil, err
-	}
-	bodyReader = bytes.NewReader(buf)
-	return NewListFeedsRequestWithBody(server, projectId, params, "application/json", bodyReader)
-}
-
-// NewListFeedsRequestWithBody creates a GET request for /projects/{projectId}/feeds with any body
-func NewListFeedsRequestWithBody(server string, projectId string, params *ListFeedsParams, contentType string, body io.Reader) (*http.Request, error) {
+// NewListFeedsRequest creates a GET request for /feeds/v1/projects/{project_id}/feeds
+func NewListFeedsRequest(server string, projectId string, params *ListFeedsParams) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
-	pathParam0, err = oapiCodegenParamsPkg.StyleParameter("projectId", projectId, oapiCodegenParamsPkg.ParameterOptions{Style: "simple", ParamLocation: oapiCodegenParamsPkg.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", AllowReserved: false})
+	pathParam0, err = oapiCodegenParamsPkg.StyleParameter("project_id", projectId, oapiCodegenParamsPkg.ParameterOptions{Style: "simple", ParamLocation: oapiCodegenParamsPkg.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", AllowReserved: false})
 	if err != nil {
 		return nil, err
 	}
@@ -308,7 +249,7 @@ func NewListFeedsRequestWithBody(server string, projectId string, params *ListFe
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/projects/%s/feeds", pathParam0)
+	operationPath := fmt.Sprintf("/feeds/v1/projects/%s/feeds", pathParam0)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
@@ -320,8 +261,8 @@ func NewListFeedsRequestWithBody(server string, projectId string, params *ListFe
 
 	if params != nil {
 		queryValues := reqURL.Query()
-		if params.Limit != nil {
-			if queryFrag, err := oapiCodegenParamsPkg.StyleParameter("limit", *params.Limit, oapiCodegenParamsPkg.ParameterOptions{Style: "form", ParamLocation: oapiCodegenParamsPkg.ParamLocationQuery, Explode: true, Required: false, Type: "integer", Format: "", AllowReserved: false}); err != nil {
+		if params.PaginationLimit != nil {
+			if queryFrag, err := oapiCodegenParamsPkg.StyleParameter("pagination.limit", *params.PaginationLimit, oapiCodegenParamsPkg.ParameterOptions{Style: "form", ParamLocation: oapiCodegenParamsPkg.ParamLocationQuery, Explode: true, Required: false, Type: "integer", Format: "int32", AllowReserved: false}); err != nil {
 				return nil, err
 			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
 				return nil, err
@@ -333,8 +274,8 @@ func NewListFeedsRequestWithBody(server string, projectId string, params *ListFe
 				}
 			}
 		}
-		if params.Offset != nil {
-			if queryFrag, err := oapiCodegenParamsPkg.StyleParameter("offset", *params.Offset, oapiCodegenParamsPkg.ParameterOptions{Style: "form", ParamLocation: oapiCodegenParamsPkg.ParamLocationQuery, Explode: true, Required: false, Type: "integer", Format: "", AllowReserved: false}); err != nil {
+		if params.PaginationOffset != nil {
+			if queryFrag, err := oapiCodegenParamsPkg.StyleParameter("pagination.offset", *params.PaginationOffset, oapiCodegenParamsPkg.ParameterOptions{Style: "form", ParamLocation: oapiCodegenParamsPkg.ParamLocationQuery, Explode: true, Required: false, Type: "integer", Format: "int32", AllowReserved: false}); err != nil {
 				return nil, err
 			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
 				return nil, err
@@ -349,18 +290,16 @@ func NewListFeedsRequestWithBody(server string, projectId string, params *ListFe
 		reqURL.RawQuery = queryValues.Encode()
 	}
 
-	req, err := http.NewRequest("GET", reqURL.String(), body)
+	req, err := http.NewRequest("GET", reqURL.String(), nil)
 	if err != nil {
 		return nil, err
 	}
 
-	req.Header.Add("Content-Type", contentType)
-
 	return req, nil
 }
 
-// NewCreateFeedRequest creates a POST request for /projects/{projectId}/feeds with application/json body
-func NewCreateFeedRequest(server string, projectId string, body createFeedJSONRequestBody) (*http.Request, error) {
+// NewCreateFeedRequest creates a POST request for /feeds/v1/projects/{project_id}/feeds with application/json body
+func NewCreateFeedRequest(server string, projectId string, body CreateFeedJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
@@ -370,12 +309,12 @@ func NewCreateFeedRequest(server string, projectId string, body createFeedJSONRe
 	return NewCreateFeedRequestWithBody(server, projectId, "application/json", bodyReader)
 }
 
-// NewCreateFeedRequestWithBody creates a POST request for /projects/{projectId}/feeds with any body
+// NewCreateFeedRequestWithBody creates a POST request for /feeds/v1/projects/{project_id}/feeds with any body
 func NewCreateFeedRequestWithBody(server string, projectId string, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
-	pathParam0, err = oapiCodegenParamsPkg.StyleParameter("projectId", projectId, oapiCodegenParamsPkg.ParameterOptions{Style: "simple", ParamLocation: oapiCodegenParamsPkg.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", AllowReserved: false})
+	pathParam0, err = oapiCodegenParamsPkg.StyleParameter("project_id", projectId, oapiCodegenParamsPkg.ParameterOptions{Style: "simple", ParamLocation: oapiCodegenParamsPkg.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", AllowReserved: false})
 	if err != nil {
 		return nil, err
 	}
@@ -385,7 +324,7 @@ func NewCreateFeedRequestWithBody(server string, projectId string, contentType s
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/projects/%s/feeds", pathParam0)
+	operationPath := fmt.Sprintf("/feeds/v1/projects/%s/feeds", pathParam0)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
@@ -405,29 +344,18 @@ func NewCreateFeedRequestWithBody(server string, projectId string, contentType s
 	return req, nil
 }
 
-// NewDeleteFeedRequest creates a DELETE request for /projects/{projectId}/feeds/{feedId} with application/json body
-func NewDeleteFeedRequest(server string, projectId string, feedId string, body deleteFeedJSONRequestBody) (*http.Request, error) {
-	var bodyReader io.Reader
-	buf, err := json.Marshal(body)
-	if err != nil {
-		return nil, err
-	}
-	bodyReader = bytes.NewReader(buf)
-	return NewDeleteFeedRequestWithBody(server, projectId, feedId, "application/json", bodyReader)
-}
-
-// NewDeleteFeedRequestWithBody creates a DELETE request for /projects/{projectId}/feeds/{feedId} with any body
-func NewDeleteFeedRequestWithBody(server string, projectId string, feedId string, contentType string, body io.Reader) (*http.Request, error) {
+// NewDeleteFeedRequest creates a DELETE request for /feeds/v1/projects/{project_id}/feeds/{feed_id}
+func NewDeleteFeedRequest(server string, projectId string, feedId string) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
-	pathParam0, err = oapiCodegenParamsPkg.StyleParameter("projectId", projectId, oapiCodegenParamsPkg.ParameterOptions{Style: "simple", ParamLocation: oapiCodegenParamsPkg.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", AllowReserved: false})
+	pathParam0, err = oapiCodegenParamsPkg.StyleParameter("project_id", projectId, oapiCodegenParamsPkg.ParameterOptions{Style: "simple", ParamLocation: oapiCodegenParamsPkg.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", AllowReserved: false})
 	if err != nil {
 		return nil, err
 	}
 
 	var pathParam1 string
-	pathParam1, err = oapiCodegenParamsPkg.StyleParameter("feedId", feedId, oapiCodegenParamsPkg.ParameterOptions{Style: "simple", ParamLocation: oapiCodegenParamsPkg.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", AllowReserved: false})
+	pathParam1, err = oapiCodegenParamsPkg.StyleParameter("feed_id", feedId, oapiCodegenParamsPkg.ParameterOptions{Style: "simple", ParamLocation: oapiCodegenParamsPkg.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", AllowReserved: false})
 	if err != nil {
 		return nil, err
 	}
@@ -437,7 +365,7 @@ func NewDeleteFeedRequestWithBody(server string, projectId string, feedId string
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/projects/%s/feeds/%s", pathParam0, pathParam1)
+	operationPath := fmt.Sprintf("/feeds/v1/projects/%s/feeds/%s", pathParam0, pathParam1)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
@@ -447,39 +375,26 @@ func NewDeleteFeedRequestWithBody(server string, projectId string, feedId string
 		return nil, err
 	}
 
-	req, err := http.NewRequest("DELETE", reqURL.String(), body)
+	req, err := http.NewRequest("DELETE", reqURL.String(), nil)
 	if err != nil {
 		return nil, err
 	}
-
-	req.Header.Add("Content-Type", contentType)
 
 	return req, nil
 }
 
-// NewGetFeedRequest creates a GET request for /projects/{projectId}/feeds/{feedId} with application/json body
-func NewGetFeedRequest(server string, projectId string, feedId string, body getFeedJSONRequestBody) (*http.Request, error) {
-	var bodyReader io.Reader
-	buf, err := json.Marshal(body)
-	if err != nil {
-		return nil, err
-	}
-	bodyReader = bytes.NewReader(buf)
-	return NewGetFeedRequestWithBody(server, projectId, feedId, "application/json", bodyReader)
-}
-
-// NewGetFeedRequestWithBody creates a GET request for /projects/{projectId}/feeds/{feedId} with any body
-func NewGetFeedRequestWithBody(server string, projectId string, feedId string, contentType string, body io.Reader) (*http.Request, error) {
+// NewGetFeedRequest creates a GET request for /feeds/v1/projects/{project_id}/feeds/{feed_id}
+func NewGetFeedRequest(server string, projectId string, feedId string) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
-	pathParam0, err = oapiCodegenParamsPkg.StyleParameter("projectId", projectId, oapiCodegenParamsPkg.ParameterOptions{Style: "simple", ParamLocation: oapiCodegenParamsPkg.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", AllowReserved: false})
+	pathParam0, err = oapiCodegenParamsPkg.StyleParameter("project_id", projectId, oapiCodegenParamsPkg.ParameterOptions{Style: "simple", ParamLocation: oapiCodegenParamsPkg.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", AllowReserved: false})
 	if err != nil {
 		return nil, err
 	}
 
 	var pathParam1 string
-	pathParam1, err = oapiCodegenParamsPkg.StyleParameter("feedId", feedId, oapiCodegenParamsPkg.ParameterOptions{Style: "simple", ParamLocation: oapiCodegenParamsPkg.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", AllowReserved: false})
+	pathParam1, err = oapiCodegenParamsPkg.StyleParameter("feed_id", feedId, oapiCodegenParamsPkg.ParameterOptions{Style: "simple", ParamLocation: oapiCodegenParamsPkg.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", AllowReserved: false})
 	if err != nil {
 		return nil, err
 	}
@@ -489,7 +404,7 @@ func NewGetFeedRequestWithBody(server string, projectId string, feedId string, c
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/projects/%s/feeds/%s", pathParam0, pathParam1)
+	operationPath := fmt.Sprintf("/feeds/v1/projects/%s/feeds/%s", pathParam0, pathParam1)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
@@ -499,18 +414,16 @@ func NewGetFeedRequestWithBody(server string, projectId string, feedId string, c
 		return nil, err
 	}
 
-	req, err := http.NewRequest("GET", reqURL.String(), body)
+	req, err := http.NewRequest("GET", reqURL.String(), nil)
 	if err != nil {
 		return nil, err
 	}
 
-	req.Header.Add("Content-Type", contentType)
-
 	return req, nil
 }
 
-// NewUpdateFeedRequest creates a PUT request for /projects/{projectId}/feeds/{feedId} with application/json body
-func NewUpdateFeedRequest(server string, projectId string, feedId string, body updateFeedJSONRequestBody) (*http.Request, error) {
+// NewUpdateFeedRequest creates a PUT request for /feeds/v1/projects/{project_id}/feeds/{feed_id} with application/json body
+func NewUpdateFeedRequest(server string, projectId string, feedId string, body UpdateFeedJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
@@ -520,18 +433,18 @@ func NewUpdateFeedRequest(server string, projectId string, feedId string, body u
 	return NewUpdateFeedRequestWithBody(server, projectId, feedId, "application/json", bodyReader)
 }
 
-// NewUpdateFeedRequestWithBody creates a PUT request for /projects/{projectId}/feeds/{feedId} with any body
+// NewUpdateFeedRequestWithBody creates a PUT request for /feeds/v1/projects/{project_id}/feeds/{feed_id} with any body
 func NewUpdateFeedRequestWithBody(server string, projectId string, feedId string, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
-	pathParam0, err = oapiCodegenParamsPkg.StyleParameter("projectId", projectId, oapiCodegenParamsPkg.ParameterOptions{Style: "simple", ParamLocation: oapiCodegenParamsPkg.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", AllowReserved: false})
+	pathParam0, err = oapiCodegenParamsPkg.StyleParameter("project_id", projectId, oapiCodegenParamsPkg.ParameterOptions{Style: "simple", ParamLocation: oapiCodegenParamsPkg.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", AllowReserved: false})
 	if err != nil {
 		return nil, err
 	}
 
 	var pathParam1 string
-	pathParam1, err = oapiCodegenParamsPkg.StyleParameter("feedId", feedId, oapiCodegenParamsPkg.ParameterOptions{Style: "simple", ParamLocation: oapiCodegenParamsPkg.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", AllowReserved: false})
+	pathParam1, err = oapiCodegenParamsPkg.StyleParameter("feed_id", feedId, oapiCodegenParamsPkg.ParameterOptions{Style: "simple", ParamLocation: oapiCodegenParamsPkg.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", AllowReserved: false})
 	if err != nil {
 		return nil, err
 	}
@@ -541,7 +454,7 @@ func NewUpdateFeedRequestWithBody(server string, projectId string, feedId string
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/projects/%s/feeds/%s", pathParam0, pathParam1)
+	operationPath := fmt.Sprintf("/feeds/v1/projects/%s/feeds/%s", pathParam0, pathParam1)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
@@ -589,12 +502,12 @@ func NewSimpleClient(server string, opts ...ClientOption) (*SimpleClient, error)
 	return &SimpleClient{Client: inner}, nil
 }
 
-// ListFeeds makes a GET request to /projects/{projectId}/feeds and returns the parsed response.
-// List feeds
+// ListFeeds makes a GET request to /feeds/v1/projects/{project_id}/feeds and returns the parsed response.
+// ListFeeds
 // On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
-func (c *SimpleClient) ListFeeds(ctx context.Context, projectId string, params *ListFeedsParams, body listFeedsJSONRequestBody, reqEditors ...RequestEditorFn) (models.Feedsv1ListFeedsResponse, error) {
-	var result models.Feedsv1ListFeedsResponse
-	resp, err := c.Client.ListFeeds(ctx, projectId, params, body, reqEditors...)
+func (c *SimpleClient) ListFeeds(ctx context.Context, projectId string, params *ListFeedsParams, reqEditors ...RequestEditorFn) (models.FeedsV1ListFeedsResponse, error) {
+	var result models.FeedsV1ListFeedsResponse
+	resp, err := c.Client.ListFeeds(ctx, projectId, params, reqEditors...)
 	if err != nil {
 		return result, err
 	}
@@ -619,11 +532,11 @@ func (c *SimpleClient) ListFeeds(ctx context.Context, projectId string, params *
 	}
 }
 
-// CreateFeed makes a POST request to /projects/{projectId}/feeds and returns the parsed response.
-// Create a feed
+// CreateFeed makes a POST request to /feeds/v1/projects/{project_id}/feeds and returns the parsed response.
+// CreateFeed
 // On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
-func (c *SimpleClient) CreateFeed(ctx context.Context, projectId string, body createFeedJSONRequestBody, reqEditors ...RequestEditorFn) (models.Feedsv1Feed, error) {
-	var result models.Feedsv1Feed
+func (c *SimpleClient) CreateFeed(ctx context.Context, projectId string, body CreateFeedJSONRequestBody, reqEditors ...RequestEditorFn) (models.FeedsV1Feed, error) {
+	var result models.FeedsV1Feed
 	resp, err := c.Client.CreateFeed(ctx, projectId, body, reqEditors...)
 	if err != nil {
 		return result, err
@@ -649,12 +562,12 @@ func (c *SimpleClient) CreateFeed(ctx context.Context, projectId string, body cr
 	}
 }
 
-// DeleteFeed makes a DELETE request to /projects/{projectId}/feeds/{feedId} and returns the parsed response.
-// Delete a feed
+// DeleteFeed makes a DELETE request to /feeds/v1/projects/{project_id}/feeds/{feed_id} and returns the parsed response.
+// DeleteFeed
 // On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
-func (c *SimpleClient) DeleteFeed(ctx context.Context, projectId string, feedId string, body deleteFeedJSONRequestBody, reqEditors ...RequestEditorFn) (models.Feedsv1DeleteFeedResponse, error) {
-	var result models.Feedsv1DeleteFeedResponse
-	resp, err := c.Client.DeleteFeed(ctx, projectId, feedId, body, reqEditors...)
+func (c *SimpleClient) DeleteFeed(ctx context.Context, projectId string, feedId string, reqEditors ...RequestEditorFn) (models.GoogleProtobufEmpty, error) {
+	var result models.GoogleProtobufEmpty
+	resp, err := c.Client.DeleteFeed(ctx, projectId, feedId, reqEditors...)
 	if err != nil {
 		return result, err
 	}
@@ -679,12 +592,12 @@ func (c *SimpleClient) DeleteFeed(ctx context.Context, projectId string, feedId 
 	}
 }
 
-// GetFeed makes a GET request to /projects/{projectId}/feeds/{feedId} and returns the parsed response.
-// Get a feed
+// GetFeed makes a GET request to /feeds/v1/projects/{project_id}/feeds/{feed_id} and returns the parsed response.
+// GetFeed
 // On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
-func (c *SimpleClient) GetFeed(ctx context.Context, projectId string, feedId string, body getFeedJSONRequestBody, reqEditors ...RequestEditorFn) (models.Feedsv1Feed, error) {
-	var result models.Feedsv1Feed
-	resp, err := c.Client.GetFeed(ctx, projectId, feedId, body, reqEditors...)
+func (c *SimpleClient) GetFeed(ctx context.Context, projectId string, feedId string, reqEditors ...RequestEditorFn) (models.FeedsV1Feed, error) {
+	var result models.FeedsV1Feed
+	resp, err := c.Client.GetFeed(ctx, projectId, feedId, reqEditors...)
 	if err != nil {
 		return result, err
 	}
@@ -709,11 +622,11 @@ func (c *SimpleClient) GetFeed(ctx context.Context, projectId string, feedId str
 	}
 }
 
-// UpdateFeed makes a PUT request to /projects/{projectId}/feeds/{feedId} and returns the parsed response.
-// Update a feed
+// UpdateFeed makes a PUT request to /feeds/v1/projects/{project_id}/feeds/{feed_id} and returns the parsed response.
+// UpdateFeed
 // On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
-func (c *SimpleClient) UpdateFeed(ctx context.Context, projectId string, feedId string, body updateFeedJSONRequestBody, reqEditors ...RequestEditorFn) (models.Feedsv1Feed, error) {
-	var result models.Feedsv1Feed
+func (c *SimpleClient) UpdateFeed(ctx context.Context, projectId string, feedId string, body UpdateFeedJSONRequestBody, reqEditors ...RequestEditorFn) (models.FeedsV1Feed, error) {
+	var result models.FeedsV1Feed
 	resp, err := c.Client.UpdateFeed(ctx, projectId, feedId, body, reqEditors...)
 	if err != nil {
 		return result, err

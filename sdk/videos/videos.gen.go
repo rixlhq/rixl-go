@@ -3,12 +3,22 @@
 package videos
 
 import (
+	"bytes"
 	"context"
+	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 	"net/url"
 	"strings"
+
+	"github.com/rixlhq/rixl-go/sdk/models"
+	oapiCodegenParamsPkg "github.com/rixlhq/rixl-go/sdk/runtime/params"
 )
+
+type CreateVideoUploadJSONRequestBody = any
+
+type UpdateVideoVisibilityJSONRequestBody = any
 
 // RequestEditorFn is the function signature for the RequestEditor callback function.
 type RequestEditorFn func(ctx context.Context, req *http.Request) error
@@ -106,6 +116,386 @@ func (c *Client) applyEditors(ctx context.Context, req *http.Request, additional
 
 // ClientInterface is the interface specification for the client.
 type ClientInterface interface {
+	// ListVideos makes a GET request to /media/v1/projects/{project_id}/videos
+	ListVideos(ctx context.Context, projectId string, params *ListVideosParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// CreateVideoUploadWithBody makes a POST request to /media/v1/projects/{project_id}/videos/upload
+	CreateVideoUploadWithBody(ctx context.Context, projectId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+	CreateVideoUpload(ctx context.Context, projectId string, body CreateVideoUploadJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// DeleteVideo makes a DELETE request to /media/v1/projects/{project_id}/videos/{video_id}
+	DeleteVideo(ctx context.Context, projectId string, videoId string, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// UpdateVideoVisibilityWithBody makes a PATCH request to /media/v1/projects/{project_id}/videos/{video_id}/visibility
+	UpdateVideoVisibilityWithBody(ctx context.Context, projectId string, videoId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+	UpdateVideoVisibility(ctx context.Context, projectId string, videoId string, body UpdateVideoVisibilityJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// GetVideo makes a GET request to /media/v1/videos/{video_id}
+	GetVideo(ctx context.Context, videoId string, reqEditors ...RequestEditorFn) (*http.Response, error)
+}
+
+// ListVideosParams defines parameters for ListVideos.
+type ListVideosParams struct {
+	// pagination.limit (optional)
+	PaginationLimit *int32 `form:"pagination.limit" json:"pagination.limit"`
+	// pagination.offset (optional)
+	PaginationOffset *int32 `form:"pagination.offset" json:"pagination.offset"`
+	// sort_field (optional)
+	SortField *string `form:"sort_field" json:"sort_field"`
+	// sort_direction (optional)
+	SortDirection *string `form:"sort_direction" json:"sort_direction"`
+}
+
+// ListVideos makes a GET request to /media/v1/projects/{project_id}/videos
+// ListVideos
+func (c *Client) ListVideos(ctx context.Context, projectId string, params *ListVideosParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListVideosRequest(c.Server, projectId, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// CreateVideoUploadWithBody makes a POST request to /media/v1/projects/{project_id}/videos/upload
+// CreateVideoUpload
+func (c *Client) CreateVideoUploadWithBody(ctx context.Context, projectId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateVideoUploadRequestWithBody(c.Server, projectId, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// CreateVideoUpload makes a POST request to /media/v1/projects/{project_id}/videos/upload with application/json body
+func (c *Client) CreateVideoUpload(ctx context.Context, projectId string, body CreateVideoUploadJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateVideoUploadRequest(c.Server, projectId, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// DeleteVideo makes a DELETE request to /media/v1/projects/{project_id}/videos/{video_id}
+// DeleteVideo
+func (c *Client) DeleteVideo(ctx context.Context, projectId string, videoId string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewDeleteVideoRequest(c.Server, projectId, videoId)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// UpdateVideoVisibilityWithBody makes a PATCH request to /media/v1/projects/{project_id}/videos/{video_id}/visibility
+// UpdateVideoVisibility
+func (c *Client) UpdateVideoVisibilityWithBody(ctx context.Context, projectId string, videoId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpdateVideoVisibilityRequestWithBody(c.Server, projectId, videoId, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// UpdateVideoVisibility makes a PATCH request to /media/v1/projects/{project_id}/videos/{video_id}/visibility with application/json body
+func (c *Client) UpdateVideoVisibility(ctx context.Context, projectId string, videoId string, body UpdateVideoVisibilityJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpdateVideoVisibilityRequest(c.Server, projectId, videoId, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// GetVideo makes a GET request to /media/v1/videos/{video_id}
+// GetVideo
+func (c *Client) GetVideo(ctx context.Context, videoId string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetVideoRequest(c.Server, videoId)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// NewListVideosRequest creates a GET request for /media/v1/projects/{project_id}/videos
+func NewListVideosRequest(server string, projectId string, params *ListVideosParams) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+	pathParam0, err = oapiCodegenParamsPkg.StyleParameter("project_id", projectId, oapiCodegenParamsPkg.ParameterOptions{Style: "simple", ParamLocation: oapiCodegenParamsPkg.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", AllowReserved: false})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/media/v1/projects/%s/videos", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	reqURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		queryValues := reqURL.Query()
+		if params.PaginationLimit != nil {
+			if queryFrag, err := oapiCodegenParamsPkg.StyleParameter("pagination.limit", *params.PaginationLimit, oapiCodegenParamsPkg.ParameterOptions{Style: "form", ParamLocation: oapiCodegenParamsPkg.ParamLocationQuery, Explode: true, Required: false, Type: "integer", Format: "int32", AllowReserved: false}); err != nil {
+				return nil, err
+			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+				return nil, err
+			} else {
+				for k, v := range parsed {
+					for _, v2 := range v {
+						queryValues.Add(k, v2)
+					}
+				}
+			}
+		}
+		if params.PaginationOffset != nil {
+			if queryFrag, err := oapiCodegenParamsPkg.StyleParameter("pagination.offset", *params.PaginationOffset, oapiCodegenParamsPkg.ParameterOptions{Style: "form", ParamLocation: oapiCodegenParamsPkg.ParamLocationQuery, Explode: true, Required: false, Type: "integer", Format: "int32", AllowReserved: false}); err != nil {
+				return nil, err
+			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+				return nil, err
+			} else {
+				for k, v := range parsed {
+					for _, v2 := range v {
+						queryValues.Add(k, v2)
+					}
+				}
+			}
+		}
+		if params.SortField != nil {
+			if queryFrag, err := oapiCodegenParamsPkg.StyleParameter("sort_field", *params.SortField, oapiCodegenParamsPkg.ParameterOptions{Style: "form", ParamLocation: oapiCodegenParamsPkg.ParamLocationQuery, Explode: true, Required: false, Type: "string", Format: "", AllowReserved: false}); err != nil {
+				return nil, err
+			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+				return nil, err
+			} else {
+				for k, v := range parsed {
+					for _, v2 := range v {
+						queryValues.Add(k, v2)
+					}
+				}
+			}
+		}
+		if params.SortDirection != nil {
+			if queryFrag, err := oapiCodegenParamsPkg.StyleParameter("sort_direction", *params.SortDirection, oapiCodegenParamsPkg.ParameterOptions{Style: "form", ParamLocation: oapiCodegenParamsPkg.ParamLocationQuery, Explode: true, Required: false, Type: "string", Format: "", AllowReserved: false}); err != nil {
+				return nil, err
+			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+				return nil, err
+			} else {
+				for k, v := range parsed {
+					for _, v2 := range v {
+						queryValues.Add(k, v2)
+					}
+				}
+			}
+		}
+		reqURL.RawQuery = queryValues.Encode()
+	}
+
+	req, err := http.NewRequest("GET", reqURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewCreateVideoUploadRequest creates a POST request for /media/v1/projects/{project_id}/videos/upload with application/json body
+func NewCreateVideoUploadRequest(server string, projectId string, body CreateVideoUploadJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewCreateVideoUploadRequestWithBody(server, projectId, "application/json", bodyReader)
+}
+
+// NewCreateVideoUploadRequestWithBody creates a POST request for /media/v1/projects/{project_id}/videos/upload with any body
+func NewCreateVideoUploadRequestWithBody(server string, projectId string, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+	pathParam0, err = oapiCodegenParamsPkg.StyleParameter("project_id", projectId, oapiCodegenParamsPkg.ParameterOptions{Style: "simple", ParamLocation: oapiCodegenParamsPkg.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", AllowReserved: false})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/media/v1/projects/%s/videos/upload", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	reqURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("POST", reqURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
+// NewDeleteVideoRequest creates a DELETE request for /media/v1/projects/{project_id}/videos/{video_id}
+func NewDeleteVideoRequest(server string, projectId string, videoId string) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+	pathParam0, err = oapiCodegenParamsPkg.StyleParameter("project_id", projectId, oapiCodegenParamsPkg.ParameterOptions{Style: "simple", ParamLocation: oapiCodegenParamsPkg.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", AllowReserved: false})
+	if err != nil {
+		return nil, err
+	}
+
+	var pathParam1 string
+	pathParam1, err = oapiCodegenParamsPkg.StyleParameter("video_id", videoId, oapiCodegenParamsPkg.ParameterOptions{Style: "simple", ParamLocation: oapiCodegenParamsPkg.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", AllowReserved: false})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/media/v1/projects/%s/videos/%s", pathParam0, pathParam1)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	reqURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("DELETE", reqURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewUpdateVideoVisibilityRequest creates a PATCH request for /media/v1/projects/{project_id}/videos/{video_id}/visibility with application/json body
+func NewUpdateVideoVisibilityRequest(server string, projectId string, videoId string, body UpdateVideoVisibilityJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewUpdateVideoVisibilityRequestWithBody(server, projectId, videoId, "application/json", bodyReader)
+}
+
+// NewUpdateVideoVisibilityRequestWithBody creates a PATCH request for /media/v1/projects/{project_id}/videos/{video_id}/visibility with any body
+func NewUpdateVideoVisibilityRequestWithBody(server string, projectId string, videoId string, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+	pathParam0, err = oapiCodegenParamsPkg.StyleParameter("project_id", projectId, oapiCodegenParamsPkg.ParameterOptions{Style: "simple", ParamLocation: oapiCodegenParamsPkg.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", AllowReserved: false})
+	if err != nil {
+		return nil, err
+	}
+
+	var pathParam1 string
+	pathParam1, err = oapiCodegenParamsPkg.StyleParameter("video_id", videoId, oapiCodegenParamsPkg.ParameterOptions{Style: "simple", ParamLocation: oapiCodegenParamsPkg.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", AllowReserved: false})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/media/v1/projects/%s/videos/%s/visibility", pathParam0, pathParam1)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	reqURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("PATCH", reqURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
+// NewGetVideoRequest creates a GET request for /media/v1/videos/{video_id}
+func NewGetVideoRequest(server string, videoId string) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+	pathParam0, err = oapiCodegenParamsPkg.StyleParameter("video_id", videoId, oapiCodegenParamsPkg.ParameterOptions{Style: "simple", ParamLocation: oapiCodegenParamsPkg.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", AllowReserved: false})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/media/v1/videos/%s", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	reqURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", reqURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
 }
 
 // ClientHttpError represents an HTTP error response.
@@ -134,4 +524,154 @@ func NewSimpleClient(server string, opts ...ClientOption) (*SimpleClient, error)
 		return nil, err
 	}
 	return &SimpleClient{Client: inner}, nil
+}
+
+// ListVideos makes a GET request to /media/v1/projects/{project_id}/videos and returns the parsed response.
+// ListVideos
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+func (c *SimpleClient) ListVideos(ctx context.Context, projectId string, params *ListVideosParams, reqEditors ...RequestEditorFn) (models.VideosV1ListVideosResponse, error) {
+	var result models.VideosV1ListVideosResponse
+	resp, err := c.Client.ListVideos(ctx, projectId, params, reqEditors...)
+	if err != nil {
+		return result, err
+	}
+	defer resp.Body.Close()
+
+	rawBody, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return result, err
+	}
+
+	if resp.StatusCode >= 200 && resp.StatusCode < 300 {
+		if err := json.Unmarshal(rawBody, &result); err != nil {
+			return result, err
+		}
+		return result, nil
+	}
+
+	// No typed error response defined
+	return result, &ClientHttpError[struct{}]{
+		StatusCode: resp.StatusCode,
+		RawBody:    rawBody,
+	}
+}
+
+// CreateVideoUpload makes a POST request to /media/v1/projects/{project_id}/videos/upload and returns the parsed response.
+// CreateVideoUpload
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+func (c *SimpleClient) CreateVideoUpload(ctx context.Context, projectId string, body CreateVideoUploadJSONRequestBody, reqEditors ...RequestEditorFn) (models.VideosV1VideoUpload, error) {
+	var result models.VideosV1VideoUpload
+	resp, err := c.Client.CreateVideoUpload(ctx, projectId, body, reqEditors...)
+	if err != nil {
+		return result, err
+	}
+	defer resp.Body.Close()
+
+	rawBody, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return result, err
+	}
+
+	if resp.StatusCode >= 200 && resp.StatusCode < 300 {
+		if err := json.Unmarshal(rawBody, &result); err != nil {
+			return result, err
+		}
+		return result, nil
+	}
+
+	// No typed error response defined
+	return result, &ClientHttpError[struct{}]{
+		StatusCode: resp.StatusCode,
+		RawBody:    rawBody,
+	}
+}
+
+// DeleteVideo makes a DELETE request to /media/v1/projects/{project_id}/videos/{video_id} and returns the parsed response.
+// DeleteVideo
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+func (c *SimpleClient) DeleteVideo(ctx context.Context, projectId string, videoId string, reqEditors ...RequestEditorFn) (models.GoogleProtobufEmpty, error) {
+	var result models.GoogleProtobufEmpty
+	resp, err := c.Client.DeleteVideo(ctx, projectId, videoId, reqEditors...)
+	if err != nil {
+		return result, err
+	}
+	defer resp.Body.Close()
+
+	rawBody, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return result, err
+	}
+
+	if resp.StatusCode >= 200 && resp.StatusCode < 300 {
+		if err := json.Unmarshal(rawBody, &result); err != nil {
+			return result, err
+		}
+		return result, nil
+	}
+
+	// No typed error response defined
+	return result, &ClientHttpError[struct{}]{
+		StatusCode: resp.StatusCode,
+		RawBody:    rawBody,
+	}
+}
+
+// UpdateVideoVisibility makes a PATCH request to /media/v1/projects/{project_id}/videos/{video_id}/visibility and returns the parsed response.
+// UpdateVideoVisibility
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+func (c *SimpleClient) UpdateVideoVisibility(ctx context.Context, projectId string, videoId string, body UpdateVideoVisibilityJSONRequestBody, reqEditors ...RequestEditorFn) (models.VideosV1UpdateVideoVisibilityResponse, error) {
+	var result models.VideosV1UpdateVideoVisibilityResponse
+	resp, err := c.Client.UpdateVideoVisibility(ctx, projectId, videoId, body, reqEditors...)
+	if err != nil {
+		return result, err
+	}
+	defer resp.Body.Close()
+
+	rawBody, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return result, err
+	}
+
+	if resp.StatusCode >= 200 && resp.StatusCode < 300 {
+		if err := json.Unmarshal(rawBody, &result); err != nil {
+			return result, err
+		}
+		return result, nil
+	}
+
+	// No typed error response defined
+	return result, &ClientHttpError[struct{}]{
+		StatusCode: resp.StatusCode,
+		RawBody:    rawBody,
+	}
+}
+
+// GetVideo makes a GET request to /media/v1/videos/{video_id} and returns the parsed response.
+// GetVideo
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+func (c *SimpleClient) GetVideo(ctx context.Context, videoId string, reqEditors ...RequestEditorFn) (models.VideosV1GetVideoResponse, error) {
+	var result models.VideosV1GetVideoResponse
+	resp, err := c.Client.GetVideo(ctx, videoId, reqEditors...)
+	if err != nil {
+		return result, err
+	}
+	defer resp.Body.Close()
+
+	rawBody, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return result, err
+	}
+
+	if resp.StatusCode >= 200 && resp.StatusCode < 300 {
+		if err := json.Unmarshal(rawBody, &result); err != nil {
+			return result, err
+		}
+		return result, nil
+	}
+
+	// No typed error response defined
+	return result, &ClientHttpError[struct{}]{
+		StatusCode: resp.StatusCode,
+		RawBody:    rawBody,
+	}
 }
