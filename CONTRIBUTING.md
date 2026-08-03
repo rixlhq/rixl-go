@@ -31,7 +31,7 @@ hand.
 `internal/gen` prepares the spec before codegen runs. oapi-codegen uses
 `operationId` verbatim for request body type names, and the spec ships
 fully-qualified protobuf ids such as
-`clientauth.v1.ClientCredentialService.MintClientToken` — the dots produce Go
+`clientauth.v1.ClientCredentialService.MintClientToken`. The dots produce Go
 that does not compile, so the ids are shortened to their trailing segment first.
 Remove that step once the spec emits short operationIds.
 
