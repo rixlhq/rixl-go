@@ -1,0 +1,25 @@
+pre-commit:
+  parallel: true
+  commands:
+    format:
+      glob: "*.go"
+      run: gofmt -s -w {staged_files}
+      stage_fixed: true
+    lint:
+      glob: "*.go"
+      env:
+        GOWORK: "off"
+      run: golangci-lint run --new
+      stage_fixed: true
+
+pre-push:
+  parallel: true
+  commands:
+    test:
+      env:
+        GOWORK: "off"
+      run: go test -race ./...
+    vet:
+      env:
+        GOWORK: "off"
+      run: go vet ./...
