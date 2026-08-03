@@ -4,7 +4,7 @@
 
 The official Go client for the [Rixl](https://rixl.com) API.
 
-Rixl handles the media side of your product — uploading and delivering images
+Rixl handles the media side of your product: uploading and delivering images
 and videos, organising them into feeds and posts, and reporting on how people
 engage with them. It also covers the account layer around that: users and
 organisations, sign-in, subscriptions and invoices. This SDK gives you all of it
@@ -26,7 +26,7 @@ go get github.com/rixlhq/rixl-go
 
 ## Getting started
 
-Here is the whole thing — create a client, list the images in a project:
+Here is the whole thing. Create a client, then list the images in a project:
 
 ```go
 package main
@@ -67,7 +67,7 @@ there is nothing to configure.
 
 There are two ways to identify yourself, and they answer different questions.
 
-### API keys — your backend calling as itself
+### API keys, for your backend calling as itself
 
 An API key represents your organisation. Use it for work your own systems do:
 importing a catalogue, running a nightly report, reconciling invoices. Create
@@ -79,10 +79,10 @@ client, err := sdk.New(os.Getenv("RIXL_API_KEY"))
 ```
 
 The key travels as the `X-API-Key` header. Anyone holding it can do anything
-your organisation can, so it belongs on a server — never in a browser, a mobile
-app, or anything you ship to users.
+your organisation can, so it belongs on a server. Never put one in a browser, a
+mobile app, or anything else you ship to users.
 
-### Client credentials — acting on behalf of one of your users
+### Client credentials, for acting on behalf of your users
 
 If you are building on top of Rixl and your own users each need their own
 slice of it, use client credentials. You exchange a client ID and secret for a
@@ -107,7 +107,7 @@ fmt.Println(created.Credential.ClientID, created.ClientSecret) // store both now
 ```
 
 Then, in the service that handles your users' requests, build a client per user.
-`Subject` is your own identifier for that person — whatever your database calls
+`Subject` is your own identifier for that person, whatever your database calls
 them:
 
 ```go
@@ -123,7 +123,7 @@ client, err := sdk.New("", sdk.WithClientCredentials(sdk.ClientCredentials{
 The SDK mints a token on the first call and quietly renews it before it expires,
 so there is nothing to schedule or cache yourself. Tokens last 15 minutes.
 
-When a credential is compromised or a deployment is retired, revoke it — new
+When a credential is compromised or a deployment is retired, revoke it. New
 tokens stop immediately, and any already issued expire within 15 minutes:
 
 ```go
@@ -139,7 +139,7 @@ as `sdk.ScopeImagesRead`, `sdk.ScopeVideosWrite` and so on, with the full list i
 
 ### Public endpoints
 
-Some reads need no credentials at all — delivering a public image or video,
+Some reads need no credentials at all: delivering a public image or video,
 fetching a public feed, listing supported languages. Call those with an empty
 key:
 
@@ -150,31 +150,51 @@ img, err := client.Images.GetImage(ctx, imageID)
 
 ## What you can do
 
-Every resource is a field on the client. The API is organised into six areas:
+Every resource is a field on the client. The API covers six areas, listed here
+in the order most people meet them.
 
-**Media** — `Images`, `Videos`, `Feeds`, `AudioTracks`, `Chapters`, `Subtitles`,
-`Languages`, `ImageConversion`, `VideoConversion`. Upload and deliver files,
-attach audio and captions to a video, and convert media into the formats and
-sizes you serve.
+### Media
 
-**Content** — `Posts`, `Feeds`, `Projects`. Group media into posts and feeds. A
-project is the container everything else hangs off, which is why so many calls
-take a project ID.
+`Images`, `Videos`, `Feeds`, `AudioTracks`, `Chapters`, `Subtitles`,
+`Languages`, `ImageConversion`, `VideoConversion`
 
-**Analytics** — `Dashboards`, `Events`, `PostAnalytics`, `VideoAnalytics`,
-`FeedAnalytics`, `Funnels`, `Heatmaps`, `Realtime`. Track events and read back
-engagement, playback, funnels and live activity.
+Upload and deliver files, attach audio tracks and captions to a video, and
+convert media into the formats and sizes you serve.
 
-**Billing** — `Plans`, `Subscriptions`, `Payments`, `Invoices`, `Usage`, `Sales`.
+### Content
+
+`Posts`, `Feeds`, `Projects`
+
+Group media into posts and feeds. A project is the container everything else
+hangs off, which is why so many calls take a project ID.
+
+### Analytics
+
+`Dashboards`, `Events`, `PostAnalytics`, `VideoAnalytics`, `FeedAnalytics`,
+`Funnels`, `Heatmaps`, `Realtime`
+
+Track events and read back engagement, playback, funnels and live activity.
+
+### Billing
+
+`Plans`, `Subscriptions`, `Payments`, `Invoices`, `Usage`, `Sales`
+
 Manage subscriptions and payment methods, and read invoices and metered usage.
 
-**Accounts** — `Users`, `Sessions`, `OneTimePasscodes`, `Passkeys`,
-`SocialProviders`, `Memberships`, `AccessPolicies`, `CustomDomains`, `Email`,
-`Blog`. Sign-in flows including passkeys and one-time codes, organisation
-membership and roles, and transactional email.
+### Account management
 
-**Platform** — `APIKeys`, `ClientCredentials`, `PlatformAuth`. Manage the
-credentials above programmatically.
+`Users`, `Sessions`, `OneTimePasscodes`, `Passkeys`, `SocialProviders`,
+`Memberships`, `AccessPolicies`, `CustomDomains`, `Email`, `Blog`
+
+Sign-in flows including passkeys and one-time codes, organisation membership and
+roles, custom domains, and transactional email.
+
+### Credentials
+
+`APIKeys`, `ClientCredentials`, `PlatformAuth`
+
+Create and revoke the API keys and client credentials described above, without
+going through the dashboard.
 
 For the exact methods on any of these, see the
 [reference](https://pkg.go.dev/github.com/rixlhq/rixl-go/sdk) or run
@@ -211,7 +231,8 @@ empty string.
 ## Uploading files
 
 Uploads happen in two steps. You ask Rixl for a URL, then send the bytes
-straight to storage — they never pass through the API, so large files stay fast:
+straight to storage. The bytes never pass through the API, so large files stay
+fast:
 
 ```go
 upload, err := client.Images.CreateImageUpload(ctx, projectID, models.ImagesV1CreateImageUploadRequest{
@@ -295,7 +316,7 @@ not as `ClientHttpError`.
 
 ## Timeouts
 
-The SDK does not impose a timeout and does not retry — it uses the `http.Client`
+The SDK does not impose a timeout and does not retry. It uses the `http.Client`
 you give it, so the behaviour stays yours to control. Set a deadline per call
 with a context:
 
@@ -336,7 +357,7 @@ go run ./examples/advanced/videos
 
 This package follows [SemVer](https://semver.org/spec/v2.0.0.html). New API
 resources arrive in minor releases; renamed or removed operations only in major
-ones. If an upgrade breaks you unexpectedly, please open an issue — we would
+ones. If an upgrade breaks you unexpectedly, please open an issue. We would
 rather hear about it.
 
 ## Support
