@@ -72,8 +72,10 @@ func (c *Client) UploadFile(ctx context.Context, presignedURL, path string, opts
 		return fmt.Errorf("stat upload file: %w", err)
 	}
 
-	derived := []UploadOption{WithContentType(contentTypeForPath(path))}
-	return c.Upload(ctx, presignedURL, f, info.Size(), append(derived, opts...)...)
+	derived := make([]UploadOption, 0, 1+len(opts))
+	derived = append(derived, WithContentType(contentTypeForPath(path)))
+	derived = append(derived, opts...)
+	return c.Upload(ctx, presignedURL, f, info.Size(), derived...)
 }
 
 func contentTypeForPath(path string) string {
