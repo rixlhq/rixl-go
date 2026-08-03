@@ -1,7 +1,7 @@
 // Package sdk is the entry point for the RIXL Go client.
 //
 //	client, err := sdk.New(apiKey)
-//	page, err := client.Images.GetImages(ctx, nil)
+//	page, err := client.Images.ListImages(ctx, projectID, nil)
 package sdk
 
 import (
