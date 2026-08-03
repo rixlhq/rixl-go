@@ -60,6 +60,9 @@ func main() {
 Every method takes a `context.Context` first, gives you back a parsed struct,
 and returns an ordinary Go `error` you can check.
 
+Requests go to `https://api.rixl.com`. The SDK points there by default, so
+there is nothing to configure.
+
 ## Authentication
 
 There are two ways to identify yourself, and they answer different questions.
