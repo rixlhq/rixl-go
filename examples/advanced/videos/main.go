@@ -1,14 +1,10 @@
-// Upload a video end-to-end. Same shape as the image flow, but Init returns
-// two presigned URLs (one for the video, one for the poster thumbnail) and
-// we PUT to both.
+// Request a presigned video upload. The response carries separate URLs for the
+// video and its poster image.
 package main
 
 import (
-	"bytes"
 	"context"
-	"io"
 	"log"
-	"net/http"
 	"os"
 	"time"
 
@@ -16,87 +12,40 @@ import (
 	"github.com/rixlhq/rixl-go/sdk/models"
 )
 
-const (
-	sampleVideoURL  = "https://download.samplelib.com/mp4/sample-5s.mp4"
-	samplePosterURL = "https://picsum.photos/seed/rixl/800/600.jpg"
-)
-
-func main() {
-	apiKey := os.Getenv("RIXL_API_KEY")
-	if apiKey == "" {
-		log.Fatal("missing RIXL_API_KEY")
+func env(name string) string {
+	v := os.Getenv(name)
+	if v == "" {
+		log.Fatalf("missing %s", name)
 	}
+	return v
+}
 
-	client, err := sdk.New(apiKey)
+func newClient() (*sdk.Client, context.Context, context.CancelFunc) {
+	client, err := sdk.New(env("RIXL_API_KEY"))
 	if err != nil {
 		log.Fatalf("client: %v", err)
 	}
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	return client, ctx, cancel
+}
 
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Minute)
+func main() {
+	projectID := env("RIXL_PROJECT_ID")
+	client, ctx, cancel := newClient()
 	defer cancel()
 
-	video, err := download(ctx, sampleVideoURL)
-	if err != nil {
-		log.Fatalf("download video: %v", err)
-	}
-	poster, err := download(ctx, samplePosterURL)
-	if err != nil {
-		log.Fatalf("download poster: %v", err)
-	}
-	log.Printf("downloaded video=%d poster=%d", len(video), len(poster))
-
-	posterFormat := "jpeg"
-	init, err := client.Videos.PostVideosUploadInit(ctx, models.VideoUploadInitRequest{
-		FileName:    "sample.mp4",
-		ImageFormat: &posterFormat,
+	name := "clip.mp4"
+	upload, err := client.Videos.CreateVideoUpload(ctx, projectID, models.VideosV1CreateVideoUploadRequest{
+		Name: &name,
 	})
 	if err != nil {
-		log.Fatalf("init: %v", err)
+		log.Fatalf("create upload: %v", err)
 	}
-	log.Printf("init: video_id=%s poster_id=%s", *init.VideoID, *init.PosterID)
-
-	if err := putBytes(ctx, *init.VideoPresignedURL, video, "video/mp4"); err != nil {
-		log.Fatalf("PUT video: %v", err)
+	if upload.VideoID == nil || upload.VideoUploadURL == nil {
+		log.Fatal("upload response missing video_id or video_upload_url")
 	}
-	if err := putBytes(ctx, *init.PosterPresignedURL, poster, "image/jpeg"); err != nil {
-		log.Fatalf("PUT poster: %v", err)
+	log.Printf("video %s: PUT the bytes to %s", *upload.VideoID, *upload.VideoUploadURL)
+	if upload.PosterUploadURL != nil {
+		log.Printf("poster: PUT to %s", *upload.PosterUploadURL)
 	}
-
-	v, err := client.Videos.PostVideosUploadComplete(ctx, models.GithubComRixlhqAPIInternalVideosHandlerUploadCompleteRequest{
-		VideoID: init.VideoID,
-	})
-	if err != nil {
-		log.Fatalf("complete: %v", err)
-	}
-	log.Printf("complete: id=%s", *v.ID)
 }
-
-func download(ctx context.Context, url string) ([]byte, error) {
-	req, _ := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
-	resp, err := http.DefaultClient.Do(req)
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
-	return io.ReadAll(resp.Body)
-}
-
-func putBytes(ctx context.Context, url string, body []byte, contentType string) error {
-	req, _ := http.NewRequestWithContext(ctx, http.MethodPut, url, bytes.NewReader(body))
-	req.ContentLength = int64(len(body))
-	req.Header.Set("Content-Type", contentType)
-	resp, err := http.DefaultClient.Do(req)
-	if err != nil {
-		return err
-	}
-	defer resp.Body.Close()
-	if resp.StatusCode >= 300 {
-		raw, _ := io.ReadAll(resp.Body)
-		return &httpError{Status: resp.Status, Body: string(raw)}
-	}
-	return nil
-}
-
-type httpError struct{ Status, Body string }
-
-func (e *httpError) Error() string { return e.Status + ": " + e.Body }

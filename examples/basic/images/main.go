@@ -1,4 +1,4 @@
-// List images in your project, optionally fetch one by ID.
+// List images in a project, optionally fetch one by ID.
 package main
 
 import (
@@ -15,6 +15,10 @@ func main() {
 	if apiKey == "" {
 		log.Fatal("missing RIXL_API_KEY")
 	}
+	projectID := os.Getenv("RIXL_PROJECT_ID")
+	if projectID == "" {
+		log.Fatal("missing RIXL_PROJECT_ID")
+	}
 
 	client, err := sdk.New(apiKey)
 	if err != nil {
@@ -24,12 +28,12 @@ func main() {
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
 
-	page, err := client.Images.GetImages(ctx, nil)
+	page, err := client.Images.ListImages(ctx, projectID, nil)
 	if err != nil {
 		log.Fatalf("list: %v", err)
 	}
-	log.Printf("listed %d images", len(page.Data))
-	for _, img := range page.Data {
+	log.Printf("listed %d images", len(page.Images))
+	for _, img := range page.Images {
 		if img.ID != nil {
 			log.Printf("  - %s", *img.ID)
 		}
@@ -39,9 +43,11 @@ func main() {
 	if id == "" {
 		return
 	}
-	img, err := client.Images.GetImagesImageId(ctx, id)
+	got, err := client.Images.GetImage(ctx, id)
 	if err != nil {
 		log.Fatalf("get %s: %v", id, err)
 	}
-	log.Printf("image %s: %dx%d", *img.ID, *img.Width, *img.Height)
+	if got.Image != nil {
+		log.Printf("image %s: %dx%d", *got.Image.ID, *got.Image.Width, *got.Image.Height)
+	}
 }
