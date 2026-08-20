@@ -1,15 +1,22 @@
 # Rixl Go SDK
 
-[![Go Reference](https://pkg.go.dev/badge/github.com/rixlhq/rixl-go.svg)](https://pkg.go.dev/github.com/rixlhq/rixl-go)
+[![Go Reference](https://pkg.go.dev/badge/github.com/rixlhq/rixl-go.svg)](https://pkg.go.dev/github.com/rixlhq/rixl-go/sdk)
 
-The Rixl Go SDK gives you access to the [Rixl](https://rixl.com) REST API from
-any Go 1.25+ application. It covers media (images, videos, feeds, posts),
-projects, analytics, billing and account management, with a typed client per
-resource and Go structs for every request and response.
+The official Go client for the [Rixl](https://rixl.com) API.
+
+Rixl handles the media side of your product: uploading and delivering images
+and videos, organising them into feeds and posts, and reporting on how people
+engage with them. It also covers the account layer around that: users and
+organisations, sign-in, subscriptions and invoices. This SDK gives you all of it
+from Go, with a typed client per resource and a Go struct for every request and
+response.
+
+Works with Go 1.25 and later.
 
 ## Documentation
 
-Full reference for every type and method: **[pkg.go.dev/github.com/rixlhq/rixl-go](https://pkg.go.dev/github.com/rixlhq/rixl-go/sdk)**.
+Reference for every type and method:
+**[pkg.go.dev/github.com/rixlhq/rixl-go/sdk](https://pkg.go.dev/github.com/rixlhq/rixl-go/sdk)**
 
 ## Installation
 
@@ -19,7 +26,7 @@ go get github.com/rixlhq/rixl-go
 
 ## Getting started
 
-Listing the images in a project is three lines of setup and one call:
+Here is the whole thing. Create a client, then list the images in a project:
 
 ```go
 package main
@@ -50,45 +57,153 @@ func main() {
 }
 ```
 
-Every method takes a `context.Context` first, returns a parsed struct, and
-returns an ordinary Go `error` you can check.
+Every method takes a `context.Context` first, gives you back a parsed struct,
+and returns an ordinary Go `error` you can check.
+
+Requests go to `https://api.rixl.com`. The SDK points there by default, so
+there is nothing to configure.
 
 ## Authentication
 
-You need an API key. Create one in the [Rixl dashboard](https://rixl.com) and
-keep it out of source control — read it from the environment, as above.
+There are two ways to identify yourself, and they answer different questions.
+
+### API keys, for your backend calling as itself
+
+An API key represents your organisation. Use it for work your own systems do:
+importing a catalogue, running a nightly report, reconciling invoices. Create
+one in the [Rixl dashboard](https://rixl.com), keep it out of source control,
+and read it from the environment:
 
 ```go
-client, err := sdk.New(apiKey)
+client, err := sdk.New(os.Getenv("RIXL_API_KEY"))
 ```
 
-The key is sent as the `X-API-Key` header on every request.
+The key travels as the `X-API-Key` header. Anyone holding it can do anything
+your organisation can, so it belongs on a server. Never put one in a browser, a
+mobile app, or anything else you ship to users.
 
-If you already hold a bearer token, pass an empty key and supply the token
-instead:
+### Client credentials, for acting on behalf of your users
+
+If you are building on top of Rixl and your own users each need their own
+slice of it, use client credentials. You exchange a client ID and secret for a
+short-lived token that is scoped to a single end user, so one customer can never
+read another's media.
+
+First create the credential. This returns a secret that is shown **once**:
 
 ```go
-client, err := sdk.New("", sdk.WithBearer(token))
+admin, err := sdk.New(os.Getenv("RIXL_API_KEY"))
+if err != nil {
+    log.Fatal(err)
+}
+
+created, err := admin.Credentials.Create(ctx, sdk.CreateCredentialParams{
+    Name: "Production backend",
+})
+if err != nil {
+    log.Fatal(err)
+}
+fmt.Println(created.Credential.ClientID, created.ClientSecret) // store both now
 ```
 
-## Usage
-
-Each API resource is a field on the client:
+Then, in the service that handles your users' requests, build a client per user.
+`Subject` is your own identifier for that person, whatever your database calls
+them:
 
 ```go
-client.Images       // media/v1 images
-client.Videos       // media/v1 videos
-client.Feeds        // media/v1 feeds
-client.Posts        // posts/v1
-client.Projects     // project/v1
-client.Memberships  // organisation members
+client, err := sdk.New("", sdk.WithClientCredentials(sdk.ClientCredentials{
+    ClientID:     os.Getenv("RIXL_CLIENT_ID"),
+    ClientSecret: os.Getenv("RIXL_CLIENT_SECRET"),
+    Subject:      user.ID,
+    ProjectID:    os.Getenv("RIXL_PROJECT_ID"), // optional
+    Scopes:       sdk.MediaReadScopes,
+}))
 ```
 
-There are 38 in total, one per resource in the API. Run
-`go doc github.com/rixlhq/rixl-go/sdk Client` to see them all, or browse the
-[reference](https://pkg.go.dev/github.com/rixlhq/rixl-go/sdk).
+The SDK mints a token on the first call and quietly renews it before it expires,
+so there is nothing to schedule or cache yourself. Tokens last 15 minutes.
 
-They all follow the same shape — list, get, create, delete:
+When a credential is compromised or a deployment is retired, revoke it. New
+tokens stop immediately, and any already issued expire within 15 minutes:
+
+```go
+err = admin.Credentials.Revoke(ctx, credentialID, "")
+```
+
+`Scopes` states what the credential is expected to be allowed to do, and is
+checked for typos when the client is built. What it can *actually* do is set by
+the policies attached to it in the dashboard. The common bundles are
+`sdk.MediaReadScopes` and `sdk.MediaWriteScopes`; individual scopes are exported
+as `sdk.ScopeImagesRead`, `sdk.ScopeVideosWrite` and so on, with the full list in
+`sdk.AllScopes`.
+
+### Public endpoints
+
+Some reads need no credentials at all: delivering a public image or video,
+fetching a public feed, listing supported languages. Call those with an empty
+key:
+
+```go
+client, _ := sdk.New("")
+img, err := client.Images.GetImage(ctx, imageID)
+```
+
+## What you can do
+
+Every resource is a field on the client. The API covers six areas, listed here
+in the order most people meet them.
+
+### Media
+
+`Images`, `Videos`, `Feeds`, `AudioTracks`, `Chapters`, `Subtitles`,
+`Languages`, `ImageConversion`, `VideoConversion`
+
+Upload and deliver files, attach audio tracks and captions to a video, and
+convert media into the formats and sizes you serve.
+
+### Content
+
+`Posts`, `Feeds`, `Projects`
+
+Group media into posts and feeds. A project is the container everything else
+hangs off, which is why so many calls take a project ID.
+
+### Analytics
+
+`Dashboards`, `Events`, `PostAnalytics`, `VideoAnalytics`, `FeedAnalytics`,
+`Funnels`, `Heatmaps`, `Realtime`
+
+Track events and read back engagement, playback, funnels and live activity.
+
+### Billing
+
+`Plans`, `Subscriptions`, `Payments`, `Invoices`, `Usage`, `Sales`
+
+Manage subscriptions and payment methods, and read invoices and metered usage.
+
+### Account management
+
+`Users`, `Sessions`, `OneTimePasscodes`, `Passkeys`, `SocialProviders`,
+`Memberships`, `AccessPolicies`, `CustomDomains`, `Email`, `Blog`
+
+Sign-in flows including passkeys and one-time codes, organisation membership and
+roles, custom domains, and transactional email.
+
+### Credentials
+
+`APIKeys`, `ClientCredentials`, `PlatformAuth`
+
+Create and revoke the API keys and client credentials described above, without
+going through the dashboard.
+
+For the exact methods on any of these, see the
+[reference](https://pkg.go.dev/github.com/rixlhq/rixl-go/sdk) or run
+`go doc github.com/rixlhq/rixl-go/sdk/images`.
+
+## Working with resources
+
+Resources follow the same shape, so once you have used one you have used all of
+them:
 
 ```go
 import "github.com/rixlhq/rixl-go/sdk/images"
@@ -98,7 +213,7 @@ img,  err := client.Images.GetImage(ctx, imageID)
 err        = client.Images.DeleteImage(ctx, projectID, imageID)
 ```
 
-Methods that send a body take a generated model:
+Calls that send data take a generated struct:
 
 ```go
 import "github.com/rixlhq/rixl-go/sdk/models"
@@ -107,16 +222,39 @@ name := "photo.jpg"
 upload, err := client.Images.CreateImageUpload(ctx, projectID, models.ImagesV1CreateImageUploadRequest{
     Name: &name,
 })
-// upload.UploadURL is a presigned URL — PUT the file bytes to it.
 ```
 
-Optional fields are pointers, which is how the SDK tells "not set" apart from
-the zero value. `nil` for a `*string` means the field is omitted; a pointer to
-`""` sends an empty string.
+Optional fields are pointers. That is how the SDK tells "leave this alone" apart
+from "set this to empty": `nil` omits the field, while a pointer to `""` sends an
+empty string.
+
+## Uploading files
+
+Uploads happen in two steps. You ask Rixl for a URL, then send the bytes
+straight to storage. The bytes never pass through the API, so large files stay
+fast:
+
+```go
+upload, err := client.Images.CreateImageUpload(ctx, projectID, models.ImagesV1CreateImageUploadRequest{
+    Name: &name,
+})
+if err != nil {
+    return err
+}
+
+err = client.UploadFile(ctx, *upload.UploadURL, "photo.jpg")
+```
+
+`UploadFile` works out the content type from the file extension; pass
+`sdk.WithContentType` to set it yourself. To stream from something that is not a
+file, use `client.Upload` with a reader and its exact size.
+
+There is no "finish" call to make. Storage tells Rixl when the object lands and
+the image or video becomes available on its own.
 
 ## Pagination
 
-List methods take `limit` and `offset`, and the response tells you the total:
+List calls take a limit and an offset, and tell you the total:
 
 ```go
 limit, offset := int32(50), int32(0)
@@ -139,11 +277,9 @@ for {
 }
 ```
 
-There is no auto-paginating iterator yet — you advance `offset` yourself.
-
 ## Handling errors
 
-Any non-2xx response comes back as `*ClientHttpError[E]`, carrying the status
+Anything that is not a 2xx comes back as `*ClientHttpError`, carrying the status
 code and the raw response body. Each resource package defines its own, so
 type-assert against the package whose method you called:
 
@@ -164,32 +300,32 @@ if err != nil {
 }
 ```
 
-What the status codes mean:
+What the codes mean:
 
-| Status | Meaning |
-| --- | --- |
-| 400 | The request was malformed or failed validation |
-| 401 | The API key or token is missing, expired or invalid |
-| 403 | The credential is valid but lacks permission for this resource |
-| 404 | No such resource, or it belongs to another organisation |
-| 429 | Rate limited — slow down and retry |
-| 5xx | Something failed on our side; safe to retry |
+| Status | What happened | What to do |
+| --- | --- | --- |
+| 400 | The request was malformed or failed validation | Fix the request; retrying will not help |
+| 401 | The key or token is missing, expired or invalid | Check the credential |
+| 403 | The credential is valid but not allowed to do this | Check the scopes and policies on it |
+| 404 | No such resource, or it belongs to another organisation | Check the ID and the project |
+| 429 | You are going too fast | Back off and retry |
+| 5xx | Something broke on our side | Retry with backoff |
 
-Network failures surface as ordinary Go errors from `net/http`, not as
-`ClientHttpError`.
+Connection failures and timeouts surface as ordinary Go errors from `net/http`,
+not as `ClientHttpError`.
 
-## Timeouts and retries
+## Timeouts
 
-The SDK does not retry, and it has no timeout of its own — it uses the
-`http.Client` you give it, or `http.DefaultClient`. Set a deadline with a
-context, per request:
+The SDK does not impose a timeout and does not retry. It uses the `http.Client`
+you give it, so the behaviour stays yours to control. Set a deadline per call
+with a context:
 
 ```go
 ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 defer cancel()
 ```
 
-Or configure the underlying client once:
+Or once, for every call:
 
 ```go
 client, err := sdk.New(apiKey, sdk.WithHTTPClient(&http.Client{
@@ -197,8 +333,8 @@ client, err := sdk.New(apiKey, sdk.WithHTTPClient(&http.Client{
 }))
 ```
 
-`sdk.WithRequestEditor` lets you mutate every outbound request, which is where
-tracing headers or a custom retrying transport go:
+`sdk.WithRequestEditor` runs on every outbound request, which is where tracing
+headers or a retrying transport go:
 
 ```go
 client, err := sdk.New(apiKey, sdk.WithRequestEditor(func(ctx context.Context, req *http.Request) error {
@@ -209,7 +345,7 @@ client, err := sdk.New(apiKey, sdk.WithRequestEditor(func(ctx context.Context, r
 
 ## Examples
 
-Runnable programs in [examples/](./examples):
+Runnable programs live in [examples/](./examples):
 
 ```bash
 export RIXL_API_KEY=<key> RIXL_PROJECT_ID=<project>
@@ -217,48 +353,14 @@ go run ./examples/basic/images
 go run ./examples/advanced/videos
 ```
 
-## Requirements
-
-Go 1.25.0 or higher.
-
 ## Versioning
 
-This package follows [SemVer](https://semver.org/spec/v2.0.0.html). The SDK is
-generated from the Rixl OpenAPI specification, so new API resources arrive as
-minor releases and renamed or removed operations as major ones. If an upgrade
-breaks you unexpectedly, please open an issue.
+This package follows [SemVer](https://semver.org/spec/v2.0.0.html). New API
+resources arrive in minor releases; renamed or removed operations only in major
+ones. If an upgrade breaks you unexpectedly, please open an issue. We would
+rather hear about it.
 
-## Regenerating the SDK
-
-```bash
-./gen.sh
-```
-
-`gen.sh` reads the published OpenAPI spec and generates one package per API
-resource, plus the shared `models` and `runtime` packages and the client
-facade. Point it at a local spec with `SPEC=../openapi/openapi.yaml ./gen.sh`.
-
-```
-sdk/
-├── models/           every request and response schema
-├── runtime/          shared codegen helpers
-├── <resource>/       Client + SimpleClient, one package per API resource
-├── resources.gen.go  the generated Client fields
-├── sdk.go            hand-written: New and the client options
-└── upload.go         hand-written: presigned uploads
-```
-
-Everything under `sdk/` except the hand-written files is regenerated from
-scratch on each run, so a resource removed upstream disappears here too.
-
-`internal/gen` prepares the spec before codegen. It exists because
-oapi-codegen uses `operationId` verbatim for request body type names while the
-spec ships fully-qualified protobuf ids such as
-`clientauth.v1.ClientCredentialService.MintClientToken` — the dots produce Go
-that does not compile. It shortens them to the trailing segment. Delete that
-step once the spec emits short operationIds.
-
-## Issues
+## Support
 
 Bugs and feature requests:
 [github.com/rixlhq/rixl-go/issues](https://github.com/rixlhq/rixl-go/issues).
