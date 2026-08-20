@@ -3,12 +3,22 @@
 package images
 
 import (
+	"bytes"
 	"context"
+	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 	"net/url"
 	"strings"
+
+	"github.com/rixlhq/rixl-go/sdk/models"
+	oapiCodegenParamsPkg "github.com/rixlhq/rixl-go/sdk/runtime/params"
 )
+
+type CreateImageUploadJSONRequestBody = any
+
+type UpdateImageVisibilityJSONRequestBody = any
 
 // RequestEditorFn is the function signature for the RequestEditor callback function.
 type RequestEditorFn func(ctx context.Context, req *http.Request) error
@@ -106,6 +116,386 @@ func (c *Client) applyEditors(ctx context.Context, req *http.Request, additional
 
 // ClientInterface is the interface specification for the client.
 type ClientInterface interface {
+	// GetImage makes a GET request to /media/v1/images/{image_id}
+	GetImage(ctx context.Context, imageId string, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// ListImages makes a GET request to /media/v1/projects/{project_id}/images
+	ListImages(ctx context.Context, projectId string, params *ListImagesParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// CreateImageUploadWithBody makes a POST request to /media/v1/projects/{project_id}/images/upload
+	CreateImageUploadWithBody(ctx context.Context, projectId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+	CreateImageUpload(ctx context.Context, projectId string, body CreateImageUploadJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// DeleteImage makes a DELETE request to /media/v1/projects/{project_id}/images/{image_id}
+	DeleteImage(ctx context.Context, projectId string, imageId string, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// UpdateImageVisibilityWithBody makes a PATCH request to /media/v1/projects/{project_id}/images/{image_id}/visibility
+	UpdateImageVisibilityWithBody(ctx context.Context, projectId string, imageId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+	UpdateImageVisibility(ctx context.Context, projectId string, imageId string, body UpdateImageVisibilityJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+}
+
+// ListImagesParams defines parameters for ListImages.
+type ListImagesParams struct {
+	// pagination.limit (optional)
+	PaginationLimit *int32 `form:"pagination.limit" json:"pagination.limit"`
+	// pagination.offset (optional)
+	PaginationOffset *int32 `form:"pagination.offset" json:"pagination.offset"`
+	// sort_field (optional)
+	SortField *string `form:"sort_field" json:"sort_field"`
+	// sort_direction (optional)
+	SortDirection *string `form:"sort_direction" json:"sort_direction"`
+}
+
+// GetImage makes a GET request to /media/v1/images/{image_id}
+// GetImage
+func (c *Client) GetImage(ctx context.Context, imageId string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetImageRequest(c.Server, imageId)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// ListImages makes a GET request to /media/v1/projects/{project_id}/images
+// ListImages
+func (c *Client) ListImages(ctx context.Context, projectId string, params *ListImagesParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListImagesRequest(c.Server, projectId, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// CreateImageUploadWithBody makes a POST request to /media/v1/projects/{project_id}/images/upload
+// CreateImageUpload
+func (c *Client) CreateImageUploadWithBody(ctx context.Context, projectId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateImageUploadRequestWithBody(c.Server, projectId, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// CreateImageUpload makes a POST request to /media/v1/projects/{project_id}/images/upload with application/json body
+func (c *Client) CreateImageUpload(ctx context.Context, projectId string, body CreateImageUploadJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateImageUploadRequest(c.Server, projectId, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// DeleteImage makes a DELETE request to /media/v1/projects/{project_id}/images/{image_id}
+// DeleteImage
+func (c *Client) DeleteImage(ctx context.Context, projectId string, imageId string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewDeleteImageRequest(c.Server, projectId, imageId)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// UpdateImageVisibilityWithBody makes a PATCH request to /media/v1/projects/{project_id}/images/{image_id}/visibility
+// UpdateImageVisibility
+func (c *Client) UpdateImageVisibilityWithBody(ctx context.Context, projectId string, imageId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpdateImageVisibilityRequestWithBody(c.Server, projectId, imageId, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// UpdateImageVisibility makes a PATCH request to /media/v1/projects/{project_id}/images/{image_id}/visibility with application/json body
+func (c *Client) UpdateImageVisibility(ctx context.Context, projectId string, imageId string, body UpdateImageVisibilityJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpdateImageVisibilityRequest(c.Server, projectId, imageId, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// NewGetImageRequest creates a GET request for /media/v1/images/{image_id}
+func NewGetImageRequest(server string, imageId string) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+	pathParam0, err = oapiCodegenParamsPkg.StyleParameter("image_id", imageId, oapiCodegenParamsPkg.ParameterOptions{Style: "simple", ParamLocation: oapiCodegenParamsPkg.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", AllowReserved: false})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/media/v1/images/%s", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	reqURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", reqURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewListImagesRequest creates a GET request for /media/v1/projects/{project_id}/images
+func NewListImagesRequest(server string, projectId string, params *ListImagesParams) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+	pathParam0, err = oapiCodegenParamsPkg.StyleParameter("project_id", projectId, oapiCodegenParamsPkg.ParameterOptions{Style: "simple", ParamLocation: oapiCodegenParamsPkg.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", AllowReserved: false})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/media/v1/projects/%s/images", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	reqURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		queryValues := reqURL.Query()
+		if params.PaginationLimit != nil {
+			if queryFrag, err := oapiCodegenParamsPkg.StyleParameter("pagination.limit", *params.PaginationLimit, oapiCodegenParamsPkg.ParameterOptions{Style: "form", ParamLocation: oapiCodegenParamsPkg.ParamLocationQuery, Explode: true, Required: false, Type: "integer", Format: "int32", AllowReserved: false}); err != nil {
+				return nil, err
+			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+				return nil, err
+			} else {
+				for k, v := range parsed {
+					for _, v2 := range v {
+						queryValues.Add(k, v2)
+					}
+				}
+			}
+		}
+		if params.PaginationOffset != nil {
+			if queryFrag, err := oapiCodegenParamsPkg.StyleParameter("pagination.offset", *params.PaginationOffset, oapiCodegenParamsPkg.ParameterOptions{Style: "form", ParamLocation: oapiCodegenParamsPkg.ParamLocationQuery, Explode: true, Required: false, Type: "integer", Format: "int32", AllowReserved: false}); err != nil {
+				return nil, err
+			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+				return nil, err
+			} else {
+				for k, v := range parsed {
+					for _, v2 := range v {
+						queryValues.Add(k, v2)
+					}
+				}
+			}
+		}
+		if params.SortField != nil {
+			if queryFrag, err := oapiCodegenParamsPkg.StyleParameter("sort_field", *params.SortField, oapiCodegenParamsPkg.ParameterOptions{Style: "form", ParamLocation: oapiCodegenParamsPkg.ParamLocationQuery, Explode: true, Required: false, Type: "string", Format: "", AllowReserved: false}); err != nil {
+				return nil, err
+			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+				return nil, err
+			} else {
+				for k, v := range parsed {
+					for _, v2 := range v {
+						queryValues.Add(k, v2)
+					}
+				}
+			}
+		}
+		if params.SortDirection != nil {
+			if queryFrag, err := oapiCodegenParamsPkg.StyleParameter("sort_direction", *params.SortDirection, oapiCodegenParamsPkg.ParameterOptions{Style: "form", ParamLocation: oapiCodegenParamsPkg.ParamLocationQuery, Explode: true, Required: false, Type: "string", Format: "", AllowReserved: false}); err != nil {
+				return nil, err
+			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+				return nil, err
+			} else {
+				for k, v := range parsed {
+					for _, v2 := range v {
+						queryValues.Add(k, v2)
+					}
+				}
+			}
+		}
+		reqURL.RawQuery = queryValues.Encode()
+	}
+
+	req, err := http.NewRequest("GET", reqURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewCreateImageUploadRequest creates a POST request for /media/v1/projects/{project_id}/images/upload with application/json body
+func NewCreateImageUploadRequest(server string, projectId string, body CreateImageUploadJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewCreateImageUploadRequestWithBody(server, projectId, "application/json", bodyReader)
+}
+
+// NewCreateImageUploadRequestWithBody creates a POST request for /media/v1/projects/{project_id}/images/upload with any body
+func NewCreateImageUploadRequestWithBody(server string, projectId string, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+	pathParam0, err = oapiCodegenParamsPkg.StyleParameter("project_id", projectId, oapiCodegenParamsPkg.ParameterOptions{Style: "simple", ParamLocation: oapiCodegenParamsPkg.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", AllowReserved: false})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/media/v1/projects/%s/images/upload", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	reqURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("POST", reqURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
+// NewDeleteImageRequest creates a DELETE request for /media/v1/projects/{project_id}/images/{image_id}
+func NewDeleteImageRequest(server string, projectId string, imageId string) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+	pathParam0, err = oapiCodegenParamsPkg.StyleParameter("project_id", projectId, oapiCodegenParamsPkg.ParameterOptions{Style: "simple", ParamLocation: oapiCodegenParamsPkg.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", AllowReserved: false})
+	if err != nil {
+		return nil, err
+	}
+
+	var pathParam1 string
+	pathParam1, err = oapiCodegenParamsPkg.StyleParameter("image_id", imageId, oapiCodegenParamsPkg.ParameterOptions{Style: "simple", ParamLocation: oapiCodegenParamsPkg.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", AllowReserved: false})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/media/v1/projects/%s/images/%s", pathParam0, pathParam1)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	reqURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("DELETE", reqURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewUpdateImageVisibilityRequest creates a PATCH request for /media/v1/projects/{project_id}/images/{image_id}/visibility with application/json body
+func NewUpdateImageVisibilityRequest(server string, projectId string, imageId string, body UpdateImageVisibilityJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewUpdateImageVisibilityRequestWithBody(server, projectId, imageId, "application/json", bodyReader)
+}
+
+// NewUpdateImageVisibilityRequestWithBody creates a PATCH request for /media/v1/projects/{project_id}/images/{image_id}/visibility with any body
+func NewUpdateImageVisibilityRequestWithBody(server string, projectId string, imageId string, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+	pathParam0, err = oapiCodegenParamsPkg.StyleParameter("project_id", projectId, oapiCodegenParamsPkg.ParameterOptions{Style: "simple", ParamLocation: oapiCodegenParamsPkg.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", AllowReserved: false})
+	if err != nil {
+		return nil, err
+	}
+
+	var pathParam1 string
+	pathParam1, err = oapiCodegenParamsPkg.StyleParameter("image_id", imageId, oapiCodegenParamsPkg.ParameterOptions{Style: "simple", ParamLocation: oapiCodegenParamsPkg.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", AllowReserved: false})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/media/v1/projects/%s/images/%s/visibility", pathParam0, pathParam1)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	reqURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("PATCH", reqURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
 }
 
 // ClientHttpError represents an HTTP error response.
@@ -134,4 +524,154 @@ func NewSimpleClient(server string, opts ...ClientOption) (*SimpleClient, error)
 		return nil, err
 	}
 	return &SimpleClient{Client: inner}, nil
+}
+
+// GetImage makes a GET request to /media/v1/images/{image_id} and returns the parsed response.
+// GetImage
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+func (c *SimpleClient) GetImage(ctx context.Context, imageId string, reqEditors ...RequestEditorFn) (models.ImagesV1GetImageResponse, error) {
+	var result models.ImagesV1GetImageResponse
+	resp, err := c.Client.GetImage(ctx, imageId, reqEditors...)
+	if err != nil {
+		return result, err
+	}
+	defer resp.Body.Close()
+
+	rawBody, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return result, err
+	}
+
+	if resp.StatusCode >= 200 && resp.StatusCode < 300 {
+		if err := json.Unmarshal(rawBody, &result); err != nil {
+			return result, err
+		}
+		return result, nil
+	}
+
+	// No typed error response defined
+	return result, &ClientHttpError[struct{}]{
+		StatusCode: resp.StatusCode,
+		RawBody:    rawBody,
+	}
+}
+
+// ListImages makes a GET request to /media/v1/projects/{project_id}/images and returns the parsed response.
+// ListImages
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+func (c *SimpleClient) ListImages(ctx context.Context, projectId string, params *ListImagesParams, reqEditors ...RequestEditorFn) (models.ImagesV1ListImagesResponse, error) {
+	var result models.ImagesV1ListImagesResponse
+	resp, err := c.Client.ListImages(ctx, projectId, params, reqEditors...)
+	if err != nil {
+		return result, err
+	}
+	defer resp.Body.Close()
+
+	rawBody, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return result, err
+	}
+
+	if resp.StatusCode >= 200 && resp.StatusCode < 300 {
+		if err := json.Unmarshal(rawBody, &result); err != nil {
+			return result, err
+		}
+		return result, nil
+	}
+
+	// No typed error response defined
+	return result, &ClientHttpError[struct{}]{
+		StatusCode: resp.StatusCode,
+		RawBody:    rawBody,
+	}
+}
+
+// CreateImageUpload makes a POST request to /media/v1/projects/{project_id}/images/upload and returns the parsed response.
+// CreateImageUpload
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+func (c *SimpleClient) CreateImageUpload(ctx context.Context, projectId string, body CreateImageUploadJSONRequestBody, reqEditors ...RequestEditorFn) (models.ImagesV1ImageUpload, error) {
+	var result models.ImagesV1ImageUpload
+	resp, err := c.Client.CreateImageUpload(ctx, projectId, body, reqEditors...)
+	if err != nil {
+		return result, err
+	}
+	defer resp.Body.Close()
+
+	rawBody, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return result, err
+	}
+
+	if resp.StatusCode >= 200 && resp.StatusCode < 300 {
+		if err := json.Unmarshal(rawBody, &result); err != nil {
+			return result, err
+		}
+		return result, nil
+	}
+
+	// No typed error response defined
+	return result, &ClientHttpError[struct{}]{
+		StatusCode: resp.StatusCode,
+		RawBody:    rawBody,
+	}
+}
+
+// DeleteImage makes a DELETE request to /media/v1/projects/{project_id}/images/{image_id} and returns the parsed response.
+// DeleteImage
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+func (c *SimpleClient) DeleteImage(ctx context.Context, projectId string, imageId string, reqEditors ...RequestEditorFn) (models.GoogleProtobufEmpty, error) {
+	var result models.GoogleProtobufEmpty
+	resp, err := c.Client.DeleteImage(ctx, projectId, imageId, reqEditors...)
+	if err != nil {
+		return result, err
+	}
+	defer resp.Body.Close()
+
+	rawBody, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return result, err
+	}
+
+	if resp.StatusCode >= 200 && resp.StatusCode < 300 {
+		if err := json.Unmarshal(rawBody, &result); err != nil {
+			return result, err
+		}
+		return result, nil
+	}
+
+	// No typed error response defined
+	return result, &ClientHttpError[struct{}]{
+		StatusCode: resp.StatusCode,
+		RawBody:    rawBody,
+	}
+}
+
+// UpdateImageVisibility makes a PATCH request to /media/v1/projects/{project_id}/images/{image_id}/visibility and returns the parsed response.
+// UpdateImageVisibility
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+func (c *SimpleClient) UpdateImageVisibility(ctx context.Context, projectId string, imageId string, body UpdateImageVisibilityJSONRequestBody, reqEditors ...RequestEditorFn) (models.ImagesV1UpdateImageVisibilityResponse, error) {
+	var result models.ImagesV1UpdateImageVisibilityResponse
+	resp, err := c.Client.UpdateImageVisibility(ctx, projectId, imageId, body, reqEditors...)
+	if err != nil {
+		return result, err
+	}
+	defer resp.Body.Close()
+
+	rawBody, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return result, err
+	}
+
+	if resp.StatusCode >= 200 && resp.StatusCode < 300 {
+		if err := json.Unmarshal(rawBody, &result); err != nil {
+			return result, err
+		}
+		return result, nil
+	}
+
+	// No typed error response defined
+	return result, &ClientHttpError[struct{}]{
+		StatusCode: resp.StatusCode,
+		RawBody:    rawBody,
+	}
 }
