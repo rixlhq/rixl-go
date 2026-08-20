@@ -16,9 +16,10 @@ import (
 const baseURL = "https://api.rixl.com"
 
 type Client struct {
-	Feeds  *feeds.SimpleClient
-	Images *images.SimpleClient
-	Videos *videos.SimpleClient
+	Feeds       *feeds.SimpleClient
+	Images      *images.SimpleClient
+	Videos      *videos.SimpleClient
+	Credentials *CredentialsClient
 
 	httpClient *http.Client
 }
@@ -30,6 +31,9 @@ func New(apiKey string, opts ...Option) (*Client, error) {
 	}
 	for _, opt := range opts {
 		opt(&cfg)
+	}
+	if err := resolveCredentials(&cfg); err != nil {
+		return nil, err
 	}
 
 	feedsCli, err := feeds.NewSimpleClient(baseURL, feedsOpts(cfg)...)
@@ -50,7 +54,13 @@ func New(apiKey string, opts ...Option) (*Client, error) {
 		httpClient = http.DefaultClient
 	}
 
-	return &Client{Feeds: feedsCli, Images: imagesCli, Videos: videosCli, httpClient: httpClient}, nil
+	return &Client{
+		Feeds:       feedsCli,
+		Images:      imagesCli,
+		Videos:      videosCli,
+		Credentials: &CredentialsClient{baseURL: baseURL, httpClient: httpClient, editors: cfg.editors},
+		httpClient:  httpClient,
+	}, nil
 }
 
 type Option func(*config)
@@ -75,6 +85,7 @@ type editorFn = func(ctx context.Context, req *http.Request) error
 type config struct {
 	httpClient *http.Client
 	editors    []editorFn
+	creds      *ClientCredentials
 }
 
 func headerEditor(name, value string) editorFn {
