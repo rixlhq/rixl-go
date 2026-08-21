@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.8.0](https://github.com/rixlhq/rixl-go/compare/v0.7.0...v0.8.0) (2026-08-21)
+
+
+### Features
+
+* **sdk:** regenerate based on latest OpenAPI spec ([29a03c1](https://github.com/rixlhq/rixl-go/commit/29a03c1f05f6cc07b4d70a3ef56c41004a51e824))
+
 ## [0.7.0](https://github.com/rixlhq/rixl-go/compare/v0.6.0...v0.7.0) (2026-08-21)
 
 
