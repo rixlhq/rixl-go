@@ -17,6 +17,7 @@ import (
 	"github.com/rixlhq/rixl-go/sdk/feeds"
 	"github.com/rixlhq/rixl-go/sdk/funnels"
 	"github.com/rixlhq/rixl-go/sdk/heatmaps"
+	"github.com/rixlhq/rixl-go/sdk/imageanalytics"
 	"github.com/rixlhq/rixl-go/sdk/imageconversion"
 	"github.com/rixlhq/rixl-go/sdk/images"
 	"github.com/rixlhq/rixl-go/sdk/invoices"
@@ -60,6 +61,7 @@ type resources struct {
 	Feeds             *feeds.SimpleClient
 	Funnels           *funnels.SimpleClient
 	Heatmaps          *heatmaps.SimpleClient
+	ImageAnalytics    *imageanalytics.SimpleClient
 	ImageConversion   *imageconversion.SimpleClient
 	Images            *images.SimpleClient
 	Invoices          *invoices.SimpleClient
@@ -257,6 +259,18 @@ func newResources(cfg config) (*resources, error) {
 			opts = append(opts, heatmaps.WithRequestEditorFn(edit))
 		}
 		if r.Heatmaps, err = heatmaps.NewSimpleClient(baseURL, opts...); err != nil {
+			return nil, err
+		}
+	}
+	{
+		opts := make([]imageanalytics.ClientOption, 0, len(cfg.editors)+1)
+		if cfg.httpClient != nil {
+			opts = append(opts, imageanalytics.WithHTTPClient(cfg.httpClient))
+		}
+		for _, edit := range cfg.editors {
+			opts = append(opts, imageanalytics.WithRequestEditorFn(edit))
+		}
+		if r.ImageAnalytics, err = imageanalytics.NewSimpleClient(baseURL, opts...); err != nil {
 			return nil, err
 		}
 	}

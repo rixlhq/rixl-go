@@ -116,6 +116,8 @@ func (c *Client) applyEditors(ctx context.Context, req *http.Request, additional
 
 // ClientInterface is the interface specification for the client.
 type ClientInterface interface {
+	// RegenerateBackupCodes makes a POST request to /auth/v1/users/current/totp/backup-codes/regenerate
+	RegenerateBackupCodes(ctx context.Context, params *RegenerateBackupCodesParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 	// DeleteOTP makes a DELETE request to /auth/v1/users/current/totp/delete
 	DeleteOTP(ctx context.Context, params *DeleteOTPParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 	// SetupOTP makes a POST request to /auth/v1/users/current/totp/setup
@@ -128,6 +130,12 @@ type ClientInterface interface {
 	// VerifyTOTPForLoginWithBody makes a POST request to /auth/v1/verify-totp
 	VerifyTOTPForLoginWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 	VerifyTOTPForLogin(ctx context.Context, body VerifyTOTPForLoginJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+}
+
+// RegenerateBackupCodesParams defines parameters for RegenerateBackupCodes.
+type RegenerateBackupCodesParams struct {
+	// user_id (optional)
+	UserId *string `form:"user_id" json:"user_id"`
 }
 
 // DeleteOTPParams defines parameters for DeleteOTP.
@@ -146,6 +154,20 @@ type SetupOTPParams struct {
 type GetOTPStatusParams struct {
 	// user_id (optional)
 	UserId *string `form:"user_id" json:"user_id"`
+}
+
+// RegenerateBackupCodes makes a POST request to /auth/v1/users/current/totp/backup-codes/regenerate
+// RegenerateBackupCodes
+func (c *Client) RegenerateBackupCodes(ctx context.Context, params *RegenerateBackupCodesParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewRegenerateBackupCodesRequest(c.Server, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
 }
 
 // DeleteOTP makes a DELETE request to /auth/v1/users/current/totp/delete
@@ -242,6 +264,51 @@ func (c *Client) VerifyTOTPForLogin(ctx context.Context, body VerifyTOTPForLogin
 		return nil, err
 	}
 	return c.Client.Do(req)
+}
+
+// NewRegenerateBackupCodesRequest creates a POST request for /auth/v1/users/current/totp/backup-codes/regenerate
+func NewRegenerateBackupCodesRequest(server string, params *RegenerateBackupCodesParams) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/auth/v1/users/current/totp/backup-codes/regenerate")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	reqURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		queryValues := reqURL.Query()
+		if params.UserId != nil {
+			if queryFrag, err := oapiCodegenParamsPkg.StyleParameter("user_id", *params.UserId, oapiCodegenParamsPkg.ParameterOptions{Style: "form", ParamLocation: oapiCodegenParamsPkg.ParamLocationQuery, Explode: true, Required: false, Type: "string", Format: "", AllowReserved: false}); err != nil {
+				return nil, err
+			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+				return nil, err
+			} else {
+				for k, v := range parsed {
+					for _, v2 := range v {
+						queryValues.Add(k, v2)
+					}
+				}
+			}
+		}
+		reqURL.RawQuery = queryValues.Encode()
+	}
+
+	req, err := http.NewRequest("POST", reqURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
 }
 
 // NewDeleteOTPRequest creates a DELETE request for /auth/v1/users/current/totp/delete
@@ -485,6 +552,36 @@ func NewSimpleClient(server string, opts ...ClientOption) (*SimpleClient, error)
 		return nil, err
 	}
 	return &SimpleClient{Client: inner}, nil
+}
+
+// RegenerateBackupCodes makes a POST request to /auth/v1/users/current/totp/backup-codes/regenerate and returns the parsed response.
+// RegenerateBackupCodes
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+func (c *SimpleClient) RegenerateBackupCodes(ctx context.Context, params *RegenerateBackupCodesParams, reqEditors ...RequestEditorFn) (models.AuthV1BackupCodesResponse, error) {
+	var result models.AuthV1BackupCodesResponse
+	resp, err := c.Client.RegenerateBackupCodes(ctx, params, reqEditors...)
+	if err != nil {
+		return result, err
+	}
+	defer resp.Body.Close()
+
+	rawBody, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return result, err
+	}
+
+	if resp.StatusCode >= 200 && resp.StatusCode < 300 {
+		if err := json.Unmarshal(rawBody, &result); err != nil {
+			return result, err
+		}
+		return result, nil
+	}
+
+	// No typed error response defined
+	return result, &ClientHttpError[struct{}]{
+		StatusCode: resp.StatusCode,
+		RawBody:    rawBody,
+	}
 }
 
 // DeleteOTP makes a DELETE request to /auth/v1/users/current/totp/delete and returns the parsed response.

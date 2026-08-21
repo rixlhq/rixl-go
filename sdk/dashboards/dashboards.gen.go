@@ -3,6 +3,7 @@
 package dashboards
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -14,6 +15,24 @@ import (
 	"github.com/rixlhq/rixl-go/sdk/models"
 	oapiCodegenParamsPkg "github.com/rixlhq/rixl-go/sdk/runtime/params"
 )
+
+type QueryChartJSONRequestBody = models.AnalyticsV1ChartQueryRequest
+
+type BatchQueryChartJSONRequestBody = models.AnalyticsV1BatchChartQueryRequest
+
+type GetFilterOptionsJSONRequestBody = models.AnalyticsV1GetFilterOptionsRequest
+
+type GetScopeTreeJSONRequestBody = models.AnalyticsV1GetScopeTreeRequest
+
+type CreateDashboardJSONRequestBody = models.AnalyticsV1CreateDashboardRequest
+
+type UpdateWidgetJSONRequestBody = any
+
+type UpdateDashboardLayoutJSONRequestBody = any
+
+type CreateWidgetJSONRequestBody = models.AnalyticsV1WidgetInput
+
+type UpdateDashboardJSONRequestBody = any
 
 // RequestEditorFn is the function signature for the RequestEditor callback function.
 type RequestEditorFn func(ctx context.Context, req *http.Request) error
@@ -113,6 +132,45 @@ func (c *Client) applyEditors(ctx context.Context, req *http.Request, additional
 type ClientInterface interface {
 	// GetDashboardStats makes a GET request to /analytics/v1/dashboard
 	GetDashboardStats(ctx context.Context, params *GetDashboardStatsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// QueryChartWithBody makes a POST request to /analytics/v1/dashboard/chart-query
+	QueryChartWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+	QueryChart(ctx context.Context, body QueryChartJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// BatchQueryChartWithBody makes a POST request to /analytics/v1/dashboard/chart-query/batch
+	BatchQueryChartWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+	BatchQueryChart(ctx context.Context, body BatchQueryChartJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// ListDatasets makes a GET request to /analytics/v1/dashboard/datasets
+	ListDatasets(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// GetFilterOptionsWithBody makes a POST request to /analytics/v1/dashboard/filter-options
+	GetFilterOptionsWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+	GetFilterOptions(ctx context.Context, body GetFilterOptionsJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// GetScopeTreeWithBody makes a POST request to /analytics/v1/dashboard/scope-tree
+	GetScopeTreeWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+	GetScopeTree(ctx context.Context, body GetScopeTreeJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// ListDashboards makes a GET request to /analytics/v1/dashboards
+	ListDashboards(ctx context.Context, params *ListDashboardsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// CreateDashboardWithBody makes a POST request to /analytics/v1/dashboards
+	CreateDashboardWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+	CreateDashboard(ctx context.Context, body CreateDashboardJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// DeleteWidget makes a DELETE request to /analytics/v1/dashboards/widgets/{id}
+	DeleteWidget(ctx context.Context, id string, params *DeleteWidgetParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// UpdateWidgetWithBody makes a PATCH request to /analytics/v1/dashboards/widgets/{id}
+	UpdateWidgetWithBody(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+	UpdateWidget(ctx context.Context, id string, body UpdateWidgetJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// UpdateDashboardLayoutWithBody makes a POST request to /analytics/v1/dashboards/{dashboard_id}/layout
+	UpdateDashboardLayoutWithBody(ctx context.Context, dashboardId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+	UpdateDashboardLayout(ctx context.Context, dashboardId string, body UpdateDashboardLayoutJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// CreateWidgetWithBody makes a POST request to /analytics/v1/dashboards/{dashboard_id}/widgets
+	CreateWidgetWithBody(ctx context.Context, dashboardId string, params *CreateWidgetParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+	CreateWidget(ctx context.Context, dashboardId string, params *CreateWidgetParams, body CreateWidgetJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// DeleteDashboard makes a DELETE request to /analytics/v1/dashboards/{id}
+	DeleteDashboard(ctx context.Context, id string, params *DeleteDashboardParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// GetDashboard makes a GET request to /analytics/v1/dashboards/{id}
+	GetDashboard(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// UpdateDashboardWithBody makes a PATCH request to /analytics/v1/dashboards/{id}
+	UpdateDashboardWithBody(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+	UpdateDashboard(ctx context.Context, id string, body UpdateDashboardJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// SetDefaultDashboard makes a POST request to /analytics/v1/dashboards/{id}/default
+	SetDefaultDashboard(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*http.Response, error)
 }
 
 // GetDashboardStatsParams defines parameters for GetDashboardStats.
@@ -123,12 +181,381 @@ type GetDashboardStatsParams struct {
 	TimeEnd string `form:"time_end" json:"time_end"`
 	// interval (optional)
 	Interval *string `form:"interval" json:"interval"`
+	// filter.countries (optional)
+	FilterCountries *[]string `form:"filter.countries" json:"filter.countries"`
+	// filter.cities (optional)
+	FilterCities *[]string `form:"filter.cities" json:"filter.cities"`
+	// filter.devices (optional)
+	FilterDevices *[]string `form:"filter.devices" json:"filter.devices"`
+	// filter.os (optional)
+	FilterOs *[]string `form:"filter.os" json:"filter.os"`
+	// filter.languages (optional)
+	FilterLanguages *[]string `form:"filter.languages" json:"filter.languages"`
+	// filter.regions (optional)
+	FilterRegions *[]string `form:"filter.regions" json:"filter.regions"`
+	// filter.browsers (optional)
+	FilterBrowsers *[]string `form:"filter.browsers" json:"filter.browsers"`
+	// filter.os_versions (optional)
+	FilterOsVersions *[]string `form:"filter.os_versions" json:"filter.os_versions"`
+}
+
+// ListDashboardsParams defines parameters for ListDashboards.
+type ListDashboardsParams struct {
+	// page_size (optional)
+	PageSize *int32 `form:"page_size" json:"page_size"`
+	// page (optional)
+	Page *int32 `form:"page" json:"page"`
+}
+
+// DeleteWidgetParams defines parameters for DeleteWidget.
+type DeleteWidgetParams struct {
+	// expected_revision (required)
+	ExpectedRevision int32 `form:"expected_revision" json:"expected_revision"`
+}
+
+// CreateWidgetParams defines parameters for CreateWidget.
+type CreateWidgetParams struct {
+	// expected_revision (required)
+	ExpectedRevision int32 `form:"expected_revision" json:"expected_revision"`
+}
+
+// DeleteDashboardParams defines parameters for DeleteDashboard.
+type DeleteDashboardParams struct {
+	// expected_revision (required)
+	ExpectedRevision int32 `form:"expected_revision" json:"expected_revision"`
 }
 
 // GetDashboardStats makes a GET request to /analytics/v1/dashboard
 // GetDashboardStats
 func (c *Client) GetDashboardStats(ctx context.Context, params *GetDashboardStatsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewGetDashboardStatsRequest(c.Server, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// QueryChartWithBody makes a POST request to /analytics/v1/dashboard/chart-query
+// QueryChart
+func (c *Client) QueryChartWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewQueryChartRequestWithBody(c.Server, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// QueryChart makes a POST request to /analytics/v1/dashboard/chart-query with application/json body
+func (c *Client) QueryChart(ctx context.Context, body QueryChartJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewQueryChartRequest(c.Server, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// BatchQueryChartWithBody makes a POST request to /analytics/v1/dashboard/chart-query/batch
+// BatchQueryChart
+func (c *Client) BatchQueryChartWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewBatchQueryChartRequestWithBody(c.Server, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// BatchQueryChart makes a POST request to /analytics/v1/dashboard/chart-query/batch with application/json body
+func (c *Client) BatchQueryChart(ctx context.Context, body BatchQueryChartJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewBatchQueryChartRequest(c.Server, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// ListDatasets makes a GET request to /analytics/v1/dashboard/datasets
+// ListDatasets
+func (c *Client) ListDatasets(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListDatasetsRequest(c.Server)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// GetFilterOptionsWithBody makes a POST request to /analytics/v1/dashboard/filter-options
+// GetFilterOptions
+func (c *Client) GetFilterOptionsWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetFilterOptionsRequestWithBody(c.Server, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// GetFilterOptions makes a POST request to /analytics/v1/dashboard/filter-options with application/json body
+func (c *Client) GetFilterOptions(ctx context.Context, body GetFilterOptionsJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetFilterOptionsRequest(c.Server, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// GetScopeTreeWithBody makes a POST request to /analytics/v1/dashboard/scope-tree
+// GetScopeTree
+func (c *Client) GetScopeTreeWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetScopeTreeRequestWithBody(c.Server, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// GetScopeTree makes a POST request to /analytics/v1/dashboard/scope-tree with application/json body
+func (c *Client) GetScopeTree(ctx context.Context, body GetScopeTreeJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetScopeTreeRequest(c.Server, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// ListDashboards makes a GET request to /analytics/v1/dashboards
+// ListDashboards
+func (c *Client) ListDashboards(ctx context.Context, params *ListDashboardsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListDashboardsRequest(c.Server, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// CreateDashboardWithBody makes a POST request to /analytics/v1/dashboards
+// CreateDashboard
+func (c *Client) CreateDashboardWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateDashboardRequestWithBody(c.Server, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// CreateDashboard makes a POST request to /analytics/v1/dashboards with application/json body
+func (c *Client) CreateDashboard(ctx context.Context, body CreateDashboardJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateDashboardRequest(c.Server, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// DeleteWidget makes a DELETE request to /analytics/v1/dashboards/widgets/{id}
+// DeleteWidget
+func (c *Client) DeleteWidget(ctx context.Context, id string, params *DeleteWidgetParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewDeleteWidgetRequest(c.Server, id, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// UpdateWidgetWithBody makes a PATCH request to /analytics/v1/dashboards/widgets/{id}
+// UpdateWidget
+func (c *Client) UpdateWidgetWithBody(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpdateWidgetRequestWithBody(c.Server, id, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// UpdateWidget makes a PATCH request to /analytics/v1/dashboards/widgets/{id} with application/json body
+func (c *Client) UpdateWidget(ctx context.Context, id string, body UpdateWidgetJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpdateWidgetRequest(c.Server, id, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// UpdateDashboardLayoutWithBody makes a POST request to /analytics/v1/dashboards/{dashboard_id}/layout
+// UpdateDashboardLayout
+func (c *Client) UpdateDashboardLayoutWithBody(ctx context.Context, dashboardId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpdateDashboardLayoutRequestWithBody(c.Server, dashboardId, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// UpdateDashboardLayout makes a POST request to /analytics/v1/dashboards/{dashboard_id}/layout with application/json body
+func (c *Client) UpdateDashboardLayout(ctx context.Context, dashboardId string, body UpdateDashboardLayoutJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpdateDashboardLayoutRequest(c.Server, dashboardId, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// CreateWidgetWithBody makes a POST request to /analytics/v1/dashboards/{dashboard_id}/widgets
+// CreateWidget
+func (c *Client) CreateWidgetWithBody(ctx context.Context, dashboardId string, params *CreateWidgetParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateWidgetRequestWithBody(c.Server, dashboardId, params, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// CreateWidget makes a POST request to /analytics/v1/dashboards/{dashboard_id}/widgets with application/json body
+func (c *Client) CreateWidget(ctx context.Context, dashboardId string, params *CreateWidgetParams, body CreateWidgetJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateWidgetRequest(c.Server, dashboardId, params, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// DeleteDashboard makes a DELETE request to /analytics/v1/dashboards/{id}
+// DeleteDashboard
+func (c *Client) DeleteDashboard(ctx context.Context, id string, params *DeleteDashboardParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewDeleteDashboardRequest(c.Server, id, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// GetDashboard makes a GET request to /analytics/v1/dashboards/{id}
+// GetDashboard
+func (c *Client) GetDashboard(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetDashboardRequest(c.Server, id)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// UpdateDashboardWithBody makes a PATCH request to /analytics/v1/dashboards/{id}
+// UpdateDashboard
+func (c *Client) UpdateDashboardWithBody(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpdateDashboardRequestWithBody(c.Server, id, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// UpdateDashboard makes a PATCH request to /analytics/v1/dashboards/{id} with application/json body
+func (c *Client) UpdateDashboard(ctx context.Context, id string, body UpdateDashboardJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpdateDashboardRequest(c.Server, id, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// SetDefaultDashboard makes a POST request to /analytics/v1/dashboards/{id}/default
+// SetDefaultDashboard
+func (c *Client) SetDefaultDashboard(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewSetDefaultDashboardRequest(c.Server, id)
 	if err != nil {
 		return nil, err
 	}
@@ -195,10 +622,763 @@ func NewGetDashboardStatsRequest(server string, params *GetDashboardStatsParams)
 				}
 			}
 		}
+		if params.FilterCountries != nil {
+			if queryFrag, err := oapiCodegenParamsPkg.StyleParameter("filter.countries", *params.FilterCountries, oapiCodegenParamsPkg.ParameterOptions{Style: "form", ParamLocation: oapiCodegenParamsPkg.ParamLocationQuery, Explode: true, Required: false, Type: "array", Format: "", AllowReserved: false}); err != nil {
+				return nil, err
+			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+				return nil, err
+			} else {
+				for k, v := range parsed {
+					for _, v2 := range v {
+						queryValues.Add(k, v2)
+					}
+				}
+			}
+		}
+		if params.FilterCities != nil {
+			if queryFrag, err := oapiCodegenParamsPkg.StyleParameter("filter.cities", *params.FilterCities, oapiCodegenParamsPkg.ParameterOptions{Style: "form", ParamLocation: oapiCodegenParamsPkg.ParamLocationQuery, Explode: true, Required: false, Type: "array", Format: "", AllowReserved: false}); err != nil {
+				return nil, err
+			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+				return nil, err
+			} else {
+				for k, v := range parsed {
+					for _, v2 := range v {
+						queryValues.Add(k, v2)
+					}
+				}
+			}
+		}
+		if params.FilterDevices != nil {
+			if queryFrag, err := oapiCodegenParamsPkg.StyleParameter("filter.devices", *params.FilterDevices, oapiCodegenParamsPkg.ParameterOptions{Style: "form", ParamLocation: oapiCodegenParamsPkg.ParamLocationQuery, Explode: true, Required: false, Type: "array", Format: "", AllowReserved: false}); err != nil {
+				return nil, err
+			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+				return nil, err
+			} else {
+				for k, v := range parsed {
+					for _, v2 := range v {
+						queryValues.Add(k, v2)
+					}
+				}
+			}
+		}
+		if params.FilterOs != nil {
+			if queryFrag, err := oapiCodegenParamsPkg.StyleParameter("filter.os", *params.FilterOs, oapiCodegenParamsPkg.ParameterOptions{Style: "form", ParamLocation: oapiCodegenParamsPkg.ParamLocationQuery, Explode: true, Required: false, Type: "array", Format: "", AllowReserved: false}); err != nil {
+				return nil, err
+			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+				return nil, err
+			} else {
+				for k, v := range parsed {
+					for _, v2 := range v {
+						queryValues.Add(k, v2)
+					}
+				}
+			}
+		}
+		if params.FilterLanguages != nil {
+			if queryFrag, err := oapiCodegenParamsPkg.StyleParameter("filter.languages", *params.FilterLanguages, oapiCodegenParamsPkg.ParameterOptions{Style: "form", ParamLocation: oapiCodegenParamsPkg.ParamLocationQuery, Explode: true, Required: false, Type: "array", Format: "", AllowReserved: false}); err != nil {
+				return nil, err
+			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+				return nil, err
+			} else {
+				for k, v := range parsed {
+					for _, v2 := range v {
+						queryValues.Add(k, v2)
+					}
+				}
+			}
+		}
+		if params.FilterRegions != nil {
+			if queryFrag, err := oapiCodegenParamsPkg.StyleParameter("filter.regions", *params.FilterRegions, oapiCodegenParamsPkg.ParameterOptions{Style: "form", ParamLocation: oapiCodegenParamsPkg.ParamLocationQuery, Explode: true, Required: false, Type: "array", Format: "", AllowReserved: false}); err != nil {
+				return nil, err
+			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+				return nil, err
+			} else {
+				for k, v := range parsed {
+					for _, v2 := range v {
+						queryValues.Add(k, v2)
+					}
+				}
+			}
+		}
+		if params.FilterBrowsers != nil {
+			if queryFrag, err := oapiCodegenParamsPkg.StyleParameter("filter.browsers", *params.FilterBrowsers, oapiCodegenParamsPkg.ParameterOptions{Style: "form", ParamLocation: oapiCodegenParamsPkg.ParamLocationQuery, Explode: true, Required: false, Type: "array", Format: "", AllowReserved: false}); err != nil {
+				return nil, err
+			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+				return nil, err
+			} else {
+				for k, v := range parsed {
+					for _, v2 := range v {
+						queryValues.Add(k, v2)
+					}
+				}
+			}
+		}
+		if params.FilterOsVersions != nil {
+			if queryFrag, err := oapiCodegenParamsPkg.StyleParameter("filter.os_versions", *params.FilterOsVersions, oapiCodegenParamsPkg.ParameterOptions{Style: "form", ParamLocation: oapiCodegenParamsPkg.ParamLocationQuery, Explode: true, Required: false, Type: "array", Format: "", AllowReserved: false}); err != nil {
+				return nil, err
+			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+				return nil, err
+			} else {
+				for k, v := range parsed {
+					for _, v2 := range v {
+						queryValues.Add(k, v2)
+					}
+				}
+			}
+		}
 		reqURL.RawQuery = queryValues.Encode()
 	}
 
 	req, err := http.NewRequest("GET", reqURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewQueryChartRequest creates a POST request for /analytics/v1/dashboard/chart-query with application/json body
+func NewQueryChartRequest(server string, body QueryChartJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewQueryChartRequestWithBody(server, "application/json", bodyReader)
+}
+
+// NewQueryChartRequestWithBody creates a POST request for /analytics/v1/dashboard/chart-query with any body
+func NewQueryChartRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/analytics/v1/dashboard/chart-query")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	reqURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("POST", reqURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
+// NewBatchQueryChartRequest creates a POST request for /analytics/v1/dashboard/chart-query/batch with application/json body
+func NewBatchQueryChartRequest(server string, body BatchQueryChartJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewBatchQueryChartRequestWithBody(server, "application/json", bodyReader)
+}
+
+// NewBatchQueryChartRequestWithBody creates a POST request for /analytics/v1/dashboard/chart-query/batch with any body
+func NewBatchQueryChartRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/analytics/v1/dashboard/chart-query/batch")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	reqURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("POST", reqURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
+// NewListDatasetsRequest creates a GET request for /analytics/v1/dashboard/datasets
+func NewListDatasetsRequest(server string) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/analytics/v1/dashboard/datasets")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	reqURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", reqURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewGetFilterOptionsRequest creates a POST request for /analytics/v1/dashboard/filter-options with application/json body
+func NewGetFilterOptionsRequest(server string, body GetFilterOptionsJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewGetFilterOptionsRequestWithBody(server, "application/json", bodyReader)
+}
+
+// NewGetFilterOptionsRequestWithBody creates a POST request for /analytics/v1/dashboard/filter-options with any body
+func NewGetFilterOptionsRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/analytics/v1/dashboard/filter-options")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	reqURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("POST", reqURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
+// NewGetScopeTreeRequest creates a POST request for /analytics/v1/dashboard/scope-tree with application/json body
+func NewGetScopeTreeRequest(server string, body GetScopeTreeJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewGetScopeTreeRequestWithBody(server, "application/json", bodyReader)
+}
+
+// NewGetScopeTreeRequestWithBody creates a POST request for /analytics/v1/dashboard/scope-tree with any body
+func NewGetScopeTreeRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/analytics/v1/dashboard/scope-tree")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	reqURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("POST", reqURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
+// NewListDashboardsRequest creates a GET request for /analytics/v1/dashboards
+func NewListDashboardsRequest(server string, params *ListDashboardsParams) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/analytics/v1/dashboards")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	reqURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		queryValues := reqURL.Query()
+		if params.PageSize != nil {
+			if queryFrag, err := oapiCodegenParamsPkg.StyleParameter("page_size", *params.PageSize, oapiCodegenParamsPkg.ParameterOptions{Style: "form", ParamLocation: oapiCodegenParamsPkg.ParamLocationQuery, Explode: true, Required: false, Type: "integer", Format: "int32", AllowReserved: false}); err != nil {
+				return nil, err
+			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+				return nil, err
+			} else {
+				for k, v := range parsed {
+					for _, v2 := range v {
+						queryValues.Add(k, v2)
+					}
+				}
+			}
+		}
+		if params.Page != nil {
+			if queryFrag, err := oapiCodegenParamsPkg.StyleParameter("page", *params.Page, oapiCodegenParamsPkg.ParameterOptions{Style: "form", ParamLocation: oapiCodegenParamsPkg.ParamLocationQuery, Explode: true, Required: false, Type: "integer", Format: "int32", AllowReserved: false}); err != nil {
+				return nil, err
+			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+				return nil, err
+			} else {
+				for k, v := range parsed {
+					for _, v2 := range v {
+						queryValues.Add(k, v2)
+					}
+				}
+			}
+		}
+		reqURL.RawQuery = queryValues.Encode()
+	}
+
+	req, err := http.NewRequest("GET", reqURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewCreateDashboardRequest creates a POST request for /analytics/v1/dashboards with application/json body
+func NewCreateDashboardRequest(server string, body CreateDashboardJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewCreateDashboardRequestWithBody(server, "application/json", bodyReader)
+}
+
+// NewCreateDashboardRequestWithBody creates a POST request for /analytics/v1/dashboards with any body
+func NewCreateDashboardRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/analytics/v1/dashboards")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	reqURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("POST", reqURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
+// NewDeleteWidgetRequest creates a DELETE request for /analytics/v1/dashboards/widgets/{id}
+func NewDeleteWidgetRequest(server string, id string, params *DeleteWidgetParams) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+	pathParam0, err = oapiCodegenParamsPkg.StyleParameter("id", id, oapiCodegenParamsPkg.ParameterOptions{Style: "simple", ParamLocation: oapiCodegenParamsPkg.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", AllowReserved: false})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/analytics/v1/dashboards/widgets/%s", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	reqURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		queryValues := reqURL.Query()
+		if queryFrag, err := oapiCodegenParamsPkg.StyleParameter("expected_revision", params.ExpectedRevision, oapiCodegenParamsPkg.ParameterOptions{Style: "form", ParamLocation: oapiCodegenParamsPkg.ParamLocationQuery, Explode: true, Required: true, Type: "integer", Format: "int32", AllowReserved: false}); err != nil {
+			return nil, err
+		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+			return nil, err
+		} else {
+			for k, v := range parsed {
+				for _, v2 := range v {
+					queryValues.Add(k, v2)
+				}
+			}
+		}
+		reqURL.RawQuery = queryValues.Encode()
+	}
+
+	req, err := http.NewRequest("DELETE", reqURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewUpdateWidgetRequest creates a PATCH request for /analytics/v1/dashboards/widgets/{id} with application/json body
+func NewUpdateWidgetRequest(server string, id string, body UpdateWidgetJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewUpdateWidgetRequestWithBody(server, id, "application/json", bodyReader)
+}
+
+// NewUpdateWidgetRequestWithBody creates a PATCH request for /analytics/v1/dashboards/widgets/{id} with any body
+func NewUpdateWidgetRequestWithBody(server string, id string, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+	pathParam0, err = oapiCodegenParamsPkg.StyleParameter("id", id, oapiCodegenParamsPkg.ParameterOptions{Style: "simple", ParamLocation: oapiCodegenParamsPkg.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", AllowReserved: false})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/analytics/v1/dashboards/widgets/%s", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	reqURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("PATCH", reqURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
+// NewUpdateDashboardLayoutRequest creates a POST request for /analytics/v1/dashboards/{dashboard_id}/layout with application/json body
+func NewUpdateDashboardLayoutRequest(server string, dashboardId string, body UpdateDashboardLayoutJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewUpdateDashboardLayoutRequestWithBody(server, dashboardId, "application/json", bodyReader)
+}
+
+// NewUpdateDashboardLayoutRequestWithBody creates a POST request for /analytics/v1/dashboards/{dashboard_id}/layout with any body
+func NewUpdateDashboardLayoutRequestWithBody(server string, dashboardId string, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+	pathParam0, err = oapiCodegenParamsPkg.StyleParameter("dashboard_id", dashboardId, oapiCodegenParamsPkg.ParameterOptions{Style: "simple", ParamLocation: oapiCodegenParamsPkg.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", AllowReserved: false})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/analytics/v1/dashboards/%s/layout", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	reqURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("POST", reqURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
+// NewCreateWidgetRequest creates a POST request for /analytics/v1/dashboards/{dashboard_id}/widgets with application/json body
+func NewCreateWidgetRequest(server string, dashboardId string, params *CreateWidgetParams, body CreateWidgetJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewCreateWidgetRequestWithBody(server, dashboardId, params, "application/json", bodyReader)
+}
+
+// NewCreateWidgetRequestWithBody creates a POST request for /analytics/v1/dashboards/{dashboard_id}/widgets with any body
+func NewCreateWidgetRequestWithBody(server string, dashboardId string, params *CreateWidgetParams, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+	pathParam0, err = oapiCodegenParamsPkg.StyleParameter("dashboard_id", dashboardId, oapiCodegenParamsPkg.ParameterOptions{Style: "simple", ParamLocation: oapiCodegenParamsPkg.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", AllowReserved: false})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/analytics/v1/dashboards/%s/widgets", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	reqURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		queryValues := reqURL.Query()
+		if queryFrag, err := oapiCodegenParamsPkg.StyleParameter("expected_revision", params.ExpectedRevision, oapiCodegenParamsPkg.ParameterOptions{Style: "form", ParamLocation: oapiCodegenParamsPkg.ParamLocationQuery, Explode: true, Required: true, Type: "integer", Format: "int32", AllowReserved: false}); err != nil {
+			return nil, err
+		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+			return nil, err
+		} else {
+			for k, v := range parsed {
+				for _, v2 := range v {
+					queryValues.Add(k, v2)
+				}
+			}
+		}
+		reqURL.RawQuery = queryValues.Encode()
+	}
+
+	req, err := http.NewRequest("POST", reqURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
+// NewDeleteDashboardRequest creates a DELETE request for /analytics/v1/dashboards/{id}
+func NewDeleteDashboardRequest(server string, id string, params *DeleteDashboardParams) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+	pathParam0, err = oapiCodegenParamsPkg.StyleParameter("id", id, oapiCodegenParamsPkg.ParameterOptions{Style: "simple", ParamLocation: oapiCodegenParamsPkg.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", AllowReserved: false})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/analytics/v1/dashboards/%s", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	reqURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		queryValues := reqURL.Query()
+		if queryFrag, err := oapiCodegenParamsPkg.StyleParameter("expected_revision", params.ExpectedRevision, oapiCodegenParamsPkg.ParameterOptions{Style: "form", ParamLocation: oapiCodegenParamsPkg.ParamLocationQuery, Explode: true, Required: true, Type: "integer", Format: "int32", AllowReserved: false}); err != nil {
+			return nil, err
+		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+			return nil, err
+		} else {
+			for k, v := range parsed {
+				for _, v2 := range v {
+					queryValues.Add(k, v2)
+				}
+			}
+		}
+		reqURL.RawQuery = queryValues.Encode()
+	}
+
+	req, err := http.NewRequest("DELETE", reqURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewGetDashboardRequest creates a GET request for /analytics/v1/dashboards/{id}
+func NewGetDashboardRequest(server string, id string) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+	pathParam0, err = oapiCodegenParamsPkg.StyleParameter("id", id, oapiCodegenParamsPkg.ParameterOptions{Style: "simple", ParamLocation: oapiCodegenParamsPkg.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", AllowReserved: false})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/analytics/v1/dashboards/%s", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	reqURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", reqURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewUpdateDashboardRequest creates a PATCH request for /analytics/v1/dashboards/{id} with application/json body
+func NewUpdateDashboardRequest(server string, id string, body UpdateDashboardJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewUpdateDashboardRequestWithBody(server, id, "application/json", bodyReader)
+}
+
+// NewUpdateDashboardRequestWithBody creates a PATCH request for /analytics/v1/dashboards/{id} with any body
+func NewUpdateDashboardRequestWithBody(server string, id string, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+	pathParam0, err = oapiCodegenParamsPkg.StyleParameter("id", id, oapiCodegenParamsPkg.ParameterOptions{Style: "simple", ParamLocation: oapiCodegenParamsPkg.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", AllowReserved: false})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/analytics/v1/dashboards/%s", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	reqURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("PATCH", reqURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
+// NewSetDefaultDashboardRequest creates a POST request for /analytics/v1/dashboards/{id}/default
+func NewSetDefaultDashboardRequest(server string, id string) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+	pathParam0, err = oapiCodegenParamsPkg.StyleParameter("id", id, oapiCodegenParamsPkg.ParameterOptions{Style: "simple", ParamLocation: oapiCodegenParamsPkg.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", AllowReserved: false})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/analytics/v1/dashboards/%s/default", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	reqURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("POST", reqURL.String(), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -240,6 +1420,456 @@ func NewSimpleClient(server string, opts ...ClientOption) (*SimpleClient, error)
 func (c *SimpleClient) GetDashboardStats(ctx context.Context, params *GetDashboardStatsParams, reqEditors ...RequestEditorFn) (models.AnalyticsV1DashboardStatsResponse, error) {
 	var result models.AnalyticsV1DashboardStatsResponse
 	resp, err := c.Client.GetDashboardStats(ctx, params, reqEditors...)
+	if err != nil {
+		return result, err
+	}
+	defer resp.Body.Close()
+
+	rawBody, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return result, err
+	}
+
+	if resp.StatusCode >= 200 && resp.StatusCode < 300 {
+		if err := json.Unmarshal(rawBody, &result); err != nil {
+			return result, err
+		}
+		return result, nil
+	}
+
+	// No typed error response defined
+	return result, &ClientHttpError[struct{}]{
+		StatusCode: resp.StatusCode,
+		RawBody:    rawBody,
+	}
+}
+
+// QueryChart makes a POST request to /analytics/v1/dashboard/chart-query and returns the parsed response.
+// QueryChart
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+func (c *SimpleClient) QueryChart(ctx context.Context, body QueryChartJSONRequestBody, reqEditors ...RequestEditorFn) (models.AnalyticsV1ChartQueryResponse, error) {
+	var result models.AnalyticsV1ChartQueryResponse
+	resp, err := c.Client.QueryChart(ctx, body, reqEditors...)
+	if err != nil {
+		return result, err
+	}
+	defer resp.Body.Close()
+
+	rawBody, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return result, err
+	}
+
+	if resp.StatusCode >= 200 && resp.StatusCode < 300 {
+		if err := json.Unmarshal(rawBody, &result); err != nil {
+			return result, err
+		}
+		return result, nil
+	}
+
+	// No typed error response defined
+	return result, &ClientHttpError[struct{}]{
+		StatusCode: resp.StatusCode,
+		RawBody:    rawBody,
+	}
+}
+
+// BatchQueryChart makes a POST request to /analytics/v1/dashboard/chart-query/batch and returns the parsed response.
+// BatchQueryChart
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+func (c *SimpleClient) BatchQueryChart(ctx context.Context, body BatchQueryChartJSONRequestBody, reqEditors ...RequestEditorFn) (models.AnalyticsV1BatchChartQueryResponse, error) {
+	var result models.AnalyticsV1BatchChartQueryResponse
+	resp, err := c.Client.BatchQueryChart(ctx, body, reqEditors...)
+	if err != nil {
+		return result, err
+	}
+	defer resp.Body.Close()
+
+	rawBody, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return result, err
+	}
+
+	if resp.StatusCode >= 200 && resp.StatusCode < 300 {
+		if err := json.Unmarshal(rawBody, &result); err != nil {
+			return result, err
+		}
+		return result, nil
+	}
+
+	// No typed error response defined
+	return result, &ClientHttpError[struct{}]{
+		StatusCode: resp.StatusCode,
+		RawBody:    rawBody,
+	}
+}
+
+// ListDatasets makes a GET request to /analytics/v1/dashboard/datasets and returns the parsed response.
+// ListDatasets
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+func (c *SimpleClient) ListDatasets(ctx context.Context, reqEditors ...RequestEditorFn) (models.AnalyticsV1ListDatasetsResponse, error) {
+	var result models.AnalyticsV1ListDatasetsResponse
+	resp, err := c.Client.ListDatasets(ctx, reqEditors...)
+	if err != nil {
+		return result, err
+	}
+	defer resp.Body.Close()
+
+	rawBody, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return result, err
+	}
+
+	if resp.StatusCode >= 200 && resp.StatusCode < 300 {
+		if err := json.Unmarshal(rawBody, &result); err != nil {
+			return result, err
+		}
+		return result, nil
+	}
+
+	// No typed error response defined
+	return result, &ClientHttpError[struct{}]{
+		StatusCode: resp.StatusCode,
+		RawBody:    rawBody,
+	}
+}
+
+// GetFilterOptions makes a POST request to /analytics/v1/dashboard/filter-options and returns the parsed response.
+// GetFilterOptions
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+func (c *SimpleClient) GetFilterOptions(ctx context.Context, body GetFilterOptionsJSONRequestBody, reqEditors ...RequestEditorFn) (models.AnalyticsV1GetFilterOptionsResponse, error) {
+	var result models.AnalyticsV1GetFilterOptionsResponse
+	resp, err := c.Client.GetFilterOptions(ctx, body, reqEditors...)
+	if err != nil {
+		return result, err
+	}
+	defer resp.Body.Close()
+
+	rawBody, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return result, err
+	}
+
+	if resp.StatusCode >= 200 && resp.StatusCode < 300 {
+		if err := json.Unmarshal(rawBody, &result); err != nil {
+			return result, err
+		}
+		return result, nil
+	}
+
+	// No typed error response defined
+	return result, &ClientHttpError[struct{}]{
+		StatusCode: resp.StatusCode,
+		RawBody:    rawBody,
+	}
+}
+
+// GetScopeTree makes a POST request to /analytics/v1/dashboard/scope-tree and returns the parsed response.
+// GetScopeTree
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+func (c *SimpleClient) GetScopeTree(ctx context.Context, body GetScopeTreeJSONRequestBody, reqEditors ...RequestEditorFn) (models.AnalyticsV1GetScopeTreeResponse, error) {
+	var result models.AnalyticsV1GetScopeTreeResponse
+	resp, err := c.Client.GetScopeTree(ctx, body, reqEditors...)
+	if err != nil {
+		return result, err
+	}
+	defer resp.Body.Close()
+
+	rawBody, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return result, err
+	}
+
+	if resp.StatusCode >= 200 && resp.StatusCode < 300 {
+		if err := json.Unmarshal(rawBody, &result); err != nil {
+			return result, err
+		}
+		return result, nil
+	}
+
+	// No typed error response defined
+	return result, &ClientHttpError[struct{}]{
+		StatusCode: resp.StatusCode,
+		RawBody:    rawBody,
+	}
+}
+
+// ListDashboards makes a GET request to /analytics/v1/dashboards and returns the parsed response.
+// ListDashboards
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+func (c *SimpleClient) ListDashboards(ctx context.Context, params *ListDashboardsParams, reqEditors ...RequestEditorFn) (models.AnalyticsV1ListDashboardsResponse, error) {
+	var result models.AnalyticsV1ListDashboardsResponse
+	resp, err := c.Client.ListDashboards(ctx, params, reqEditors...)
+	if err != nil {
+		return result, err
+	}
+	defer resp.Body.Close()
+
+	rawBody, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return result, err
+	}
+
+	if resp.StatusCode >= 200 && resp.StatusCode < 300 {
+		if err := json.Unmarshal(rawBody, &result); err != nil {
+			return result, err
+		}
+		return result, nil
+	}
+
+	// No typed error response defined
+	return result, &ClientHttpError[struct{}]{
+		StatusCode: resp.StatusCode,
+		RawBody:    rawBody,
+	}
+}
+
+// CreateDashboard makes a POST request to /analytics/v1/dashboards and returns the parsed response.
+// CreateDashboard
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+func (c *SimpleClient) CreateDashboard(ctx context.Context, body CreateDashboardJSONRequestBody, reqEditors ...RequestEditorFn) (models.AnalyticsV1Dashboard, error) {
+	var result models.AnalyticsV1Dashboard
+	resp, err := c.Client.CreateDashboard(ctx, body, reqEditors...)
+	if err != nil {
+		return result, err
+	}
+	defer resp.Body.Close()
+
+	rawBody, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return result, err
+	}
+
+	if resp.StatusCode >= 200 && resp.StatusCode < 300 {
+		if err := json.Unmarshal(rawBody, &result); err != nil {
+			return result, err
+		}
+		return result, nil
+	}
+
+	// No typed error response defined
+	return result, &ClientHttpError[struct{}]{
+		StatusCode: resp.StatusCode,
+		RawBody:    rawBody,
+	}
+}
+
+// DeleteWidget makes a DELETE request to /analytics/v1/dashboards/widgets/{id} and returns the parsed response.
+// DeleteWidget
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+func (c *SimpleClient) DeleteWidget(ctx context.Context, id string, params *DeleteWidgetParams, reqEditors ...RequestEditorFn) (models.AnalyticsV1DeleteWidgetResponse, error) {
+	var result models.AnalyticsV1DeleteWidgetResponse
+	resp, err := c.Client.DeleteWidget(ctx, id, params, reqEditors...)
+	if err != nil {
+		return result, err
+	}
+	defer resp.Body.Close()
+
+	rawBody, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return result, err
+	}
+
+	if resp.StatusCode >= 200 && resp.StatusCode < 300 {
+		if err := json.Unmarshal(rawBody, &result); err != nil {
+			return result, err
+		}
+		return result, nil
+	}
+
+	// No typed error response defined
+	return result, &ClientHttpError[struct{}]{
+		StatusCode: resp.StatusCode,
+		RawBody:    rawBody,
+	}
+}
+
+// UpdateWidget makes a PATCH request to /analytics/v1/dashboards/widgets/{id} and returns the parsed response.
+// UpdateWidget
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+func (c *SimpleClient) UpdateWidget(ctx context.Context, id string, body UpdateWidgetJSONRequestBody, reqEditors ...RequestEditorFn) (models.AnalyticsV1Widget, error) {
+	var result models.AnalyticsV1Widget
+	resp, err := c.Client.UpdateWidget(ctx, id, body, reqEditors...)
+	if err != nil {
+		return result, err
+	}
+	defer resp.Body.Close()
+
+	rawBody, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return result, err
+	}
+
+	if resp.StatusCode >= 200 && resp.StatusCode < 300 {
+		if err := json.Unmarshal(rawBody, &result); err != nil {
+			return result, err
+		}
+		return result, nil
+	}
+
+	// No typed error response defined
+	return result, &ClientHttpError[struct{}]{
+		StatusCode: resp.StatusCode,
+		RawBody:    rawBody,
+	}
+}
+
+// UpdateDashboardLayout makes a POST request to /analytics/v1/dashboards/{dashboard_id}/layout and returns the parsed response.
+// UpdateDashboardLayout
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+func (c *SimpleClient) UpdateDashboardLayout(ctx context.Context, dashboardId string, body UpdateDashboardLayoutJSONRequestBody, reqEditors ...RequestEditorFn) (models.AnalyticsV1Dashboard, error) {
+	var result models.AnalyticsV1Dashboard
+	resp, err := c.Client.UpdateDashboardLayout(ctx, dashboardId, body, reqEditors...)
+	if err != nil {
+		return result, err
+	}
+	defer resp.Body.Close()
+
+	rawBody, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return result, err
+	}
+
+	if resp.StatusCode >= 200 && resp.StatusCode < 300 {
+		if err := json.Unmarshal(rawBody, &result); err != nil {
+			return result, err
+		}
+		return result, nil
+	}
+
+	// No typed error response defined
+	return result, &ClientHttpError[struct{}]{
+		StatusCode: resp.StatusCode,
+		RawBody:    rawBody,
+	}
+}
+
+// CreateWidget makes a POST request to /analytics/v1/dashboards/{dashboard_id}/widgets and returns the parsed response.
+// CreateWidget
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+func (c *SimpleClient) CreateWidget(ctx context.Context, dashboardId string, params *CreateWidgetParams, body CreateWidgetJSONRequestBody, reqEditors ...RequestEditorFn) (models.AnalyticsV1Widget, error) {
+	var result models.AnalyticsV1Widget
+	resp, err := c.Client.CreateWidget(ctx, dashboardId, params, body, reqEditors...)
+	if err != nil {
+		return result, err
+	}
+	defer resp.Body.Close()
+
+	rawBody, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return result, err
+	}
+
+	if resp.StatusCode >= 200 && resp.StatusCode < 300 {
+		if err := json.Unmarshal(rawBody, &result); err != nil {
+			return result, err
+		}
+		return result, nil
+	}
+
+	// No typed error response defined
+	return result, &ClientHttpError[struct{}]{
+		StatusCode: resp.StatusCode,
+		RawBody:    rawBody,
+	}
+}
+
+// DeleteDashboard makes a DELETE request to /analytics/v1/dashboards/{id} and returns the parsed response.
+// DeleteDashboard
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+func (c *SimpleClient) DeleteDashboard(ctx context.Context, id string, params *DeleteDashboardParams, reqEditors ...RequestEditorFn) (models.GoogleProtobufEmpty, error) {
+	var result models.GoogleProtobufEmpty
+	resp, err := c.Client.DeleteDashboard(ctx, id, params, reqEditors...)
+	if err != nil {
+		return result, err
+	}
+	defer resp.Body.Close()
+
+	rawBody, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return result, err
+	}
+
+	if resp.StatusCode >= 200 && resp.StatusCode < 300 {
+		if err := json.Unmarshal(rawBody, &result); err != nil {
+			return result, err
+		}
+		return result, nil
+	}
+
+	// No typed error response defined
+	return result, &ClientHttpError[struct{}]{
+		StatusCode: resp.StatusCode,
+		RawBody:    rawBody,
+	}
+}
+
+// GetDashboard makes a GET request to /analytics/v1/dashboards/{id} and returns the parsed response.
+// GetDashboard
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+func (c *SimpleClient) GetDashboard(ctx context.Context, id string, reqEditors ...RequestEditorFn) (models.AnalyticsV1Dashboard, error) {
+	var result models.AnalyticsV1Dashboard
+	resp, err := c.Client.GetDashboard(ctx, id, reqEditors...)
+	if err != nil {
+		return result, err
+	}
+	defer resp.Body.Close()
+
+	rawBody, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return result, err
+	}
+
+	if resp.StatusCode >= 200 && resp.StatusCode < 300 {
+		if err := json.Unmarshal(rawBody, &result); err != nil {
+			return result, err
+		}
+		return result, nil
+	}
+
+	// No typed error response defined
+	return result, &ClientHttpError[struct{}]{
+		StatusCode: resp.StatusCode,
+		RawBody:    rawBody,
+	}
+}
+
+// UpdateDashboard makes a PATCH request to /analytics/v1/dashboards/{id} and returns the parsed response.
+// UpdateDashboard
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+func (c *SimpleClient) UpdateDashboard(ctx context.Context, id string, body UpdateDashboardJSONRequestBody, reqEditors ...RequestEditorFn) (models.AnalyticsV1Dashboard, error) {
+	var result models.AnalyticsV1Dashboard
+	resp, err := c.Client.UpdateDashboard(ctx, id, body, reqEditors...)
+	if err != nil {
+		return result, err
+	}
+	defer resp.Body.Close()
+
+	rawBody, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return result, err
+	}
+
+	if resp.StatusCode >= 200 && resp.StatusCode < 300 {
+		if err := json.Unmarshal(rawBody, &result); err != nil {
+			return result, err
+		}
+		return result, nil
+	}
+
+	// No typed error response defined
+	return result, &ClientHttpError[struct{}]{
+		StatusCode: resp.StatusCode,
+		RawBody:    rawBody,
+	}
+}
+
+// SetDefaultDashboard makes a POST request to /analytics/v1/dashboards/{id}/default and returns the parsed response.
+// SetDefaultDashboard
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+func (c *SimpleClient) SetDefaultDashboard(ctx context.Context, id string, reqEditors ...RequestEditorFn) (models.AnalyticsV1Dashboard, error) {
+	var result models.AnalyticsV1Dashboard
+	resp, err := c.Client.SetDefaultDashboard(ctx, id, reqEditors...)
 	if err != nil {
 		return result, err
 	}
