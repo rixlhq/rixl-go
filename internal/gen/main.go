@@ -3,6 +3,7 @@
 package main
 
 import (
+	"context"
 	"flag"
 	"fmt"
 	"log"
@@ -10,6 +11,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"regexp"
+	"slices"
 	"sort"
 	"strings"
 
@@ -104,7 +106,7 @@ func prepare(specPath, specOut, pkgsOut string) error {
 // compile. Collisions keep more of the qualifier.
 func shortOperationID(id string, seen map[string]bool) string {
 	parts := strings.Split(id, ".")
-	for start := len(parts) - 1; start >= 0; start-- {
+	for start := range slices.Backward(parts) {
 		candidate := strings.Join(parts[start:], "")
 		if !seen[candidate] {
 			seen[candidate] = true
@@ -190,7 +192,7 @@ func writeFacade(pkgsPath, outPath string) error {
 	}
 
 	var imports, fields, constructors strings.Builder
-	for _, line := range strings.Split(strings.TrimSpace(string(raw)), "\n") {
+	for line := range strings.SplitSeq(strings.TrimSpace(string(raw)), "\n") {
 		pkg, tag, ok := strings.Cut(line, "\t")
 		if !ok {
 			return fmt.Errorf("malformed package line %q", line)
@@ -232,14 +234,14 @@ func writeAliases() error {
 	}
 
 	missing := map[string]map[string]bool{}
-	build := exec.Command("go", "build", "./sdk/...")
+	build := exec.CommandContext(context.Background(), "go", "build", "./sdk/...")
 	build.Env = append(os.Environ(), "GOWORK=off")
 	output, err := build.CombinedOutput()
 	if err == nil {
 		return nil
 	}
 
-	for _, line := range strings.Split(string(output), "\n") {
+	for line := range strings.SplitSeq(string(output), "\n") {
 		match := undefinedSymbol.FindStringSubmatch(strings.TrimSpace(line))
 		if match == nil {
 			continue

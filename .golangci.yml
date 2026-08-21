@@ -97,6 +97,15 @@ linters:
           - staticcheck
           - unparam
           - unused
+      # Build-time codegen tool, not shipped in the SDK.
+      - path: ^internal/gen/
+        linters:
+          - forbidigo
+          - gocognit
+          - gocyclo
+          - godoclint
+          - modernize
+          - noctx
 formatters:
   enable:
     - gofmt
