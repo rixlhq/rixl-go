@@ -28,6 +28,8 @@ type CreateDashboardJSONRequestBody = models.AnalyticsV1CreateDashboardRequest
 
 type UpdateWidgetJSONRequestBody = any
 
+type ExportDashboardJSONRequestBody = any
+
 type UpdateDashboardLayoutJSONRequestBody = any
 
 type CreateWidgetJSONRequestBody = models.AnalyticsV1WidgetInput
@@ -156,6 +158,9 @@ type ClientInterface interface {
 	// UpdateWidgetWithBody makes a PATCH request to /analytics/v1/dashboards/widgets/{id}
 	UpdateWidgetWithBody(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 	UpdateWidget(ctx context.Context, id string, body UpdateWidgetJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// ExportDashboardWithBody makes a POST request to /analytics/v1/dashboards/{dashboard_id}/export
+	ExportDashboardWithBody(ctx context.Context, dashboardId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+	ExportDashboard(ctx context.Context, dashboardId string, body ExportDashboardJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 	// UpdateDashboardLayoutWithBody makes a POST request to /analytics/v1/dashboards/{dashboard_id}/layout
 	UpdateDashboardLayoutWithBody(ctx context.Context, dashboardId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 	UpdateDashboardLayout(ctx context.Context, dashboardId string, body UpdateDashboardLayoutJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -433,6 +438,33 @@ func (c *Client) UpdateWidgetWithBody(ctx context.Context, id string, contentTyp
 // UpdateWidget makes a PATCH request to /analytics/v1/dashboards/widgets/{id} with application/json body
 func (c *Client) UpdateWidget(ctx context.Context, id string, body UpdateWidgetJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewUpdateWidgetRequest(c.Server, id, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// ExportDashboardWithBody makes a POST request to /analytics/v1/dashboards/{dashboard_id}/export
+// ExportDashboard
+func (c *Client) ExportDashboardWithBody(ctx context.Context, dashboardId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewExportDashboardRequestWithBody(c.Server, dashboardId, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// ExportDashboard makes a POST request to /analytics/v1/dashboards/{dashboard_id}/export with application/json body
+func (c *Client) ExportDashboard(ctx context.Context, dashboardId string, body ExportDashboardJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewExportDashboardRequest(c.Server, dashboardId, body)
 	if err != nil {
 		return nil, err
 	}
@@ -1117,6 +1149,52 @@ func NewUpdateWidgetRequestWithBody(server string, id string, contentType string
 	return req, nil
 }
 
+// NewExportDashboardRequest creates a POST request for /analytics/v1/dashboards/{dashboard_id}/export with application/json body
+func NewExportDashboardRequest(server string, dashboardId string, body ExportDashboardJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewExportDashboardRequestWithBody(server, dashboardId, "application/json", bodyReader)
+}
+
+// NewExportDashboardRequestWithBody creates a POST request for /analytics/v1/dashboards/{dashboard_id}/export with any body
+func NewExportDashboardRequestWithBody(server string, dashboardId string, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+	pathParam0, err = oapiCodegenParamsPkg.StyleParameter("dashboard_id", dashboardId, oapiCodegenParamsPkg.ParameterOptions{Style: "simple", ParamLocation: oapiCodegenParamsPkg.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", AllowReserved: false})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/analytics/v1/dashboards/%s/export", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	reqURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("POST", reqURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
 // NewUpdateDashboardLayoutRequest creates a POST request for /analytics/v1/dashboards/{dashboard_id}/layout with application/json body
 func NewUpdateDashboardLayoutRequest(server string, dashboardId string, body UpdateDashboardLayoutJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
@@ -1690,6 +1768,36 @@ func (c *SimpleClient) DeleteWidget(ctx context.Context, id string, params *Dele
 func (c *SimpleClient) UpdateWidget(ctx context.Context, id string, body UpdateWidgetJSONRequestBody, reqEditors ...RequestEditorFn) (models.AnalyticsV1Widget, error) {
 	var result models.AnalyticsV1Widget
 	resp, err := c.Client.UpdateWidget(ctx, id, body, reqEditors...)
+	if err != nil {
+		return result, err
+	}
+	defer resp.Body.Close()
+
+	rawBody, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return result, err
+	}
+
+	if resp.StatusCode >= 200 && resp.StatusCode < 300 {
+		if err := json.Unmarshal(rawBody, &result); err != nil {
+			return result, err
+		}
+		return result, nil
+	}
+
+	// No typed error response defined
+	return result, &ClientHttpError[struct{}]{
+		StatusCode: resp.StatusCode,
+		RawBody:    rawBody,
+	}
+}
+
+// ExportDashboard makes a POST request to /analytics/v1/dashboards/{dashboard_id}/export and returns the parsed response.
+// ExportDashboard
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+func (c *SimpleClient) ExportDashboard(ctx context.Context, dashboardId string, body ExportDashboardJSONRequestBody, reqEditors ...RequestEditorFn) (models.AnalyticsV1ExportDashboardResponse, error) {
+	var result models.AnalyticsV1ExportDashboardResponse
+	resp, err := c.Client.ExportDashboard(ctx, dashboardId, body, reqEditors...)
 	if err != nil {
 		return result, err
 	}
