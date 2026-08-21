@@ -1,24 +1,24 @@
 // Package sdk is the entry point for the RIXL Go client.
 //
 //	client, err := sdk.New(apiKey)
-//	page, err := client.Images.GetImages(ctx, nil)
+//	page, err := client.Images.ListImages(ctx, projectID, nil)
 package sdk
 
 import (
 	"context"
 	"net/http"
-
-	"github.com/rixlhq/rixl-go/sdk/feeds"
-	"github.com/rixlhq/rixl-go/sdk/images"
-	"github.com/rixlhq/rixl-go/sdk/videos"
 )
 
 const baseURL = "https://api.rixl.com"
 
+// Client exposes one typed client per API resource. The resource fields are
+// generated from the OpenAPI spec — see sdk/resources.gen.go.
 type Client struct {
-	Feeds  *feeds.SimpleClient
-	Images *images.SimpleClient
-	Videos *videos.SimpleClient
+	*resources
+
+	Credentials *CredentialsClient
+
+	httpClient *http.Client
 }
 
 func New(apiKey string, opts ...Option) (*Client, error) {
@@ -29,21 +29,25 @@ func New(apiKey string, opts ...Option) (*Client, error) {
 	for _, opt := range opts {
 		opt(&cfg)
 	}
+	if err := resolveCredentials(&cfg); err != nil {
+		return nil, err
+	}
 
-	feedsCli, err := feeds.NewSimpleClient(baseURL, feedsOpts(cfg)...)
-	if err != nil {
-		return nil, err
-	}
-	imagesCli, err := images.NewSimpleClient(baseURL, imagesOpts(cfg)...)
-	if err != nil {
-		return nil, err
-	}
-	videosCli, err := videos.NewSimpleClient(baseURL, videosOpts(cfg)...)
+	res, err := newResources(cfg)
 	if err != nil {
 		return nil, err
 	}
 
-	return &Client{Feeds: feedsCli, Images: imagesCli, Videos: videosCli}, nil
+	httpClient := cfg.httpClient
+	if httpClient == nil {
+		httpClient = http.DefaultClient
+	}
+
+	return &Client{
+		resources:   res,
+		Credentials: &CredentialsClient{baseURL: baseURL, httpClient: httpClient, editors: cfg.editors},
+		httpClient:  httpClient,
+	}, nil
 }
 
 type Option func(*config)
@@ -68,6 +72,7 @@ type editorFn = func(ctx context.Context, req *http.Request) error
 type config struct {
 	httpClient *http.Client
 	editors    []editorFn
+	creds      *ClientCredentials
 }
 
 func headerEditor(name, value string) editorFn {
@@ -75,37 +80,4 @@ func headerEditor(name, value string) editorFn {
 		req.Header.Set(name, value)
 		return nil
 	}
-}
-
-func feedsOpts(cfg config) []feeds.ClientOption {
-	out := make([]feeds.ClientOption, 0, len(cfg.editors)+1)
-	if cfg.httpClient != nil {
-		out = append(out, feeds.WithHTTPClient(cfg.httpClient))
-	}
-	for _, e := range cfg.editors {
-		out = append(out, feeds.WithRequestEditorFn(e))
-	}
-	return out
-}
-
-func imagesOpts(cfg config) []images.ClientOption {
-	out := make([]images.ClientOption, 0, len(cfg.editors)+1)
-	if cfg.httpClient != nil {
-		out = append(out, images.WithHTTPClient(cfg.httpClient))
-	}
-	for _, e := range cfg.editors {
-		out = append(out, images.WithRequestEditorFn(e))
-	}
-	return out
-}
-
-func videosOpts(cfg config) []videos.ClientOption {
-	out := make([]videos.ClientOption, 0, len(cfg.editors)+1)
-	if cfg.httpClient != nil {
-		out = append(out, videos.WithHTTPClient(cfg.httpClient))
-	}
-	for _, e := range cfg.editors {
-		out = append(out, videos.WithRequestEditorFn(e))
-	}
-	return out
 }
