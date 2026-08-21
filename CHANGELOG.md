@@ -1,5 +1,36 @@
 # Changelog
 
+## [0.7.0](https://github.com/rixlhq/rixl-go/compare/v0.6.0...v0.7.0) (2026-08-21)
+
+
+### Features
+
+* **sdk:** add client credential management and godoc for auth API ([2b97d26](https://github.com/rixlhq/rixl-go/commit/2b97d265d3e030924ac9b05f32bfb6be2dd0560c))
+* **sdk:** add client credentials auth with scope constants ([02c2fd0](https://github.com/rixlhq/rixl-go/commit/02c2fd0d2a1e1905a4de42a3ab64099479cbfef0))
+* **sdk:** add presigned upload helpers (Upload, UploadFile) ([b065c3a](https://github.com/rixlhq/rixl-go/commit/b065c3adc52e1bc40d0e4d3f6d950fb26be60277))
+* **sdk:** add presigned upload helpers (Upload, UploadFile) ([3430a21](https://github.com/rixlhq/rixl-go/commit/3430a21f9fe059ba88b5d51482978d00c8f658ee))
+* **sdk:** client auth, credential management and scopes ([6530792](https://github.com/rixlhq/rixl-go/commit/65307922f0bdabeb41a21c483c0ac03db1c50fee))
+* **sdk:** generate a client for every OpenAPI tag ([630dcaa](https://github.com/rixlhq/rixl-go/commit/630dcaa4ba8e96e941770ae4cf201dbf22330348))
+* **sdk:** generate a client for every OpenAPI tag ([a529e90](https://github.com/rixlhq/rixl-go/commit/a529e908a083f69aa73091e8edb85c9de21a7778))
+* **sdk:** regenerate based on latest OpenAPI spec ([155cbe4](https://github.com/rixlhq/rixl-go/commit/155cbe496130a4d6391f06ac8e5d419da5a9d20a))
+* **sdk:** regenerate based on latest OpenAPI spec ([583f0a3](https://github.com/rixlhq/rixl-go/commit/583f0a3d33c906fb786a46f70d1c204dff450b3b))
+* **sdk:** regenerate based on latest OpenAPI spec ([ad25937](https://github.com/rixlhq/rixl-go/commit/ad259373bd6223f3bfafe9e897942a8f64055142))
+* **sdk:** regenerate based on latest OpenAPI spec ([9dc2396](https://github.com/rixlhq/rixl-go/commit/9dc2396f180653ca2d1d88b091c7fdca7c672096))
+* **sdk:** regenerate based on latest OpenAPI spec ([403b661](https://github.com/rixlhq/rixl-go/commit/403b66110f376446ad89ca041049898ace95773d))
+* **sdk:** regenerate based on latest OpenAPI spec ([bd4cf09](https://github.com/rixlhq/rixl-go/commit/bd4cf096708b531ee6a5cf9b54f80d1e848971ff))
+
+
+### Bug Fixes
+
+* **lint:** modernize gen tool and exempt it from strict linters ([875a4cb](https://github.com/rixlhq/rixl-go/commit/875a4cb81eb8f9661787d9a51e292fce122425c5))
+* **sdk:** clarify upload body close semantics and check Close errors ([2351807](https://github.com/rixlhq/rixl-go/commit/235180745164c3474dc896753b5836bb89a619b2))
+* **sdk:** satisfy linter in client auth and credentials ([53014ce](https://github.com/rixlhq/rixl-go/commit/53014ce9c399a9943e6fa1497b8b6572edd6ff11))
+
+
+### Performance Improvements
+
+* **sdk:** preallocate upload option slice ([929b1f3](https://github.com/rixlhq/rixl-go/commit/929b1f3655cc282b45a494a2d4a9006048b5da97))
+
 ## [0.6.0](https://github.com/rixlhq/rixl-go/compare/v0.5.0...v0.6.0) (2026-05-07)
 
 
