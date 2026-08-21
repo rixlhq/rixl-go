@@ -1,0 +1,26 @@
+[tools]
+go = '1.26'
+golangci-lint = "latest"
+lefthook = "latest"
+
+[env]
+# The repo sits inside a workspace whose go.work does not list it.
+GOWORK = "off"
+
+[hooks]
+postinstall = "lefthook install"
+
+[tasks.fmt]
+run = "gofmt -w -s ."
+
+[tasks.lint]
+run = "golangci-lint run"
+
+[tasks.test]
+run = "go test -race ./..."
+
+[tasks.vet]
+run = "go vet ./..."
+
+[tasks.gen]
+run = "./gen.sh"
