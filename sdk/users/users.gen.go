@@ -16,6 +16,8 @@ import (
 	oapiCodegenParamsPkg "github.com/rixlhq/rixl-go/sdk/runtime/params"
 )
 
+type UpdateUserAvatarJSONRequestBody = models.AuthV1UpdateUserAvatarRequest
+
 type UpdateNameJSONRequestBody = models.AuthV1UpdateNameRequest
 
 type UpdateUsernameJSONRequestBody = models.AuthV1UpdateUsernameRequest
@@ -120,6 +122,9 @@ type ClientInterface interface {
 	GetUserInfo(ctx context.Context, params *GetUserInfoParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 	// GetUser makes a GET request to /auth/v1/users/current
 	GetUser(ctx context.Context, params *GetUserParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// UpdateUserAvatarWithBody makes a PATCH request to /auth/v1/users/current/avatar
+	UpdateUserAvatarWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+	UpdateUserAvatar(ctx context.Context, body UpdateUserAvatarJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 	// UpdateNameWithBody makes a PATCH request to /auth/v1/users/current/name
 	UpdateNameWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 	UpdateName(ctx context.Context, body UpdateNameJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -158,6 +163,33 @@ func (c *Client) GetUserInfo(ctx context.Context, params *GetUserInfoParams, req
 // GetUser
 func (c *Client) GetUser(ctx context.Context, params *GetUserParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewGetUserRequest(c.Server, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// UpdateUserAvatarWithBody makes a PATCH request to /auth/v1/users/current/avatar
+// UpdateUserAvatar
+func (c *Client) UpdateUserAvatarWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpdateUserAvatarRequestWithBody(c.Server, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// UpdateUserAvatar makes a PATCH request to /auth/v1/users/current/avatar with application/json body
+func (c *Client) UpdateUserAvatar(ctx context.Context, body UpdateUserAvatarJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpdateUserAvatarRequest(c.Server, body)
 	if err != nil {
 		return nil, err
 	}
@@ -312,6 +344,46 @@ func NewGetUserRequest(server string, params *GetUserParams) (*http.Request, err
 	return req, nil
 }
 
+// NewUpdateUserAvatarRequest creates a PATCH request for /auth/v1/users/current/avatar with application/json body
+func NewUpdateUserAvatarRequest(server string, body UpdateUserAvatarJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewUpdateUserAvatarRequestWithBody(server, "application/json", bodyReader)
+}
+
+// NewUpdateUserAvatarRequestWithBody creates a PATCH request for /auth/v1/users/current/avatar with any body
+func NewUpdateUserAvatarRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/auth/v1/users/current/avatar")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	reqURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("PATCH", reqURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
 // NewUpdateNameRequest creates a PATCH request for /auth/v1/users/current/name with application/json body
 func NewUpdateNameRequest(server string, body UpdateNameJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
@@ -456,6 +528,36 @@ func (c *SimpleClient) GetUserInfo(ctx context.Context, params *GetUserInfoParam
 func (c *SimpleClient) GetUser(ctx context.Context, params *GetUserParams, reqEditors ...RequestEditorFn) (models.AuthV1GetUserResponse, error) {
 	var result models.AuthV1GetUserResponse
 	resp, err := c.Client.GetUser(ctx, params, reqEditors...)
+	if err != nil {
+		return result, err
+	}
+	defer resp.Body.Close()
+
+	rawBody, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return result, err
+	}
+
+	if resp.StatusCode >= 200 && resp.StatusCode < 300 {
+		if err := json.Unmarshal(rawBody, &result); err != nil {
+			return result, err
+		}
+		return result, nil
+	}
+
+	// No typed error response defined
+	return result, &ClientHttpError[struct{}]{
+		StatusCode: resp.StatusCode,
+		RawBody:    rawBody,
+	}
+}
+
+// UpdateUserAvatar makes a PATCH request to /auth/v1/users/current/avatar and returns the parsed response.
+// UpdateUserAvatar
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+func (c *SimpleClient) UpdateUserAvatar(ctx context.Context, body UpdateUserAvatarJSONRequestBody, reqEditors ...RequestEditorFn) (models.AuthV1UpdateUserAvatarResponse, error) {
+	var result models.AuthV1UpdateUserAvatarResponse
+	resp, err := c.Client.UpdateUserAvatar(ctx, body, reqEditors...)
 	if err != nil {
 		return result, err
 	}
