@@ -37,6 +37,8 @@ import (
 	"github.com/rixlhq/rixl-go/sdk/socialproviders"
 	"github.com/rixlhq/rixl-go/sdk/subscriptions"
 	"github.com/rixlhq/rixl-go/sdk/subtitles"
+	"github.com/rixlhq/rixl-go/sdk/supportchat"
+	"github.com/rixlhq/rixl-go/sdk/supporttickets"
 	"github.com/rixlhq/rixl-go/sdk/usage"
 	"github.com/rixlhq/rixl-go/sdk/users"
 	"github.com/rixlhq/rixl-go/sdk/videoanalytics"
@@ -81,6 +83,8 @@ type resources struct {
 	SocialProviders   *socialproviders.SimpleClient
 	Subscriptions     *subscriptions.SimpleClient
 	Subtitles         *subtitles.SimpleClient
+	SupportChat       *supportchat.SimpleClient
+	SupportTickets    *supporttickets.SimpleClient
 	Usage             *usage.SimpleClient
 	Users             *users.SimpleClient
 	VideoAnalytics    *videoanalytics.SimpleClient
@@ -499,6 +503,30 @@ func newResources(cfg config) (*resources, error) {
 			opts = append(opts, subtitles.WithRequestEditorFn(edit))
 		}
 		if r.Subtitles, err = subtitles.NewSimpleClient(baseURL, opts...); err != nil {
+			return nil, err
+		}
+	}
+	{
+		opts := make([]supportchat.ClientOption, 0, len(cfg.editors)+1)
+		if cfg.httpClient != nil {
+			opts = append(opts, supportchat.WithHTTPClient(cfg.httpClient))
+		}
+		for _, edit := range cfg.editors {
+			opts = append(opts, supportchat.WithRequestEditorFn(edit))
+		}
+		if r.SupportChat, err = supportchat.NewSimpleClient(baseURL, opts...); err != nil {
+			return nil, err
+		}
+	}
+	{
+		opts := make([]supporttickets.ClientOption, 0, len(cfg.editors)+1)
+		if cfg.httpClient != nil {
+			opts = append(opts, supporttickets.WithHTTPClient(cfg.httpClient))
+		}
+		for _, edit := range cfg.editors {
+			opts = append(opts, supporttickets.WithRequestEditorFn(edit))
+		}
+		if r.SupportTickets, err = supporttickets.NewSimpleClient(baseURL, opts...); err != nil {
 			return nil, err
 		}
 	}
