@@ -18,6 +18,8 @@ import (
 
 type CreateApiKeyJSONRequestBody = any
 
+type UpdateApiKeyJSONRequestBody = any
+
 // RequestEditorFn is the function signature for the RequestEditor callback function.
 type RequestEditorFn func(ctx context.Context, req *http.Request) error
 
@@ -121,6 +123,9 @@ type ClientInterface interface {
 	CreateApiKey(ctx context.Context, orgId string, body CreateApiKeyJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 	// DeleteApiKey makes a DELETE request to /organizations/{org_id}/api-keys/v1/{key_id}
 	DeleteApiKey(ctx context.Context, orgId string, keyId string, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// UpdateApiKeyWithBody makes a PATCH request to /organizations/{org_id}/api-keys/v1/{key_id}
+	UpdateApiKeyWithBody(ctx context.Context, orgId string, keyId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+	UpdateApiKey(ctx context.Context, orgId string, keyId string, body UpdateApiKeyJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 	// RotateApiKey makes a POST request to /organizations/{org_id}/api-keys/v1/{key_id}/rotate
 	RotateApiKey(ctx context.Context, orgId string, keyId string, reqEditors ...RequestEditorFn) (*http.Response, error)
 }
@@ -178,6 +183,33 @@ func (c *Client) CreateApiKey(ctx context.Context, orgId string, body CreateApiK
 // DeleteApiKey
 func (c *Client) DeleteApiKey(ctx context.Context, orgId string, keyId string, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewDeleteApiKeyRequest(c.Server, orgId, keyId)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// UpdateApiKeyWithBody makes a PATCH request to /organizations/{org_id}/api-keys/v1/{key_id}
+// UpdateApiKey
+func (c *Client) UpdateApiKeyWithBody(ctx context.Context, orgId string, keyId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpdateApiKeyRequestWithBody(c.Server, orgId, keyId, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// UpdateApiKey makes a PATCH request to /organizations/{org_id}/api-keys/v1/{key_id} with application/json body
+func (c *Client) UpdateApiKey(ctx context.Context, orgId string, keyId string, body UpdateApiKeyJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpdateApiKeyRequest(c.Server, orgId, keyId, body)
 	if err != nil {
 		return nil, err
 	}
@@ -351,6 +383,58 @@ func NewDeleteApiKeyRequest(server string, orgId string, keyId string) (*http.Re
 	return req, nil
 }
 
+// NewUpdateApiKeyRequest creates a PATCH request for /organizations/{org_id}/api-keys/v1/{key_id} with application/json body
+func NewUpdateApiKeyRequest(server string, orgId string, keyId string, body UpdateApiKeyJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewUpdateApiKeyRequestWithBody(server, orgId, keyId, "application/json", bodyReader)
+}
+
+// NewUpdateApiKeyRequestWithBody creates a PATCH request for /organizations/{org_id}/api-keys/v1/{key_id} with any body
+func NewUpdateApiKeyRequestWithBody(server string, orgId string, keyId string, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+	pathParam0, err = oapiCodegenParamsPkg.StyleParameter("org_id", orgId, oapiCodegenParamsPkg.ParameterOptions{Style: "simple", ParamLocation: oapiCodegenParamsPkg.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", AllowReserved: false})
+	if err != nil {
+		return nil, err
+	}
+
+	var pathParam1 string
+	pathParam1, err = oapiCodegenParamsPkg.StyleParameter("key_id", keyId, oapiCodegenParamsPkg.ParameterOptions{Style: "simple", ParamLocation: oapiCodegenParamsPkg.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", AllowReserved: false})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/organizations/%s/api-keys/v1/%s", pathParam0, pathParam1)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	reqURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("PATCH", reqURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
 // NewRotateApiKeyRequest creates a POST request for /organizations/{org_id}/api-keys/v1/{key_id}/rotate
 func NewRotateApiKeyRequest(server string, orgId string, keyId string) (*http.Request, error) {
 	var err error
@@ -484,6 +568,36 @@ func (c *SimpleClient) CreateApiKey(ctx context.Context, orgId string, body Crea
 func (c *SimpleClient) DeleteApiKey(ctx context.Context, orgId string, keyId string, reqEditors ...RequestEditorFn) (models.GoogleProtobufEmpty, error) {
 	var result models.GoogleProtobufEmpty
 	resp, err := c.Client.DeleteApiKey(ctx, orgId, keyId, reqEditors...)
+	if err != nil {
+		return result, err
+	}
+	defer resp.Body.Close()
+
+	rawBody, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return result, err
+	}
+
+	if resp.StatusCode >= 200 && resp.StatusCode < 300 {
+		if err := json.Unmarshal(rawBody, &result); err != nil {
+			return result, err
+		}
+		return result, nil
+	}
+
+	// No typed error response defined
+	return result, &ClientHttpError[struct{}]{
+		StatusCode: resp.StatusCode,
+		RawBody:    rawBody,
+	}
+}
+
+// UpdateApiKey makes a PATCH request to /organizations/{org_id}/api-keys/v1/{key_id} and returns the parsed response.
+// UpdateApiKey
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+func (c *SimpleClient) UpdateApiKey(ctx context.Context, orgId string, keyId string, body UpdateApiKeyJSONRequestBody, reqEditors ...RequestEditorFn) (models.ApikeysV1UpdateAPIKeyResponse, error) {
+	var result models.ApikeysV1UpdateAPIKeyResponse
+	resp, err := c.Client.UpdateApiKey(ctx, orgId, keyId, body, reqEditors...)
 	if err != nil {
 		return result, err
 	}
