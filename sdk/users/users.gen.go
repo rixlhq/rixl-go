@@ -125,6 +125,8 @@ type ClientInterface interface {
 	// UpdateUserAvatarWithBody makes a PATCH request to /auth/v1/users/current/avatar
 	UpdateUserAvatarWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 	UpdateUserAvatar(ctx context.Context, body UpdateUserAvatarJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// CreateAvatarUpload makes a POST request to /auth/v1/users/current/avatar/upload
+	CreateAvatarUpload(ctx context.Context, params *CreateAvatarUploadParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 	// UpdateNameWithBody makes a PATCH request to /auth/v1/users/current/name
 	UpdateNameWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 	UpdateName(ctx context.Context, body UpdateNameJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -141,6 +143,12 @@ type GetUserInfoParams struct {
 
 // GetUserParams defines parameters for GetUser.
 type GetUserParams struct {
+	// user_id (optional)
+	UserId *string `form:"user_id" json:"user_id"`
+}
+
+// CreateAvatarUploadParams defines parameters for CreateAvatarUpload.
+type CreateAvatarUploadParams struct {
 	// user_id (optional)
 	UserId *string `form:"user_id" json:"user_id"`
 }
@@ -190,6 +198,20 @@ func (c *Client) UpdateUserAvatarWithBody(ctx context.Context, contentType strin
 // UpdateUserAvatar makes a PATCH request to /auth/v1/users/current/avatar with application/json body
 func (c *Client) UpdateUserAvatar(ctx context.Context, body UpdateUserAvatarJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewUpdateUserAvatarRequest(c.Server, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// CreateAvatarUpload makes a POST request to /auth/v1/users/current/avatar/upload
+// CreateAvatarUpload
+func (c *Client) CreateAvatarUpload(ctx context.Context, params *CreateAvatarUploadParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateAvatarUploadRequest(c.Server, params)
 	if err != nil {
 		return nil, err
 	}
@@ -384,6 +406,51 @@ func NewUpdateUserAvatarRequestWithBody(server string, contentType string, body 
 	return req, nil
 }
 
+// NewCreateAvatarUploadRequest creates a POST request for /auth/v1/users/current/avatar/upload
+func NewCreateAvatarUploadRequest(server string, params *CreateAvatarUploadParams) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/auth/v1/users/current/avatar/upload")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	reqURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		queryValues := reqURL.Query()
+		if params.UserId != nil {
+			if queryFrag, err := oapiCodegenParamsPkg.StyleParameter("user_id", *params.UserId, oapiCodegenParamsPkg.ParameterOptions{Style: "form", ParamLocation: oapiCodegenParamsPkg.ParamLocationQuery, Explode: true, Required: false, Type: "string", Format: "", AllowReserved: false}); err != nil {
+				return nil, err
+			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+				return nil, err
+			} else {
+				for k, v := range parsed {
+					for _, v2 := range v {
+						queryValues.Add(k, v2)
+					}
+				}
+			}
+		}
+		reqURL.RawQuery = queryValues.Encode()
+	}
+
+	req, err := http.NewRequest("POST", reqURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
 // NewUpdateNameRequest creates a PATCH request for /auth/v1/users/current/name with application/json body
 func NewUpdateNameRequest(server string, body UpdateNameJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
@@ -558,6 +625,36 @@ func (c *SimpleClient) GetUser(ctx context.Context, params *GetUserParams, reqEd
 func (c *SimpleClient) UpdateUserAvatar(ctx context.Context, body UpdateUserAvatarJSONRequestBody, reqEditors ...RequestEditorFn) (models.AuthV1UpdateUserAvatarResponse, error) {
 	var result models.AuthV1UpdateUserAvatarResponse
 	resp, err := c.Client.UpdateUserAvatar(ctx, body, reqEditors...)
+	if err != nil {
+		return result, err
+	}
+	defer resp.Body.Close()
+
+	rawBody, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return result, err
+	}
+
+	if resp.StatusCode >= 200 && resp.StatusCode < 300 {
+		if err := json.Unmarshal(rawBody, &result); err != nil {
+			return result, err
+		}
+		return result, nil
+	}
+
+	// No typed error response defined
+	return result, &ClientHttpError[struct{}]{
+		StatusCode: resp.StatusCode,
+		RawBody:    rawBody,
+	}
+}
+
+// CreateAvatarUpload makes a POST request to /auth/v1/users/current/avatar/upload and returns the parsed response.
+// CreateAvatarUpload
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+func (c *SimpleClient) CreateAvatarUpload(ctx context.Context, params *CreateAvatarUploadParams, reqEditors ...RequestEditorFn) (models.AuthV1CreateAvatarUploadResponse, error) {
+	var result models.AuthV1CreateAvatarUploadResponse
+	resp, err := c.Client.CreateAvatarUpload(ctx, params, reqEditors...)
 	if err != nil {
 		return result, err
 	}
