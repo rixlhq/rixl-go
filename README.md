@@ -11,7 +11,7 @@ organisations, sign-in, subscriptions and invoices. This SDK gives you all of it
 from Go, with a typed client per resource and a Go struct for every request and
 response.
 
-Works with Go 1.25 and later.
+Works with the two most recent Go releases (currently 1.26 and 1.27).
 
 ## Documentation
 
