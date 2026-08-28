@@ -1,6 +1,6 @@
 module github.com/rixlhq/rixl-go/examples
 
-go 1.27.0
+go 1.26.0
 
 require github.com/rixlhq/rixl-go v0.0.0-00010101000000-000000000000
 
