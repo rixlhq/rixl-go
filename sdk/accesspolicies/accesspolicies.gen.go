@@ -121,23 +121,23 @@ type ClientInterface interface {
 	// ListPolicies makes a GET request to /auth/v1/memberships/{org_id}/policies
 	ListPolicies(ctx context.Context, orgId string, params *ListPoliciesParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 	// ListUserPolicies makes a GET request to /auth/v1/memberships/{user.org_id}/members/{member_id}/policies
-	ListUserPolicies(ctx context.Context, userOrgId string, memberId string, params *ListUserPoliciesParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+	ListUserPolicies(ctx context.Context, userOrgId string, memberId string, reqEditors ...RequestEditorFn) (*http.Response, error)
 	// CreatePolicyWithBody makes a POST request to /auth/v1/memberships/{user.org_id}/policies
 	CreatePolicyWithBody(ctx context.Context, userOrgId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 	CreatePolicy(ctx context.Context, userOrgId string, body CreatePolicyJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 	// DetachPolicy makes a DELETE request to /auth/v1/memberships/{user.org_id}/policies/attachments/{attachment_id}
-	DetachPolicy(ctx context.Context, userOrgId string, attachmentId string, params *DetachPolicyParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+	DetachPolicy(ctx context.Context, userOrgId string, attachmentId string, reqEditors ...RequestEditorFn) (*http.Response, error)
 	// ListPermissionRegistry makes a GET request to /auth/v1/memberships/{user.org_id}/policies/permissions
 	ListPermissionRegistry(ctx context.Context, userOrgId string, params *ListPermissionRegistryParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 	// DeletePolicy makes a DELETE request to /auth/v1/memberships/{user.org_id}/policies/{policy_id}
-	DeletePolicy(ctx context.Context, userOrgId string, policyId string, params *DeletePolicyParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+	DeletePolicy(ctx context.Context, userOrgId string, policyId string, reqEditors ...RequestEditorFn) (*http.Response, error)
 	// GetPolicy makes a GET request to /auth/v1/memberships/{user.org_id}/policies/{policy_id}
-	GetPolicy(ctx context.Context, userOrgId string, policyId string, params *GetPolicyParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+	GetPolicy(ctx context.Context, userOrgId string, policyId string, reqEditors ...RequestEditorFn) (*http.Response, error)
 	// UpdatePolicyWithBody makes a PUT request to /auth/v1/memberships/{user.org_id}/policies/{policy_id}
 	UpdatePolicyWithBody(ctx context.Context, userOrgId string, policyId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 	UpdatePolicy(ctx context.Context, userOrgId string, policyId string, body UpdatePolicyJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 	// ListPolicyAttachments makes a GET request to /auth/v1/memberships/{user.org_id}/policies/{policy_id}/attachments
-	ListPolicyAttachments(ctx context.Context, userOrgId string, policyId string, params *ListPolicyAttachmentsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+	ListPolicyAttachments(ctx context.Context, userOrgId string, policyId string, reqEditors ...RequestEditorFn) (*http.Response, error)
 	// AttachPolicyWithBody makes a POST request to /auth/v1/memberships/{user.org_id}/policies/{policy_id}/attachments
 	AttachPolicyWithBody(ctx context.Context, userOrgId string, policyId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 	AttachPolicy(ctx context.Context, userOrgId string, policyId string, body AttachPolicyJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -149,46 +149,14 @@ type ListPoliciesParams struct {
 	UserId *string `form:"user_id" json:"user_id"`
 }
 
-// ListUserPoliciesParams defines parameters for ListUserPolicies.
-type ListUserPoliciesParams struct {
-	// user.user_id (optional)
-	UserUserId *string `form:"user.user_id" json:"user.user_id"`
-}
-
-// DetachPolicyParams defines parameters for DetachPolicy.
-type DetachPolicyParams struct {
-	// user.user_id (optional)
-	UserUserId *string `form:"user.user_id" json:"user.user_id"`
-}
-
 // ListPermissionRegistryParams defines parameters for ListPermissionRegistry.
 type ListPermissionRegistryParams struct {
-	// user.user_id (optional)
-	UserUserId *string `form:"user.user_id" json:"user.user_id"`
 	// types (optional)
 	Types *[]string `form:"types" json:"types"`
 	// limit (optional)
 	Limit *int32 `form:"limit" json:"limit"`
 	// offset (optional)
 	Offset *int32 `form:"offset" json:"offset"`
-}
-
-// DeletePolicyParams defines parameters for DeletePolicy.
-type DeletePolicyParams struct {
-	// user.user_id (optional)
-	UserUserId *string `form:"user.user_id" json:"user.user_id"`
-}
-
-// GetPolicyParams defines parameters for GetPolicy.
-type GetPolicyParams struct {
-	// user.user_id (optional)
-	UserUserId *string `form:"user.user_id" json:"user.user_id"`
-}
-
-// ListPolicyAttachmentsParams defines parameters for ListPolicyAttachments.
-type ListPolicyAttachmentsParams struct {
-	// user.user_id (optional)
-	UserUserId *string `form:"user.user_id" json:"user.user_id"`
 }
 
 // ListPolicies makes a GET request to /auth/v1/memberships/{org_id}/policies
@@ -207,8 +175,8 @@ func (c *Client) ListPolicies(ctx context.Context, orgId string, params *ListPol
 
 // ListUserPolicies makes a GET request to /auth/v1/memberships/{user.org_id}/members/{member_id}/policies
 // ListUserPolicies
-func (c *Client) ListUserPolicies(ctx context.Context, userOrgId string, memberId string, params *ListUserPoliciesParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewListUserPoliciesRequest(c.Server, userOrgId, memberId, params)
+func (c *Client) ListUserPolicies(ctx context.Context, userOrgId string, memberId string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListUserPoliciesRequest(c.Server, userOrgId, memberId)
 	if err != nil {
 		return nil, err
 	}
@@ -248,8 +216,8 @@ func (c *Client) CreatePolicy(ctx context.Context, userOrgId string, body Create
 
 // DetachPolicy makes a DELETE request to /auth/v1/memberships/{user.org_id}/policies/attachments/{attachment_id}
 // DetachPolicy
-func (c *Client) DetachPolicy(ctx context.Context, userOrgId string, attachmentId string, params *DetachPolicyParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewDetachPolicyRequest(c.Server, userOrgId, attachmentId, params)
+func (c *Client) DetachPolicy(ctx context.Context, userOrgId string, attachmentId string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewDetachPolicyRequest(c.Server, userOrgId, attachmentId)
 	if err != nil {
 		return nil, err
 	}
@@ -276,8 +244,8 @@ func (c *Client) ListPermissionRegistry(ctx context.Context, userOrgId string, p
 
 // DeletePolicy makes a DELETE request to /auth/v1/memberships/{user.org_id}/policies/{policy_id}
 // DeletePolicy
-func (c *Client) DeletePolicy(ctx context.Context, userOrgId string, policyId string, params *DeletePolicyParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewDeletePolicyRequest(c.Server, userOrgId, policyId, params)
+func (c *Client) DeletePolicy(ctx context.Context, userOrgId string, policyId string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewDeletePolicyRequest(c.Server, userOrgId, policyId)
 	if err != nil {
 		return nil, err
 	}
@@ -290,8 +258,8 @@ func (c *Client) DeletePolicy(ctx context.Context, userOrgId string, policyId st
 
 // GetPolicy makes a GET request to /auth/v1/memberships/{user.org_id}/policies/{policy_id}
 // GetPolicy
-func (c *Client) GetPolicy(ctx context.Context, userOrgId string, policyId string, params *GetPolicyParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewGetPolicyRequest(c.Server, userOrgId, policyId, params)
+func (c *Client) GetPolicy(ctx context.Context, userOrgId string, policyId string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetPolicyRequest(c.Server, userOrgId, policyId)
 	if err != nil {
 		return nil, err
 	}
@@ -331,8 +299,8 @@ func (c *Client) UpdatePolicy(ctx context.Context, userOrgId string, policyId st
 
 // ListPolicyAttachments makes a GET request to /auth/v1/memberships/{user.org_id}/policies/{policy_id}/attachments
 // ListPolicyAttachments
-func (c *Client) ListPolicyAttachments(ctx context.Context, userOrgId string, policyId string, params *ListPolicyAttachmentsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewListPolicyAttachmentsRequest(c.Server, userOrgId, policyId, params)
+func (c *Client) ListPolicyAttachments(ctx context.Context, userOrgId string, policyId string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListPolicyAttachmentsRequest(c.Server, userOrgId, policyId)
 	if err != nil {
 		return nil, err
 	}
@@ -422,7 +390,7 @@ func NewListPoliciesRequest(server string, orgId string, params *ListPoliciesPar
 }
 
 // NewListUserPoliciesRequest creates a GET request for /auth/v1/memberships/{user.org_id}/members/{member_id}/policies
-func NewListUserPoliciesRequest(server string, userOrgId string, memberId string, params *ListUserPoliciesParams) (*http.Request, error) {
+func NewListUserPoliciesRequest(server string, userOrgId string, memberId string) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -450,24 +418,6 @@ func NewListUserPoliciesRequest(server string, userOrgId string, memberId string
 	reqURL, err := serverURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
-	}
-
-	if params != nil {
-		queryValues := reqURL.Query()
-		if params.UserUserId != nil {
-			if queryFrag, err := oapiCodegenParamsPkg.StyleParameter("user.user_id", *params.UserUserId, oapiCodegenParamsPkg.ParameterOptions{Style: "form", ParamLocation: oapiCodegenParamsPkg.ParamLocationQuery, Explode: true, Required: false, Type: "string", Format: "", AllowReserved: false}); err != nil {
-				return nil, err
-			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-				return nil, err
-			} else {
-				for k, v := range parsed {
-					for _, v2 := range v {
-						queryValues.Add(k, v2)
-					}
-				}
-			}
-		}
-		reqURL.RawQuery = queryValues.Encode()
 	}
 
 	req, err := http.NewRequest("GET", reqURL.String(), nil)
@@ -525,7 +475,7 @@ func NewCreatePolicyRequestWithBody(server string, userOrgId string, contentType
 }
 
 // NewDetachPolicyRequest creates a DELETE request for /auth/v1/memberships/{user.org_id}/policies/attachments/{attachment_id}
-func NewDetachPolicyRequest(server string, userOrgId string, attachmentId string, params *DetachPolicyParams) (*http.Request, error) {
+func NewDetachPolicyRequest(server string, userOrgId string, attachmentId string) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -553,24 +503,6 @@ func NewDetachPolicyRequest(server string, userOrgId string, attachmentId string
 	reqURL, err := serverURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
-	}
-
-	if params != nil {
-		queryValues := reqURL.Query()
-		if params.UserUserId != nil {
-			if queryFrag, err := oapiCodegenParamsPkg.StyleParameter("user.user_id", *params.UserUserId, oapiCodegenParamsPkg.ParameterOptions{Style: "form", ParamLocation: oapiCodegenParamsPkg.ParamLocationQuery, Explode: true, Required: false, Type: "string", Format: "", AllowReserved: false}); err != nil {
-				return nil, err
-			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-				return nil, err
-			} else {
-				for k, v := range parsed {
-					for _, v2 := range v {
-						queryValues.Add(k, v2)
-					}
-				}
-			}
-		}
-		reqURL.RawQuery = queryValues.Encode()
 	}
 
 	req, err := http.NewRequest("DELETE", reqURL.String(), nil)
@@ -608,19 +540,6 @@ func NewListPermissionRegistryRequest(server string, userOrgId string, params *L
 
 	if params != nil {
 		queryValues := reqURL.Query()
-		if params.UserUserId != nil {
-			if queryFrag, err := oapiCodegenParamsPkg.StyleParameter("user.user_id", *params.UserUserId, oapiCodegenParamsPkg.ParameterOptions{Style: "form", ParamLocation: oapiCodegenParamsPkg.ParamLocationQuery, Explode: true, Required: false, Type: "string", Format: "", AllowReserved: false}); err != nil {
-				return nil, err
-			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-				return nil, err
-			} else {
-				for k, v := range parsed {
-					for _, v2 := range v {
-						queryValues.Add(k, v2)
-					}
-				}
-			}
-		}
 		if params.Types != nil {
 			if queryFrag, err := oapiCodegenParamsPkg.StyleParameter("types", *params.Types, oapiCodegenParamsPkg.ParameterOptions{Style: "form", ParamLocation: oapiCodegenParamsPkg.ParamLocationQuery, Explode: true, Required: false, Type: "array", Format: "", AllowReserved: false}); err != nil {
 				return nil, err
@@ -672,7 +591,7 @@ func NewListPermissionRegistryRequest(server string, userOrgId string, params *L
 }
 
 // NewDeletePolicyRequest creates a DELETE request for /auth/v1/memberships/{user.org_id}/policies/{policy_id}
-func NewDeletePolicyRequest(server string, userOrgId string, policyId string, params *DeletePolicyParams) (*http.Request, error) {
+func NewDeletePolicyRequest(server string, userOrgId string, policyId string) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -700,24 +619,6 @@ func NewDeletePolicyRequest(server string, userOrgId string, policyId string, pa
 	reqURL, err := serverURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
-	}
-
-	if params != nil {
-		queryValues := reqURL.Query()
-		if params.UserUserId != nil {
-			if queryFrag, err := oapiCodegenParamsPkg.StyleParameter("user.user_id", *params.UserUserId, oapiCodegenParamsPkg.ParameterOptions{Style: "form", ParamLocation: oapiCodegenParamsPkg.ParamLocationQuery, Explode: true, Required: false, Type: "string", Format: "", AllowReserved: false}); err != nil {
-				return nil, err
-			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-				return nil, err
-			} else {
-				for k, v := range parsed {
-					for _, v2 := range v {
-						queryValues.Add(k, v2)
-					}
-				}
-			}
-		}
-		reqURL.RawQuery = queryValues.Encode()
 	}
 
 	req, err := http.NewRequest("DELETE", reqURL.String(), nil)
@@ -729,7 +630,7 @@ func NewDeletePolicyRequest(server string, userOrgId string, policyId string, pa
 }
 
 // NewGetPolicyRequest creates a GET request for /auth/v1/memberships/{user.org_id}/policies/{policy_id}
-func NewGetPolicyRequest(server string, userOrgId string, policyId string, params *GetPolicyParams) (*http.Request, error) {
+func NewGetPolicyRequest(server string, userOrgId string, policyId string) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -757,24 +658,6 @@ func NewGetPolicyRequest(server string, userOrgId string, policyId string, param
 	reqURL, err := serverURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
-	}
-
-	if params != nil {
-		queryValues := reqURL.Query()
-		if params.UserUserId != nil {
-			if queryFrag, err := oapiCodegenParamsPkg.StyleParameter("user.user_id", *params.UserUserId, oapiCodegenParamsPkg.ParameterOptions{Style: "form", ParamLocation: oapiCodegenParamsPkg.ParamLocationQuery, Explode: true, Required: false, Type: "string", Format: "", AllowReserved: false}); err != nil {
-				return nil, err
-			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-				return nil, err
-			} else {
-				for k, v := range parsed {
-					for _, v2 := range v {
-						queryValues.Add(k, v2)
-					}
-				}
-			}
-		}
-		reqURL.RawQuery = queryValues.Encode()
 	}
 
 	req, err := http.NewRequest("GET", reqURL.String(), nil)
@@ -838,7 +721,7 @@ func NewUpdatePolicyRequestWithBody(server string, userOrgId string, policyId st
 }
 
 // NewListPolicyAttachmentsRequest creates a GET request for /auth/v1/memberships/{user.org_id}/policies/{policy_id}/attachments
-func NewListPolicyAttachmentsRequest(server string, userOrgId string, policyId string, params *ListPolicyAttachmentsParams) (*http.Request, error) {
+func NewListPolicyAttachmentsRequest(server string, userOrgId string, policyId string) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -866,24 +749,6 @@ func NewListPolicyAttachmentsRequest(server string, userOrgId string, policyId s
 	reqURL, err := serverURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
-	}
-
-	if params != nil {
-		queryValues := reqURL.Query()
-		if params.UserUserId != nil {
-			if queryFrag, err := oapiCodegenParamsPkg.StyleParameter("user.user_id", *params.UserUserId, oapiCodegenParamsPkg.ParameterOptions{Style: "form", ParamLocation: oapiCodegenParamsPkg.ParamLocationQuery, Explode: true, Required: false, Type: "string", Format: "", AllowReserved: false}); err != nil {
-				return nil, err
-			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-				return nil, err
-			} else {
-				for k, v := range parsed {
-					for _, v2 := range v {
-						queryValues.Add(k, v2)
-					}
-				}
-			}
-		}
-		reqURL.RawQuery = queryValues.Encode()
 	}
 
 	req, err := http.NewRequest("GET", reqURL.String(), nil)
@@ -1007,9 +872,9 @@ func (c *SimpleClient) ListPolicies(ctx context.Context, orgId string, params *L
 // ListUserPolicies makes a GET request to /auth/v1/memberships/{user.org_id}/members/{member_id}/policies and returns the parsed response.
 // ListUserPolicies
 // On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
-func (c *SimpleClient) ListUserPolicies(ctx context.Context, userOrgId string, memberId string, params *ListUserPoliciesParams, reqEditors ...RequestEditorFn) (models.AuthV1MemberPoliciesResponse, error) {
+func (c *SimpleClient) ListUserPolicies(ctx context.Context, userOrgId string, memberId string, reqEditors ...RequestEditorFn) (models.AuthV1MemberPoliciesResponse, error) {
 	var result models.AuthV1MemberPoliciesResponse
-	resp, err := c.Client.ListUserPolicies(ctx, userOrgId, memberId, params, reqEditors...)
+	resp, err := c.Client.ListUserPolicies(ctx, userOrgId, memberId, reqEditors...)
 	if err != nil {
 		return result, err
 	}
@@ -1067,9 +932,9 @@ func (c *SimpleClient) CreatePolicy(ctx context.Context, userOrgId string, body 
 // DetachPolicy makes a DELETE request to /auth/v1/memberships/{user.org_id}/policies/attachments/{attachment_id} and returns the parsed response.
 // DetachPolicy
 // On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
-func (c *SimpleClient) DetachPolicy(ctx context.Context, userOrgId string, attachmentId string, params *DetachPolicyParams, reqEditors ...RequestEditorFn) (models.GoogleProtobufEmpty, error) {
+func (c *SimpleClient) DetachPolicy(ctx context.Context, userOrgId string, attachmentId string, reqEditors ...RequestEditorFn) (models.GoogleProtobufEmpty, error) {
 	var result models.GoogleProtobufEmpty
-	resp, err := c.Client.DetachPolicy(ctx, userOrgId, attachmentId, params, reqEditors...)
+	resp, err := c.Client.DetachPolicy(ctx, userOrgId, attachmentId, reqEditors...)
 	if err != nil {
 		return result, err
 	}
@@ -1127,9 +992,9 @@ func (c *SimpleClient) ListPermissionRegistry(ctx context.Context, userOrgId str
 // DeletePolicy makes a DELETE request to /auth/v1/memberships/{user.org_id}/policies/{policy_id} and returns the parsed response.
 // DeletePolicy
 // On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
-func (c *SimpleClient) DeletePolicy(ctx context.Context, userOrgId string, policyId string, params *DeletePolicyParams, reqEditors ...RequestEditorFn) (models.GoogleProtobufEmpty, error) {
+func (c *SimpleClient) DeletePolicy(ctx context.Context, userOrgId string, policyId string, reqEditors ...RequestEditorFn) (models.GoogleProtobufEmpty, error) {
 	var result models.GoogleProtobufEmpty
-	resp, err := c.Client.DeletePolicy(ctx, userOrgId, policyId, params, reqEditors...)
+	resp, err := c.Client.DeletePolicy(ctx, userOrgId, policyId, reqEditors...)
 	if err != nil {
 		return result, err
 	}
@@ -1157,9 +1022,9 @@ func (c *SimpleClient) DeletePolicy(ctx context.Context, userOrgId string, polic
 // GetPolicy makes a GET request to /auth/v1/memberships/{user.org_id}/policies/{policy_id} and returns the parsed response.
 // GetPolicy
 // On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
-func (c *SimpleClient) GetPolicy(ctx context.Context, userOrgId string, policyId string, params *GetPolicyParams, reqEditors ...RequestEditorFn) (models.AuthV1Policy, error) {
+func (c *SimpleClient) GetPolicy(ctx context.Context, userOrgId string, policyId string, reqEditors ...RequestEditorFn) (models.AuthV1Policy, error) {
 	var result models.AuthV1Policy
-	resp, err := c.Client.GetPolicy(ctx, userOrgId, policyId, params, reqEditors...)
+	resp, err := c.Client.GetPolicy(ctx, userOrgId, policyId, reqEditors...)
 	if err != nil {
 		return result, err
 	}
@@ -1217,9 +1082,9 @@ func (c *SimpleClient) UpdatePolicy(ctx context.Context, userOrgId string, polic
 // ListPolicyAttachments makes a GET request to /auth/v1/memberships/{user.org_id}/policies/{policy_id}/attachments and returns the parsed response.
 // ListPolicyAttachments
 // On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
-func (c *SimpleClient) ListPolicyAttachments(ctx context.Context, userOrgId string, policyId string, params *ListPolicyAttachmentsParams, reqEditors ...RequestEditorFn) (models.AuthV1ListAttachmentsResponse, error) {
+func (c *SimpleClient) ListPolicyAttachments(ctx context.Context, userOrgId string, policyId string, reqEditors ...RequestEditorFn) (models.AuthV1ListAttachmentsResponse, error) {
 	var result models.AuthV1ListAttachmentsResponse
-	resp, err := c.Client.ListPolicyAttachments(ctx, userOrgId, policyId, params, reqEditors...)
+	resp, err := c.Client.ListPolicyAttachments(ctx, userOrgId, policyId, reqEditors...)
 	if err != nil {
 		return result, err
 	}
