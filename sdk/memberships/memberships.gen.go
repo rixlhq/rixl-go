@@ -150,18 +150,18 @@ type ClientInterface interface {
 	ResendInvitationWithBody(ctx context.Context, userOrgId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 	ResendInvitation(ctx context.Context, userOrgId string, body ResendInvitationJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 	// CancelInvitation makes a DELETE request to /auth/v1/memberships/{user.org_id}/invite/{user_id}
-	CancelInvitation(ctx context.Context, userOrgId string, userId string, params *CancelInvitationParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+	CancelInvitation(ctx context.Context, userOrgId string, userId string, reqEditors ...RequestEditorFn) (*http.Response, error)
 	// ListOrganizationMembers makes a GET request to /auth/v1/memberships/{user.org_id}/members
 	ListOrganizationMembers(ctx context.Context, userOrgId string, params *ListOrganizationMembersParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 	// RemoveMember makes a DELETE request to /auth/v1/memberships/{user.org_id}/members/{user_id}
-	RemoveMember(ctx context.Context, userOrgId string, userId string, params *RemoveMemberParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+	RemoveMember(ctx context.Context, userOrgId string, userId string, reqEditors ...RequestEditorFn) (*http.Response, error)
 	// ReactivateMember makes a PATCH request to /auth/v1/memberships/{user.org_id}/members/{user_id}/reactivate
-	ReactivateMember(ctx context.Context, userOrgId string, userId string, params *ReactivateMemberParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+	ReactivateMember(ctx context.Context, userOrgId string, userId string, reqEditors ...RequestEditorFn) (*http.Response, error)
 	// UpdateMemberRoleWithBody makes a PATCH request to /auth/v1/memberships/{user.org_id}/members/{user_id}/role
 	UpdateMemberRoleWithBody(ctx context.Context, userOrgId string, userId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 	UpdateMemberRole(ctx context.Context, userOrgId string, userId string, body UpdateMemberRoleJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 	// SuspendMember makes a PATCH request to /auth/v1/memberships/{user.org_id}/members/{user_id}/suspend
-	SuspendMember(ctx context.Context, userOrgId string, userId string, params *SuspendMemberParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+	SuspendMember(ctx context.Context, userOrgId string, userId string, reqEditors ...RequestEditorFn) (*http.Response, error)
 	// UpdateOrgNameWithBody makes a PATCH request to /auth/v1/memberships/{user.org_id}/name
 	UpdateOrgNameWithBody(ctx context.Context, userOrgId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 	UpdateOrgName(ctx context.Context, userOrgId string, body UpdateOrgNameJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -215,38 +215,12 @@ type LeaveOrganizationParams struct {
 	UserId *string `form:"user_id" json:"user_id"`
 }
 
-// CancelInvitationParams defines parameters for CancelInvitation.
-type CancelInvitationParams struct {
-	// user.actor_id (optional)
-	UserActorId *string `form:"user.actor_id" json:"user.actor_id"`
-}
-
 // ListOrganizationMembersParams defines parameters for ListOrganizationMembers.
 type ListOrganizationMembersParams struct {
-	// user.user_id (optional)
-	UserUserId *string `form:"user.user_id" json:"user.user_id"`
 	// limit (optional)
 	Limit *int32 `form:"limit" json:"limit"`
 	// offset (optional)
 	Offset *int32 `form:"offset" json:"offset"`
-}
-
-// RemoveMemberParams defines parameters for RemoveMember.
-type RemoveMemberParams struct {
-	// user.actor_id (optional)
-	UserActorId *string `form:"user.actor_id" json:"user.actor_id"`
-}
-
-// ReactivateMemberParams defines parameters for ReactivateMember.
-type ReactivateMemberParams struct {
-	// user.actor_id (optional)
-	UserActorId *string `form:"user.actor_id" json:"user.actor_id"`
-}
-
-// SuspendMemberParams defines parameters for SuspendMember.
-type SuspendMemberParams struct {
-	// user.actor_id (optional)
-	UserActorId *string `form:"user.actor_id" json:"user.actor_id"`
 }
 
 // AcceptInvitation makes a POST request to /auth/v1/invitations/{token}/accept
@@ -430,8 +404,8 @@ func (c *Client) ResendInvitation(ctx context.Context, userOrgId string, body Re
 
 // CancelInvitation makes a DELETE request to /auth/v1/memberships/{user.org_id}/invite/{user_id}
 // CancelInvitation
-func (c *Client) CancelInvitation(ctx context.Context, userOrgId string, userId string, params *CancelInvitationParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewCancelInvitationRequest(c.Server, userOrgId, userId, params)
+func (c *Client) CancelInvitation(ctx context.Context, userOrgId string, userId string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCancelInvitationRequest(c.Server, userOrgId, userId)
 	if err != nil {
 		return nil, err
 	}
@@ -458,8 +432,8 @@ func (c *Client) ListOrganizationMembers(ctx context.Context, userOrgId string, 
 
 // RemoveMember makes a DELETE request to /auth/v1/memberships/{user.org_id}/members/{user_id}
 // RemoveMember
-func (c *Client) RemoveMember(ctx context.Context, userOrgId string, userId string, params *RemoveMemberParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewRemoveMemberRequest(c.Server, userOrgId, userId, params)
+func (c *Client) RemoveMember(ctx context.Context, userOrgId string, userId string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewRemoveMemberRequest(c.Server, userOrgId, userId)
 	if err != nil {
 		return nil, err
 	}
@@ -472,8 +446,8 @@ func (c *Client) RemoveMember(ctx context.Context, userOrgId string, userId stri
 
 // ReactivateMember makes a PATCH request to /auth/v1/memberships/{user.org_id}/members/{user_id}/reactivate
 // ReactivateMember
-func (c *Client) ReactivateMember(ctx context.Context, userOrgId string, userId string, params *ReactivateMemberParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewReactivateMemberRequest(c.Server, userOrgId, userId, params)
+func (c *Client) ReactivateMember(ctx context.Context, userOrgId string, userId string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewReactivateMemberRequest(c.Server, userOrgId, userId)
 	if err != nil {
 		return nil, err
 	}
@@ -513,8 +487,8 @@ func (c *Client) UpdateMemberRole(ctx context.Context, userOrgId string, userId 
 
 // SuspendMember makes a PATCH request to /auth/v1/memberships/{user.org_id}/members/{user_id}/suspend
 // SuspendMember
-func (c *Client) SuspendMember(ctx context.Context, userOrgId string, userId string, params *SuspendMemberParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewSuspendMemberRequest(c.Server, userOrgId, userId, params)
+func (c *Client) SuspendMember(ctx context.Context, userOrgId string, userId string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewSuspendMemberRequest(c.Server, userOrgId, userId)
 	if err != nil {
 		return nil, err
 	}
@@ -1126,7 +1100,7 @@ func NewResendInvitationRequestWithBody(server string, userOrgId string, content
 }
 
 // NewCancelInvitationRequest creates a DELETE request for /auth/v1/memberships/{user.org_id}/invite/{user_id}
-func NewCancelInvitationRequest(server string, userOrgId string, userId string, params *CancelInvitationParams) (*http.Request, error) {
+func NewCancelInvitationRequest(server string, userOrgId string, userId string) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -1154,24 +1128,6 @@ func NewCancelInvitationRequest(server string, userOrgId string, userId string, 
 	reqURL, err := serverURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
-	}
-
-	if params != nil {
-		queryValues := reqURL.Query()
-		if params.UserActorId != nil {
-			if queryFrag, err := oapiCodegenParamsPkg.StyleParameter("user.actor_id", *params.UserActorId, oapiCodegenParamsPkg.ParameterOptions{Style: "form", ParamLocation: oapiCodegenParamsPkg.ParamLocationQuery, Explode: true, Required: false, Type: "string", Format: "", AllowReserved: false}); err != nil {
-				return nil, err
-			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-				return nil, err
-			} else {
-				for k, v := range parsed {
-					for _, v2 := range v {
-						queryValues.Add(k, v2)
-					}
-				}
-			}
-		}
-		reqURL.RawQuery = queryValues.Encode()
 	}
 
 	req, err := http.NewRequest("DELETE", reqURL.String(), nil)
@@ -1209,19 +1165,6 @@ func NewListOrganizationMembersRequest(server string, userOrgId string, params *
 
 	if params != nil {
 		queryValues := reqURL.Query()
-		if params.UserUserId != nil {
-			if queryFrag, err := oapiCodegenParamsPkg.StyleParameter("user.user_id", *params.UserUserId, oapiCodegenParamsPkg.ParameterOptions{Style: "form", ParamLocation: oapiCodegenParamsPkg.ParamLocationQuery, Explode: true, Required: false, Type: "string", Format: "", AllowReserved: false}); err != nil {
-				return nil, err
-			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-				return nil, err
-			} else {
-				for k, v := range parsed {
-					for _, v2 := range v {
-						queryValues.Add(k, v2)
-					}
-				}
-			}
-		}
 		if params.Limit != nil {
 			if queryFrag, err := oapiCodegenParamsPkg.StyleParameter("limit", *params.Limit, oapiCodegenParamsPkg.ParameterOptions{Style: "form", ParamLocation: oapiCodegenParamsPkg.ParamLocationQuery, Explode: true, Required: false, Type: "integer", Format: "int32", AllowReserved: false}); err != nil {
 				return nil, err
@@ -1260,7 +1203,7 @@ func NewListOrganizationMembersRequest(server string, userOrgId string, params *
 }
 
 // NewRemoveMemberRequest creates a DELETE request for /auth/v1/memberships/{user.org_id}/members/{user_id}
-func NewRemoveMemberRequest(server string, userOrgId string, userId string, params *RemoveMemberParams) (*http.Request, error) {
+func NewRemoveMemberRequest(server string, userOrgId string, userId string) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -1290,24 +1233,6 @@ func NewRemoveMemberRequest(server string, userOrgId string, userId string, para
 		return nil, err
 	}
 
-	if params != nil {
-		queryValues := reqURL.Query()
-		if params.UserActorId != nil {
-			if queryFrag, err := oapiCodegenParamsPkg.StyleParameter("user.actor_id", *params.UserActorId, oapiCodegenParamsPkg.ParameterOptions{Style: "form", ParamLocation: oapiCodegenParamsPkg.ParamLocationQuery, Explode: true, Required: false, Type: "string", Format: "", AllowReserved: false}); err != nil {
-				return nil, err
-			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-				return nil, err
-			} else {
-				for k, v := range parsed {
-					for _, v2 := range v {
-						queryValues.Add(k, v2)
-					}
-				}
-			}
-		}
-		reqURL.RawQuery = queryValues.Encode()
-	}
-
 	req, err := http.NewRequest("DELETE", reqURL.String(), nil)
 	if err != nil {
 		return nil, err
@@ -1317,7 +1242,7 @@ func NewRemoveMemberRequest(server string, userOrgId string, userId string, para
 }
 
 // NewReactivateMemberRequest creates a PATCH request for /auth/v1/memberships/{user.org_id}/members/{user_id}/reactivate
-func NewReactivateMemberRequest(server string, userOrgId string, userId string, params *ReactivateMemberParams) (*http.Request, error) {
+func NewReactivateMemberRequest(server string, userOrgId string, userId string) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -1345,24 +1270,6 @@ func NewReactivateMemberRequest(server string, userOrgId string, userId string, 
 	reqURL, err := serverURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
-	}
-
-	if params != nil {
-		queryValues := reqURL.Query()
-		if params.UserActorId != nil {
-			if queryFrag, err := oapiCodegenParamsPkg.StyleParameter("user.actor_id", *params.UserActorId, oapiCodegenParamsPkg.ParameterOptions{Style: "form", ParamLocation: oapiCodegenParamsPkg.ParamLocationQuery, Explode: true, Required: false, Type: "string", Format: "", AllowReserved: false}); err != nil {
-				return nil, err
-			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-				return nil, err
-			} else {
-				for k, v := range parsed {
-					for _, v2 := range v {
-						queryValues.Add(k, v2)
-					}
-				}
-			}
-		}
-		reqURL.RawQuery = queryValues.Encode()
 	}
 
 	req, err := http.NewRequest("PATCH", reqURL.String(), nil)
@@ -1426,7 +1333,7 @@ func NewUpdateMemberRoleRequestWithBody(server string, userOrgId string, userId 
 }
 
 // NewSuspendMemberRequest creates a PATCH request for /auth/v1/memberships/{user.org_id}/members/{user_id}/suspend
-func NewSuspendMemberRequest(server string, userOrgId string, userId string, params *SuspendMemberParams) (*http.Request, error) {
+func NewSuspendMemberRequest(server string, userOrgId string, userId string) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -1454,24 +1361,6 @@ func NewSuspendMemberRequest(server string, userOrgId string, userId string, par
 	reqURL, err := serverURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
-	}
-
-	if params != nil {
-		queryValues := reqURL.Query()
-		if params.UserActorId != nil {
-			if queryFrag, err := oapiCodegenParamsPkg.StyleParameter("user.actor_id", *params.UserActorId, oapiCodegenParamsPkg.ParameterOptions{Style: "form", ParamLocation: oapiCodegenParamsPkg.ParamLocationQuery, Explode: true, Required: false, Type: "string", Format: "", AllowReserved: false}); err != nil {
-				return nil, err
-			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-				return nil, err
-			} else {
-				for k, v := range parsed {
-					for _, v2 := range v {
-						queryValues.Add(k, v2)
-					}
-				}
-			}
-		}
-		reqURL.RawQuery = queryValues.Encode()
 	}
 
 	req, err := http.NewRequest("PATCH", reqURL.String(), nil)
@@ -1951,9 +1840,9 @@ func (c *SimpleClient) ResendInvitation(ctx context.Context, userOrgId string, b
 // CancelInvitation makes a DELETE request to /auth/v1/memberships/{user.org_id}/invite/{user_id} and returns the parsed response.
 // CancelInvitation
 // On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
-func (c *SimpleClient) CancelInvitation(ctx context.Context, userOrgId string, userId string, params *CancelInvitationParams, reqEditors ...RequestEditorFn) (models.GoogleProtobufEmpty, error) {
+func (c *SimpleClient) CancelInvitation(ctx context.Context, userOrgId string, userId string, reqEditors ...RequestEditorFn) (models.GoogleProtobufEmpty, error) {
 	var result models.GoogleProtobufEmpty
-	resp, err := c.Client.CancelInvitation(ctx, userOrgId, userId, params, reqEditors...)
+	resp, err := c.Client.CancelInvitation(ctx, userOrgId, userId, reqEditors...)
 	if err != nil {
 		return result, err
 	}
@@ -2011,9 +1900,9 @@ func (c *SimpleClient) ListOrganizationMembers(ctx context.Context, userOrgId st
 // RemoveMember makes a DELETE request to /auth/v1/memberships/{user.org_id}/members/{user_id} and returns the parsed response.
 // RemoveMember
 // On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
-func (c *SimpleClient) RemoveMember(ctx context.Context, userOrgId string, userId string, params *RemoveMemberParams, reqEditors ...RequestEditorFn) (models.GoogleProtobufEmpty, error) {
+func (c *SimpleClient) RemoveMember(ctx context.Context, userOrgId string, userId string, reqEditors ...RequestEditorFn) (models.GoogleProtobufEmpty, error) {
 	var result models.GoogleProtobufEmpty
-	resp, err := c.Client.RemoveMember(ctx, userOrgId, userId, params, reqEditors...)
+	resp, err := c.Client.RemoveMember(ctx, userOrgId, userId, reqEditors...)
 	if err != nil {
 		return result, err
 	}
@@ -2041,9 +1930,9 @@ func (c *SimpleClient) RemoveMember(ctx context.Context, userOrgId string, userI
 // ReactivateMember makes a PATCH request to /auth/v1/memberships/{user.org_id}/members/{user_id}/reactivate and returns the parsed response.
 // ReactivateMember
 // On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
-func (c *SimpleClient) ReactivateMember(ctx context.Context, userOrgId string, userId string, params *ReactivateMemberParams, reqEditors ...RequestEditorFn) (models.AuthV1MembershipMutation, error) {
+func (c *SimpleClient) ReactivateMember(ctx context.Context, userOrgId string, userId string, reqEditors ...RequestEditorFn) (models.AuthV1MembershipMutation, error) {
 	var result models.AuthV1MembershipMutation
-	resp, err := c.Client.ReactivateMember(ctx, userOrgId, userId, params, reqEditors...)
+	resp, err := c.Client.ReactivateMember(ctx, userOrgId, userId, reqEditors...)
 	if err != nil {
 		return result, err
 	}
@@ -2101,9 +1990,9 @@ func (c *SimpleClient) UpdateMemberRole(ctx context.Context, userOrgId string, u
 // SuspendMember makes a PATCH request to /auth/v1/memberships/{user.org_id}/members/{user_id}/suspend and returns the parsed response.
 // SuspendMember
 // On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
-func (c *SimpleClient) SuspendMember(ctx context.Context, userOrgId string, userId string, params *SuspendMemberParams, reqEditors ...RequestEditorFn) (models.AuthV1MembershipMutation, error) {
+func (c *SimpleClient) SuspendMember(ctx context.Context, userOrgId string, userId string, reqEditors ...RequestEditorFn) (models.AuthV1MembershipMutation, error) {
 	var result models.AuthV1MembershipMutation
-	resp, err := c.Client.SuspendMember(ctx, userOrgId, userId, params, reqEditors...)
+	resp, err := c.Client.SuspendMember(ctx, userOrgId, userId, reqEditors...)
 	if err != nil {
 		return result, err
 	}
