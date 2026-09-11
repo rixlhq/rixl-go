@@ -11,7 +11,7 @@ permissions:
 jobs:
   release-please:
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    timeout-minutes: 15
     outputs:
       releases_created: ${{ steps.release.outputs.releases_created }}
       tag_name: ${{ steps.release.outputs.tag_name }}
@@ -41,7 +41,7 @@ jobs:
     needs: release-please
     if: ${{ needs.release-please.outputs.releases_created == 'true' }}
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v7
       - name: Setup Go
