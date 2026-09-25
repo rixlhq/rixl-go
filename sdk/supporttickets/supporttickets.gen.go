@@ -18,6 +18,8 @@ import (
 
 type CreateTicketJSONRequestBody = models.SupportV1CreateTicketRequest
 
+type CloseTicketJSONRequestBody = any
+
 type AddTicketMessageJSONRequestBody = any
 
 // RequestEditorFn is the function signature for the RequestEditor callback function.
@@ -127,8 +129,9 @@ type ClientInterface interface {
 	CreateTicket(ctx context.Context, body CreateTicketJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 	// GetTicket makes a GET request to /support/v1/tickets/{ticket_id}
 	GetTicket(ctx context.Context, ticketId string, reqEditors ...RequestEditorFn) (*http.Response, error)
-	// CloseTicket makes a POST request to /support/v1/tickets/{ticket_id}/close
-	CloseTicket(ctx context.Context, ticketId string, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// CloseTicketWithBody makes a POST request to /support/v1/tickets/{ticket_id}/close
+	CloseTicketWithBody(ctx context.Context, ticketId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+	CloseTicket(ctx context.Context, ticketId string, body CloseTicketJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 	// AddTicketMessageWithBody makes a POST request to /support/v1/tickets/{ticket_id}/messages
 	AddTicketMessageWithBody(ctx context.Context, ticketId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 	AddTicketMessage(ctx context.Context, ticketId string, body AddTicketMessageJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -243,10 +246,23 @@ func (c *Client) GetTicket(ctx context.Context, ticketId string, reqEditors ...R
 	return c.Client.Do(req)
 }
 
-// CloseTicket makes a POST request to /support/v1/tickets/{ticket_id}/close
+// CloseTicketWithBody makes a POST request to /support/v1/tickets/{ticket_id}/close
 // CloseTicket
-func (c *Client) CloseTicket(ctx context.Context, ticketId string, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewCloseTicketRequest(c.Server, ticketId)
+func (c *Client) CloseTicketWithBody(ctx context.Context, ticketId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCloseTicketRequestWithBody(c.Server, ticketId, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// CloseTicket makes a POST request to /support/v1/tickets/{ticket_id}/close with application/json body
+func (c *Client) CloseTicket(ctx context.Context, ticketId string, body CloseTicketJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCloseTicketRequest(c.Server, ticketId, body)
 	if err != nil {
 		return nil, err
 	}
@@ -520,8 +536,19 @@ func NewGetTicketRequest(server string, ticketId string) (*http.Request, error) 
 	return req, nil
 }
 
-// NewCloseTicketRequest creates a POST request for /support/v1/tickets/{ticket_id}/close
-func NewCloseTicketRequest(server string, ticketId string) (*http.Request, error) {
+// NewCloseTicketRequest creates a POST request for /support/v1/tickets/{ticket_id}/close with application/json body
+func NewCloseTicketRequest(server string, ticketId string, body CloseTicketJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewCloseTicketRequestWithBody(server, ticketId, "application/json", bodyReader)
+}
+
+// NewCloseTicketRequestWithBody creates a POST request for /support/v1/tickets/{ticket_id}/close with any body
+func NewCloseTicketRequestWithBody(server string, ticketId string, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -545,10 +572,12 @@ func NewCloseTicketRequest(server string, ticketId string) (*http.Request, error
 		return nil, err
 	}
 
-	req, err := http.NewRequest("POST", reqURL.String(), nil)
+	req, err := http.NewRequest("POST", reqURL.String(), body)
 	if err != nil {
 		return nil, err
 	}
+
+	req.Header.Add("Content-Type", contentType)
 
 	return req, nil
 }
@@ -838,9 +867,9 @@ func (c *SimpleClient) GetTicket(ctx context.Context, ticketId string, reqEditor
 // CloseTicket makes a POST request to /support/v1/tickets/{ticket_id}/close and returns the parsed response.
 // CloseTicket
 // On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
-func (c *SimpleClient) CloseTicket(ctx context.Context, ticketId string, reqEditors ...RequestEditorFn) (models.SupportV1CloseTicketResponse, error) {
+func (c *SimpleClient) CloseTicket(ctx context.Context, ticketId string, body CloseTicketJSONRequestBody, reqEditors ...RequestEditorFn) (models.SupportV1CloseTicketResponse, error) {
 	var result models.SupportV1CloseTicketResponse
-	resp, err := c.Client.CloseTicket(ctx, ticketId, reqEditors...)
+	resp, err := c.Client.CloseTicket(ctx, ticketId, body, reqEditors...)
 	if err != nil {
 		return result, err
 	}

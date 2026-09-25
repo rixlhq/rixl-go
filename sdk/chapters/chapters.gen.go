@@ -3,7 +3,6 @@
 package chapters
 
 import (
-	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -15,8 +14,6 @@ import (
 	"github.com/rixlhq/rixl-go/sdk/models"
 	oapiCodegenParamsPkg "github.com/rixlhq/rixl-go/sdk/runtime/params"
 )
-
-type UpdateVideoChaptersJSONRequestBody = any
 
 // RequestEditorFn is the function signature for the RequestEditor callback function.
 type RequestEditorFn func(ctx context.Context, req *http.Request) error
@@ -114,29 +111,26 @@ func (c *Client) applyEditors(ctx context.Context, req *http.Request, additional
 
 // ClientInterface is the interface specification for the client.
 type ClientInterface interface {
-	// UpdateVideoChapters2 makes a DELETE request to /media/v1/projects/{project_id}/videos/{video_id}/chapters
-	UpdateVideoChapters2(ctx context.Context, projectId string, videoId string, params *UpdateVideoChapters2Params, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// UpdateVideoChapters makes a DELETE request to /media/v1/projects/{project_id}/videos/{video_id}/chapters
+	UpdateVideoChapters(ctx context.Context, projectId string, videoId string, params *UpdateVideoChaptersParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 	// GetVideoChapters makes a GET request to /media/v1/projects/{project_id}/videos/{video_id}/chapters
 	GetVideoChapters(ctx context.Context, projectId string, videoId string, reqEditors ...RequestEditorFn) (*http.Response, error)
-	// UpdateVideoChaptersWithBody makes a PUT request to /media/v1/projects/{project_id}/videos/{video_id}/chapters
-	UpdateVideoChaptersWithBody(ctx context.Context, projectId string, videoId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
-	UpdateVideoChapters(ctx context.Context, projectId string, videoId string, body UpdateVideoChaptersJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 	// DeleteVideoChapter makes a DELETE request to /media/v1/projects/{project_id}/videos/{video_id}/chapters/{start_time_sec}
 	DeleteVideoChapter(ctx context.Context, projectId string, videoId string, startTimeSec int64, reqEditors ...RequestEditorFn) (*http.Response, error)
 }
 
-// UpdateVideoChapters2Params defines parameters for UpdateVideoChapters2.
-type UpdateVideoChapters2Params struct {
+// UpdateVideoChaptersParams defines parameters for UpdateVideoChapters.
+type UpdateVideoChaptersParams struct {
 	// chapters.title (optional)
 	ChaptersTitle *string `form:"chapters.title" json:"chapters.title"`
 	// chapters.start_time_sec (optional)
 	ChaptersStartTimeSec *float64 `form:"chapters.start_time_sec" json:"chapters.start_time_sec"`
 }
 
-// UpdateVideoChapters2 makes a DELETE request to /media/v1/projects/{project_id}/videos/{video_id}/chapters
+// UpdateVideoChapters makes a DELETE request to /media/v1/projects/{project_id}/videos/{video_id}/chapters
 // UpdateVideoChapters
-func (c *Client) UpdateVideoChapters2(ctx context.Context, projectId string, videoId string, params *UpdateVideoChapters2Params, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewUpdateVideoChapters2Request(c.Server, projectId, videoId, params)
+func (c *Client) UpdateVideoChapters(ctx context.Context, projectId string, videoId string, params *UpdateVideoChaptersParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpdateVideoChaptersRequest(c.Server, projectId, videoId, params)
 	if err != nil {
 		return nil, err
 	}
@@ -161,33 +155,6 @@ func (c *Client) GetVideoChapters(ctx context.Context, projectId string, videoId
 	return c.Client.Do(req)
 }
 
-// UpdateVideoChaptersWithBody makes a PUT request to /media/v1/projects/{project_id}/videos/{video_id}/chapters
-// UpdateVideoChapters
-func (c *Client) UpdateVideoChaptersWithBody(ctx context.Context, projectId string, videoId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewUpdateVideoChaptersRequestWithBody(c.Server, projectId, videoId, contentType, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-// UpdateVideoChapters makes a PUT request to /media/v1/projects/{project_id}/videos/{video_id}/chapters with application/json body
-func (c *Client) UpdateVideoChapters(ctx context.Context, projectId string, videoId string, body UpdateVideoChaptersJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewUpdateVideoChaptersRequest(c.Server, projectId, videoId, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
 // DeleteVideoChapter makes a DELETE request to /media/v1/projects/{project_id}/videos/{video_id}/chapters/{start_time_sec}
 // DeleteVideoChapter
 func (c *Client) DeleteVideoChapter(ctx context.Context, projectId string, videoId string, startTimeSec int64, reqEditors ...RequestEditorFn) (*http.Response, error) {
@@ -202,8 +169,8 @@ func (c *Client) DeleteVideoChapter(ctx context.Context, projectId string, video
 	return c.Client.Do(req)
 }
 
-// NewUpdateVideoChapters2Request creates a DELETE request for /media/v1/projects/{project_id}/videos/{video_id}/chapters
-func NewUpdateVideoChapters2Request(server string, projectId string, videoId string, params *UpdateVideoChapters2Params) (*http.Request, error) {
+// NewUpdateVideoChaptersRequest creates a DELETE request for /media/v1/projects/{project_id}/videos/{video_id}/chapters
+func NewUpdateVideoChaptersRequest(server string, projectId string, videoId string, params *UpdateVideoChaptersParams) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -311,58 +278,6 @@ func NewGetVideoChaptersRequest(server string, projectId string, videoId string)
 	return req, nil
 }
 
-// NewUpdateVideoChaptersRequest creates a PUT request for /media/v1/projects/{project_id}/videos/{video_id}/chapters with application/json body
-func NewUpdateVideoChaptersRequest(server string, projectId string, videoId string, body UpdateVideoChaptersJSONRequestBody) (*http.Request, error) {
-	var bodyReader io.Reader
-	buf, err := json.Marshal(body)
-	if err != nil {
-		return nil, err
-	}
-	bodyReader = bytes.NewReader(buf)
-	return NewUpdateVideoChaptersRequestWithBody(server, projectId, videoId, "application/json", bodyReader)
-}
-
-// NewUpdateVideoChaptersRequestWithBody creates a PUT request for /media/v1/projects/{project_id}/videos/{video_id}/chapters with any body
-func NewUpdateVideoChaptersRequestWithBody(server string, projectId string, videoId string, contentType string, body io.Reader) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-	pathParam0, err = oapiCodegenParamsPkg.StyleParameter("project_id", projectId, oapiCodegenParamsPkg.ParameterOptions{Style: "simple", ParamLocation: oapiCodegenParamsPkg.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", AllowReserved: false})
-	if err != nil {
-		return nil, err
-	}
-
-	var pathParam1 string
-	pathParam1, err = oapiCodegenParamsPkg.StyleParameter("video_id", videoId, oapiCodegenParamsPkg.ParameterOptions{Style: "simple", ParamLocation: oapiCodegenParamsPkg.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", AllowReserved: false})
-	if err != nil {
-		return nil, err
-	}
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/media/v1/projects/%s/videos/%s/chapters", pathParam0, pathParam1)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	reqURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest("PUT", reqURL.String(), body)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Add("Content-Type", contentType)
-
-	return req, nil
-}
-
 // NewDeleteVideoChapterRequest creates a DELETE request for /media/v1/projects/{project_id}/videos/{video_id}/chapters/{start_time_sec}
 func NewDeleteVideoChapterRequest(server string, projectId string, videoId string, startTimeSec int64) (*http.Request, error) {
 	var err error
@@ -436,12 +351,12 @@ func NewSimpleClient(server string, opts ...ClientOption) (*SimpleClient, error)
 	return &SimpleClient{Client: inner}, nil
 }
 
-// UpdateVideoChapters2 makes a DELETE request to /media/v1/projects/{project_id}/videos/{video_id}/chapters and returns the parsed response.
+// UpdateVideoChapters makes a DELETE request to /media/v1/projects/{project_id}/videos/{video_id}/chapters and returns the parsed response.
 // UpdateVideoChapters
 // On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
-func (c *SimpleClient) UpdateVideoChapters2(ctx context.Context, projectId string, videoId string, params *UpdateVideoChapters2Params, reqEditors ...RequestEditorFn) (models.VideosV1VideoChapters, error) {
+func (c *SimpleClient) UpdateVideoChapters(ctx context.Context, projectId string, videoId string, params *UpdateVideoChaptersParams, reqEditors ...RequestEditorFn) (models.VideosV1VideoChapters, error) {
 	var result models.VideosV1VideoChapters
-	resp, err := c.Client.UpdateVideoChapters2(ctx, projectId, videoId, params, reqEditors...)
+	resp, err := c.Client.UpdateVideoChapters(ctx, projectId, videoId, params, reqEditors...)
 	if err != nil {
 		return result, err
 	}
@@ -472,36 +387,6 @@ func (c *SimpleClient) UpdateVideoChapters2(ctx context.Context, projectId strin
 func (c *SimpleClient) GetVideoChapters(ctx context.Context, projectId string, videoId string, reqEditors ...RequestEditorFn) (models.VideosV1VideoChapters, error) {
 	var result models.VideosV1VideoChapters
 	resp, err := c.Client.GetVideoChapters(ctx, projectId, videoId, reqEditors...)
-	if err != nil {
-		return result, err
-	}
-	defer resp.Body.Close()
-
-	rawBody, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return result, err
-	}
-
-	if resp.StatusCode >= 200 && resp.StatusCode < 300 {
-		if err := json.Unmarshal(rawBody, &result); err != nil {
-			return result, err
-		}
-		return result, nil
-	}
-
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
-		StatusCode: resp.StatusCode,
-		RawBody:    rawBody,
-	}
-}
-
-// UpdateVideoChapters makes a PUT request to /media/v1/projects/{project_id}/videos/{video_id}/chapters and returns the parsed response.
-// UpdateVideoChapters
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
-func (c *SimpleClient) UpdateVideoChapters(ctx context.Context, projectId string, videoId string, body UpdateVideoChaptersJSONRequestBody, reqEditors ...RequestEditorFn) (models.VideosV1VideoChapters, error) {
-	var result models.VideosV1VideoChapters
-	resp, err := c.Client.UpdateVideoChapters(ctx, projectId, videoId, body, reqEditors...)
 	if err != nil {
 		return result, err
 	}
