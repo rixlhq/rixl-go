@@ -11,7 +11,12 @@ pre-commit:
         GOWORK: "off"
       run: golangci-lint run --new
       stage_fixed: true
-
+    jactionlint:
+      glob:
+        - ".github/workflows/*.{yml,yaml}"
+        - ".github/actions/**/action.{yml,yaml}"
+        - ".github/dependabot.{yml,yaml}"
+      run: mise exec -- jactionlint --profile correctness --shellcheck= {staged_files}
 pre-push:
   parallel: true
   commands:
