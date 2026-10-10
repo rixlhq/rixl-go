@@ -16,6 +16,8 @@ import (
 	oapiCodegenParamsPkg "github.com/rixlhq/rixl-go/sdk/runtime/params"
 )
 
+type RespondToMembershipApplicationJSONRequestBody = any
+
 type UpdateActiveMembershipJSONRequestBody = models.AuthV1UpdateActiveMembershipRequest
 
 type InviteMemberJSONRequestBody = any
@@ -132,6 +134,9 @@ type ClientInterface interface {
 	DeclineInvitation(ctx context.Context, token string, reqEditors ...RequestEditorFn) (*http.Response, error)
 	// ListMembershipApplications makes a GET request to /auth/v1/membership-applications
 	ListMembershipApplications(ctx context.Context, params *ListMembershipApplicationsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// RespondToMembershipApplicationWithBody makes a PATCH request to /auth/v1/membership-applications/{org_id}/state
+	RespondToMembershipApplicationWithBody(ctx context.Context, orgId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+	RespondToMembershipApplication(ctx context.Context, orgId string, body RespondToMembershipApplicationJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 	// ListMemberships makes a GET request to /auth/v1/memberships
 	ListMemberships(ctx context.Context, params *ListMembershipsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 	// UpdateActiveMembershipWithBody makes a PATCH request to /auth/v1/memberships/active
@@ -281,6 +286,33 @@ func (c *Client) DeclineInvitation(ctx context.Context, token string, reqEditors
 // ListMembershipApplications
 func (c *Client) ListMembershipApplications(ctx context.Context, params *ListMembershipApplicationsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewListMembershipApplicationsRequest(c.Server, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// RespondToMembershipApplicationWithBody makes a PATCH request to /auth/v1/membership-applications/{org_id}/state
+// RespondToMembershipApplication
+func (c *Client) RespondToMembershipApplicationWithBody(ctx context.Context, orgId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewRespondToMembershipApplicationRequestWithBody(c.Server, orgId, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// RespondToMembershipApplication makes a PATCH request to /auth/v1/membership-applications/{org_id}/state with application/json body
+func (c *Client) RespondToMembershipApplication(ctx context.Context, orgId string, body RespondToMembershipApplicationJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewRespondToMembershipApplicationRequest(c.Server, orgId, body)
 	if err != nil {
 		return nil, err
 	}
@@ -752,6 +784,52 @@ func NewListMembershipApplicationsRequest(server string, params *ListMembershipA
 	if err != nil {
 		return nil, err
 	}
+
+	return req, nil
+}
+
+// NewRespondToMembershipApplicationRequest creates a PATCH request for /auth/v1/membership-applications/{org_id}/state with application/json body
+func NewRespondToMembershipApplicationRequest(server string, orgId string, body RespondToMembershipApplicationJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewRespondToMembershipApplicationRequestWithBody(server, orgId, "application/json", bodyReader)
+}
+
+// NewRespondToMembershipApplicationRequestWithBody creates a PATCH request for /auth/v1/membership-applications/{org_id}/state with any body
+func NewRespondToMembershipApplicationRequestWithBody(server string, orgId string, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+	pathParam0, err = oapiCodegenParamsPkg.StyleParameter("org_id", orgId, oapiCodegenParamsPkg.ParameterOptions{Style: "simple", ParamLocation: oapiCodegenParamsPkg.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", AllowReserved: false})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/auth/v1/membership-applications/%s/state", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	reqURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("PATCH", reqURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
 
 	return req, nil
 }
@@ -1714,6 +1792,36 @@ func (c *SimpleClient) DeclineInvitation(ctx context.Context, token string, reqE
 func (c *SimpleClient) ListMembershipApplications(ctx context.Context, params *ListMembershipApplicationsParams, reqEditors ...RequestEditorFn) (models.AuthV1ListMembershipApplicationsResponse, error) {
 	var result models.AuthV1ListMembershipApplicationsResponse
 	resp, err := c.Client.ListMembershipApplications(ctx, params, reqEditors...)
+	if err != nil {
+		return result, err
+	}
+	defer resp.Body.Close()
+
+	rawBody, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return result, err
+	}
+
+	if resp.StatusCode >= 200 && resp.StatusCode < 300 {
+		if err := json.Unmarshal(rawBody, &result); err != nil {
+			return result, err
+		}
+		return result, nil
+	}
+
+	// No typed error response defined
+	return result, &ClientHttpError[struct{}]{
+		StatusCode: resp.StatusCode,
+		RawBody:    rawBody,
+	}
+}
+
+// RespondToMembershipApplication makes a PATCH request to /auth/v1/membership-applications/{org_id}/state and returns the parsed response.
+// RespondToMembershipApplication
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+func (c *SimpleClient) RespondToMembershipApplication(ctx context.Context, orgId string, body RespondToMembershipApplicationJSONRequestBody, reqEditors ...RequestEditorFn) (models.AuthV1MembershipMutation, error) {
+	var result models.AuthV1MembershipMutation
+	resp, err := c.Client.RespondToMembershipApplication(ctx, orgId, body, reqEditors...)
 	if err != nil {
 		return result, err
 	}
