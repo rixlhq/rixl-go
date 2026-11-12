@@ -287,7 +287,7 @@ func NewSimpleClient(server string, opts ...ClientOption) (*SimpleClient, error)
 
 // MarkVideoFailed makes a POST request to /internal/videos/mark-failed and returns the parsed response.
 // MarkVideoFailed
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) MarkVideoFailed(ctx context.Context, body MarkVideoFailedJSONRequestBody, reqEditors ...RequestEditorFn) (models.GoogleProtobufEmpty, error) {
 	var result models.GoogleProtobufEmpty
 	resp, err := c.Client.MarkVideoFailed(ctx, body, reqEditors...)
@@ -308,16 +308,19 @@ func (c *SimpleClient) MarkVideoFailed(ctx context.Context, body MarkVideoFailed
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }
 
 // MarkVideoProcessed makes a POST request to /internal/videos/mark-processed and returns the parsed response.
 // MarkVideoProcessed
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) MarkVideoProcessed(ctx context.Context, body MarkVideoProcessedJSONRequestBody, reqEditors ...RequestEditorFn) (models.GoogleProtobufEmpty, error) {
 	var result models.GoogleProtobufEmpty
 	resp, err := c.Client.MarkVideoProcessed(ctx, body, reqEditors...)
@@ -338,9 +341,12 @@ func (c *SimpleClient) MarkVideoProcessed(ctx context.Context, body MarkVideoPro
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }

@@ -454,7 +454,7 @@ func NewSimpleClient(server string, opts ...ClientOption) (*SimpleClient, error)
 
 // DeleteAllSubtitles makes a DELETE request to /media/v1/projects/{project_id}/videos/{video_id}/subtitles and returns the parsed response.
 // DeleteAllSubtitles
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) DeleteAllSubtitles(ctx context.Context, projectId string, videoId string, reqEditors ...RequestEditorFn) (models.GoogleProtobufEmpty, error) {
 	var result models.GoogleProtobufEmpty
 	resp, err := c.Client.DeleteAllSubtitles(ctx, projectId, videoId, reqEditors...)
@@ -475,16 +475,19 @@ func (c *SimpleClient) DeleteAllSubtitles(ctx context.Context, projectId string,
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }
 
 // DeleteSubtitlesByLanguage makes a DELETE request to /media/v1/projects/{project_id}/videos/{video_id}/subtitles/language/{language_code} and returns the parsed response.
 // DeleteSubtitlesByLanguage
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) DeleteSubtitlesByLanguage(ctx context.Context, projectId string, videoId string, languageCode string, reqEditors ...RequestEditorFn) (models.GoogleProtobufEmpty, error) {
 	var result models.GoogleProtobufEmpty
 	resp, err := c.Client.DeleteSubtitlesByLanguage(ctx, projectId, videoId, languageCode, reqEditors...)
@@ -505,16 +508,19 @@ func (c *SimpleClient) DeleteSubtitlesByLanguage(ctx context.Context, projectId 
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }
 
 // CreateSubtitleUpload makes a POST request to /media/v1/projects/{project_id}/videos/{video_id}/subtitles/upload and returns the parsed response.
 // CreateSubtitleUpload
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) CreateSubtitleUpload(ctx context.Context, projectId string, videoId string, body CreateSubtitleUploadJSONRequestBody, reqEditors ...RequestEditorFn) (models.VideosV1TrackUpload, error) {
 	var result models.VideosV1TrackUpload
 	resp, err := c.Client.CreateSubtitleUpload(ctx, projectId, videoId, body, reqEditors...)
@@ -535,16 +541,19 @@ func (c *SimpleClient) CreateSubtitleUpload(ctx context.Context, projectId strin
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }
 
 // DeleteSubtitle makes a DELETE request to /media/v1/projects/{project_id}/videos/{video_id}/subtitles/{subtitle_id} and returns the parsed response.
 // DeleteSubtitle
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) DeleteSubtitle(ctx context.Context, projectId string, videoId string, subtitleId string, reqEditors ...RequestEditorFn) (models.GoogleProtobufEmpty, error) {
 	var result models.GoogleProtobufEmpty
 	resp, err := c.Client.DeleteSubtitle(ctx, projectId, videoId, subtitleId, reqEditors...)
@@ -565,16 +574,19 @@ func (c *SimpleClient) DeleteSubtitle(ctx context.Context, projectId string, vid
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }
 
 // ListSubtitles makes a GET request to /media/v1/videos/{video_id}/subtitles and returns the parsed response.
 // ListSubtitles
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) ListSubtitles(ctx context.Context, videoId string, reqEditors ...RequestEditorFn) (models.VideosV1ListSubtitlesResponse, error) {
 	var result models.VideosV1ListSubtitlesResponse
 	resp, err := c.Client.ListSubtitles(ctx, videoId, reqEditors...)
@@ -595,9 +607,12 @@ func (c *SimpleClient) ListSubtitles(ctx context.Context, videoId string, reqEdi
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }

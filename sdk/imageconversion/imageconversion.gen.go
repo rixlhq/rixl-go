@@ -330,7 +330,7 @@ func NewSimpleClient(server string, opts ...ClientOption) (*SimpleClient, error)
 
 // MarkImageFailed makes a POST request to /internal/images/mark-failed and returns the parsed response.
 // MarkImageFailed
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) MarkImageFailed(ctx context.Context, body MarkImageFailedJSONRequestBody, reqEditors ...RequestEditorFn) (models.GoogleProtobufEmpty, error) {
 	var result models.GoogleProtobufEmpty
 	resp, err := c.Client.MarkImageFailed(ctx, body, reqEditors...)
@@ -351,16 +351,19 @@ func (c *SimpleClient) MarkImageFailed(ctx context.Context, body MarkImageFailed
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }
 
 // MarkImageProcessed makes a POST request to /internal/images/mark-processed and returns the parsed response.
 // MarkImageProcessed
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) MarkImageProcessed(ctx context.Context, body MarkImageProcessedJSONRequestBody, reqEditors ...RequestEditorFn) (models.GoogleProtobufEmpty, error) {
 	var result models.GoogleProtobufEmpty
 	resp, err := c.Client.MarkImageProcessed(ctx, body, reqEditors...)
@@ -381,16 +384,19 @@ func (c *SimpleClient) MarkImageProcessed(ctx context.Context, body MarkImagePro
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }
 
 // TakeUnprocessedImage makes a POST request to /internal/images/take and returns the parsed response.
 // TakeUnprocessedImage
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) TakeUnprocessedImage(ctx context.Context, reqEditors ...RequestEditorFn) (models.ImagesV1UnprocessedImage, error) {
 	var result models.ImagesV1UnprocessedImage
 	resp, err := c.Client.TakeUnprocessedImage(ctx, reqEditors...)
@@ -411,9 +417,12 @@ func (c *SimpleClient) TakeUnprocessedImage(ctx context.Context, reqEditors ...R
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }

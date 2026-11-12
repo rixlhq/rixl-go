@@ -787,7 +787,7 @@ func NewSimpleClient(server string, opts ...ClientOption) (*SimpleClient, error)
 
 // VerifyEmail makes a POST request to /auth/v1/email/verify and returns the parsed response.
 // VerifyEmail
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) VerifyEmail(ctx context.Context, body VerifyEmailJSONRequestBody, reqEditors ...RequestEditorFn) (models.AuthV1VerifyEmailResponse, error) {
 	var result models.AuthV1VerifyEmailResponse
 	resp, err := c.Client.VerifyEmail(ctx, body, reqEditors...)
@@ -808,16 +808,19 @@ func (c *SimpleClient) VerifyEmail(ctx context.Context, body VerifyEmailJSONRequ
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }
 
 // ResendVerification makes a POST request to /auth/v1/email/verify/resend and returns the parsed response.
 // ResendVerification
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) ResendVerification(ctx context.Context, body ResendVerificationJSONRequestBody, reqEditors ...RequestEditorFn) (models.AuthV1ResendVerificationResponse, error) {
 	var result models.AuthV1ResendVerificationResponse
 	resp, err := c.Client.ResendVerification(ctx, body, reqEditors...)
@@ -838,16 +841,19 @@ func (c *SimpleClient) ResendVerification(ctx context.Context, body ResendVerifi
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }
 
 // Login makes a POST request to /auth/v1/login and returns the parsed response.
 // Login
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) Login(ctx context.Context, body LoginJSONRequestBody, reqEditors ...RequestEditorFn) (models.AuthV1LoginResponse, error) {
 	var result models.AuthV1LoginResponse
 	resp, err := c.Client.Login(ctx, body, reqEditors...)
@@ -868,16 +874,19 @@ func (c *SimpleClient) Login(ctx context.Context, body LoginJSONRequestBody, req
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }
 
 // SendPasswordReset makes a POST request to /auth/v1/password/reset and returns the parsed response.
 // SendPasswordReset
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) SendPasswordReset(ctx context.Context, body SendPasswordResetJSONRequestBody, reqEditors ...RequestEditorFn) (models.GoogleProtobufEmpty, error) {
 	var result models.GoogleProtobufEmpty
 	resp, err := c.Client.SendPasswordReset(ctx, body, reqEditors...)
@@ -898,16 +907,19 @@ func (c *SimpleClient) SendPasswordReset(ctx context.Context, body SendPasswordR
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }
 
 // ResetPassword makes a POST request to /auth/v1/password/reset/confirm and returns the parsed response.
 // ResetPassword
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) ResetPassword(ctx context.Context, body ResetPasswordJSONRequestBody, reqEditors ...RequestEditorFn) (models.GoogleProtobufEmpty, error) {
 	var result models.GoogleProtobufEmpty
 	resp, err := c.Client.ResetPassword(ctx, body, reqEditors...)
@@ -928,16 +940,19 @@ func (c *SimpleClient) ResetPassword(ctx context.Context, body ResetPasswordJSON
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }
 
 // Register makes a POST request to /auth/v1/register and returns the parsed response.
 // Register
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) Register(ctx context.Context, body RegisterJSONRequestBody, reqEditors ...RequestEditorFn) (models.AuthV1RegisterResponse, error) {
 	var result models.AuthV1RegisterResponse
 	resp, err := c.Client.Register(ctx, body, reqEditors...)
@@ -958,16 +973,19 @@ func (c *SimpleClient) Register(ctx context.Context, body RegisterJSONRequestBod
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }
 
 // AddEmail makes a POST request to /auth/v1/users/current/emails and returns the parsed response.
 // AddEmail
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) AddEmail(ctx context.Context, body AddEmailJSONRequestBody, reqEditors ...RequestEditorFn) (models.AuthV1VerificationSentResponse, error) {
 	var result models.AuthV1VerificationSentResponse
 	resp, err := c.Client.AddEmail(ctx, body, reqEditors...)
@@ -988,16 +1006,19 @@ func (c *SimpleClient) AddEmail(ctx context.Context, body AddEmailJSONRequestBod
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }
 
 // InitiateEmailChange makes a PUT request to /auth/v1/users/current/emails/change and returns the parsed response.
 // InitiateEmailChange
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) InitiateEmailChange(ctx context.Context, body InitiateEmailChangeJSONRequestBody, reqEditors ...RequestEditorFn) (models.AuthV1VerificationSentResponse, error) {
 	var result models.AuthV1VerificationSentResponse
 	resp, err := c.Client.InitiateEmailChange(ctx, body, reqEditors...)
@@ -1018,16 +1039,19 @@ func (c *SimpleClient) InitiateEmailChange(ctx context.Context, body InitiateEma
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }
 
 // GetUserEmailStatus makes a GET request to /auth/v1/users/current/emails/status and returns the parsed response.
 // GetUserEmailStatus
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) GetUserEmailStatus(ctx context.Context, params *GetUserEmailStatusParams, reqEditors ...RequestEditorFn) (models.AuthV1EmailStatusResponse, error) {
 	var result models.AuthV1EmailStatusResponse
 	resp, err := c.Client.GetUserEmailStatus(ctx, params, reqEditors...)
@@ -1048,9 +1072,12 @@ func (c *SimpleClient) GetUserEmailStatus(ctx context.Context, params *GetUserEm
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }

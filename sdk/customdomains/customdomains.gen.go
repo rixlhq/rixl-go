@@ -592,7 +592,7 @@ func NewSimpleClient(server string, opts ...ClientOption) (*SimpleClient, error)
 
 // RemoveDomain makes a DELETE request to /auth/v1/memberships/{org_id}/domain and returns the parsed response.
 // RemoveDomain
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) RemoveDomain(ctx context.Context, orgId string, params *RemoveDomainParams, reqEditors ...RequestEditorFn) (models.GoogleProtobufEmpty, error) {
 	var result models.GoogleProtobufEmpty
 	resp, err := c.Client.RemoveDomain(ctx, orgId, params, reqEditors...)
@@ -613,16 +613,19 @@ func (c *SimpleClient) RemoveDomain(ctx context.Context, orgId string, params *R
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }
 
 // GetDomainStatus makes a GET request to /auth/v1/memberships/{org_id}/domain and returns the parsed response.
 // GetDomainStatus
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) GetDomainStatus(ctx context.Context, orgId string, params *GetDomainStatusParams, reqEditors ...RequestEditorFn) (models.AuthV1DomainResponse, error) {
 	var result models.AuthV1DomainResponse
 	resp, err := c.Client.GetDomainStatus(ctx, orgId, params, reqEditors...)
@@ -643,16 +646,19 @@ func (c *SimpleClient) GetDomainStatus(ctx context.Context, orgId string, params
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }
 
 // GetDomainAutoJoin makes a GET request to /auth/v1/memberships/{org_id}/domain/auto-join and returns the parsed response.
 // GetDomainAutoJoin
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) GetDomainAutoJoin(ctx context.Context, orgId string, params *GetDomainAutoJoinParams, reqEditors ...RequestEditorFn) (models.AuthV1AutoJoinSetting, error) {
 	var result models.AuthV1AutoJoinSetting
 	resp, err := c.Client.GetDomainAutoJoin(ctx, orgId, params, reqEditors...)
@@ -673,16 +679,19 @@ func (c *SimpleClient) GetDomainAutoJoin(ctx context.Context, orgId string, para
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }
 
 // CheckDomainVerification makes a POST request to /auth/v1/memberships/{org_id}/domain/verify and returns the parsed response.
 // CheckDomainVerification
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) CheckDomainVerification(ctx context.Context, orgId string, params *CheckDomainVerificationParams, reqEditors ...RequestEditorFn) (models.AuthV1DomainResponse, error) {
 	var result models.AuthV1DomainResponse
 	resp, err := c.Client.CheckDomainVerification(ctx, orgId, params, reqEditors...)
@@ -703,16 +712,19 @@ func (c *SimpleClient) CheckDomainVerification(ctx context.Context, orgId string
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }
 
 // CreateDomainVerification makes a POST request to /auth/v1/memberships/{user.org_id}/domain and returns the parsed response.
 // CreateDomainVerification
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) CreateDomainVerification(ctx context.Context, userOrgId string, body CreateDomainVerificationJSONRequestBody, reqEditors ...RequestEditorFn) (models.AuthV1DomainResponse, error) {
 	var result models.AuthV1DomainResponse
 	resp, err := c.Client.CreateDomainVerification(ctx, userOrgId, body, reqEditors...)
@@ -733,16 +745,19 @@ func (c *SimpleClient) CreateDomainVerification(ctx context.Context, userOrgId s
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }
 
 // SetDomainAutoJoin makes a PUT request to /auth/v1/memberships/{user.org_id}/domain/auto-join and returns the parsed response.
 // SetDomainAutoJoin
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) SetDomainAutoJoin(ctx context.Context, userOrgId string, body SetDomainAutoJoinJSONRequestBody, reqEditors ...RequestEditorFn) (models.AuthV1AutoJoinSetting, error) {
 	var result models.AuthV1AutoJoinSetting
 	resp, err := c.Client.SetDomainAutoJoin(ctx, userOrgId, body, reqEditors...)
@@ -763,9 +778,12 @@ func (c *SimpleClient) SetDomainAutoJoin(ctx context.Context, userOrgId string, 
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }

@@ -215,7 +215,7 @@ func NewSimpleClient(server string, opts ...ClientOption) (*SimpleClient, error)
 
 // ContactSales makes a POST request to /billing/v1/contact-sales and returns the parsed response.
 // ContactSales
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) ContactSales(ctx context.Context, body ContactSalesJSONRequestBody, reqEditors ...RequestEditorFn) (models.BillingV1SalesLead, error) {
 	var result models.BillingV1SalesLead
 	resp, err := c.Client.ContactSales(ctx, body, reqEditors...)
@@ -236,9 +236,12 @@ func (c *SimpleClient) ContactSales(ctx context.Context, body ContactSalesJSONRe
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }

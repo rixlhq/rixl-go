@@ -976,7 +976,7 @@ func NewSimpleClient(server string, opts ...ClientOption) (*SimpleClient, error)
 
 // ListPolicies makes a GET request to /auth/v1/memberships/{org_id}/policies and returns the parsed response.
 // ListPolicies
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) ListPolicies(ctx context.Context, orgId string, params *ListPoliciesParams, reqEditors ...RequestEditorFn) (models.AuthV1ListPoliciesResponse, error) {
 	var result models.AuthV1ListPoliciesResponse
 	resp, err := c.Client.ListPolicies(ctx, orgId, params, reqEditors...)
@@ -997,16 +997,19 @@ func (c *SimpleClient) ListPolicies(ctx context.Context, orgId string, params *L
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }
 
 // ListUserPolicies makes a GET request to /auth/v1/memberships/{user.org_id}/members/{member_id}/policies and returns the parsed response.
 // ListUserPolicies
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) ListUserPolicies(ctx context.Context, userOrgId string, memberId string, params *ListUserPoliciesParams, reqEditors ...RequestEditorFn) (models.AuthV1MemberPoliciesResponse, error) {
 	var result models.AuthV1MemberPoliciesResponse
 	resp, err := c.Client.ListUserPolicies(ctx, userOrgId, memberId, params, reqEditors...)
@@ -1027,16 +1030,19 @@ func (c *SimpleClient) ListUserPolicies(ctx context.Context, userOrgId string, m
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }
 
 // CreatePolicy makes a POST request to /auth/v1/memberships/{user.org_id}/policies and returns the parsed response.
 // CreatePolicy
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) CreatePolicy(ctx context.Context, userOrgId string, body CreatePolicyJSONRequestBody, reqEditors ...RequestEditorFn) (models.AuthV1Policy, error) {
 	var result models.AuthV1Policy
 	resp, err := c.Client.CreatePolicy(ctx, userOrgId, body, reqEditors...)
@@ -1057,16 +1063,19 @@ func (c *SimpleClient) CreatePolicy(ctx context.Context, userOrgId string, body 
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }
 
 // DetachPolicy makes a DELETE request to /auth/v1/memberships/{user.org_id}/policies/attachments/{attachment_id} and returns the parsed response.
 // DetachPolicy
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) DetachPolicy(ctx context.Context, userOrgId string, attachmentId string, params *DetachPolicyParams, reqEditors ...RequestEditorFn) (models.GoogleProtobufEmpty, error) {
 	var result models.GoogleProtobufEmpty
 	resp, err := c.Client.DetachPolicy(ctx, userOrgId, attachmentId, params, reqEditors...)
@@ -1087,16 +1096,19 @@ func (c *SimpleClient) DetachPolicy(ctx context.Context, userOrgId string, attac
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }
 
 // ListPermissionRegistry makes a GET request to /auth/v1/memberships/{user.org_id}/policies/permissions and returns the parsed response.
 // ListPermissionRegistry
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) ListPermissionRegistry(ctx context.Context, userOrgId string, params *ListPermissionRegistryParams, reqEditors ...RequestEditorFn) (models.AuthV1PermissionRegistryResponse, error) {
 	var result models.AuthV1PermissionRegistryResponse
 	resp, err := c.Client.ListPermissionRegistry(ctx, userOrgId, params, reqEditors...)
@@ -1117,16 +1129,19 @@ func (c *SimpleClient) ListPermissionRegistry(ctx context.Context, userOrgId str
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }
 
 // DeletePolicy makes a DELETE request to /auth/v1/memberships/{user.org_id}/policies/{policy_id} and returns the parsed response.
 // DeletePolicy
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) DeletePolicy(ctx context.Context, userOrgId string, policyId string, params *DeletePolicyParams, reqEditors ...RequestEditorFn) (models.GoogleProtobufEmpty, error) {
 	var result models.GoogleProtobufEmpty
 	resp, err := c.Client.DeletePolicy(ctx, userOrgId, policyId, params, reqEditors...)
@@ -1147,16 +1162,19 @@ func (c *SimpleClient) DeletePolicy(ctx context.Context, userOrgId string, polic
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }
 
 // GetPolicy makes a GET request to /auth/v1/memberships/{user.org_id}/policies/{policy_id} and returns the parsed response.
 // GetPolicy
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) GetPolicy(ctx context.Context, userOrgId string, policyId string, params *GetPolicyParams, reqEditors ...RequestEditorFn) (models.AuthV1Policy, error) {
 	var result models.AuthV1Policy
 	resp, err := c.Client.GetPolicy(ctx, userOrgId, policyId, params, reqEditors...)
@@ -1177,16 +1195,19 @@ func (c *SimpleClient) GetPolicy(ctx context.Context, userOrgId string, policyId
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }
 
 // UpdatePolicy makes a PUT request to /auth/v1/memberships/{user.org_id}/policies/{policy_id} and returns the parsed response.
 // UpdatePolicy
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) UpdatePolicy(ctx context.Context, userOrgId string, policyId string, body UpdatePolicyJSONRequestBody, reqEditors ...RequestEditorFn) (models.AuthV1Policy, error) {
 	var result models.AuthV1Policy
 	resp, err := c.Client.UpdatePolicy(ctx, userOrgId, policyId, body, reqEditors...)
@@ -1207,16 +1228,19 @@ func (c *SimpleClient) UpdatePolicy(ctx context.Context, userOrgId string, polic
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }
 
 // ListPolicyAttachments makes a GET request to /auth/v1/memberships/{user.org_id}/policies/{policy_id}/attachments and returns the parsed response.
 // ListPolicyAttachments
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) ListPolicyAttachments(ctx context.Context, userOrgId string, policyId string, params *ListPolicyAttachmentsParams, reqEditors ...RequestEditorFn) (models.AuthV1ListAttachmentsResponse, error) {
 	var result models.AuthV1ListAttachmentsResponse
 	resp, err := c.Client.ListPolicyAttachments(ctx, userOrgId, policyId, params, reqEditors...)
@@ -1237,16 +1261,19 @@ func (c *SimpleClient) ListPolicyAttachments(ctx context.Context, userOrgId stri
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }
 
 // AttachPolicy makes a POST request to /auth/v1/memberships/{user.org_id}/policies/{policy_id}/attachments and returns the parsed response.
 // AttachPolicy
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) AttachPolicy(ctx context.Context, userOrgId string, policyId string, body AttachPolicyJSONRequestBody, reqEditors ...RequestEditorFn) (models.AuthV1PolicyAttachment, error) {
 	var result models.AuthV1PolicyAttachment
 	resp, err := c.Client.AttachPolicy(ctx, userOrgId, policyId, body, reqEditors...)
@@ -1267,9 +1294,12 @@ func (c *SimpleClient) AttachPolicy(ctx context.Context, userOrgId string, polic
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }

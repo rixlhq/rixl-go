@@ -528,7 +528,7 @@ func NewSimpleClient(server string, opts ...ClientOption) (*SimpleClient, error)
 
 // ListVideos makes a GET request to /media/v1/projects/{project_id}/videos and returns the parsed response.
 // ListVideos
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) ListVideos(ctx context.Context, projectId string, params *ListVideosParams, reqEditors ...RequestEditorFn) (models.VideosV1ListVideosResponse, error) {
 	var result models.VideosV1ListVideosResponse
 	resp, err := c.Client.ListVideos(ctx, projectId, params, reqEditors...)
@@ -549,16 +549,19 @@ func (c *SimpleClient) ListVideos(ctx context.Context, projectId string, params 
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }
 
 // CreateVideoUpload makes a POST request to /media/v1/projects/{project_id}/videos/upload and returns the parsed response.
 // CreateVideoUpload
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) CreateVideoUpload(ctx context.Context, projectId string, body CreateVideoUploadJSONRequestBody, reqEditors ...RequestEditorFn) (models.VideosV1VideoUpload, error) {
 	var result models.VideosV1VideoUpload
 	resp, err := c.Client.CreateVideoUpload(ctx, projectId, body, reqEditors...)
@@ -579,16 +582,19 @@ func (c *SimpleClient) CreateVideoUpload(ctx context.Context, projectId string, 
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }
 
 // DeleteVideo makes a DELETE request to /media/v1/projects/{project_id}/videos/{video_id} and returns the parsed response.
 // DeleteVideo
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) DeleteVideo(ctx context.Context, projectId string, videoId string, reqEditors ...RequestEditorFn) (models.GoogleProtobufEmpty, error) {
 	var result models.GoogleProtobufEmpty
 	resp, err := c.Client.DeleteVideo(ctx, projectId, videoId, reqEditors...)
@@ -609,16 +615,19 @@ func (c *SimpleClient) DeleteVideo(ctx context.Context, projectId string, videoI
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }
 
 // UpdateVideoVisibility makes a PATCH request to /media/v1/projects/{project_id}/videos/{video_id}/visibility and returns the parsed response.
 // UpdateVideoVisibility
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) UpdateVideoVisibility(ctx context.Context, projectId string, videoId string, body UpdateVideoVisibilityJSONRequestBody, reqEditors ...RequestEditorFn) (models.VideosV1UpdateVideoVisibilityResponse, error) {
 	var result models.VideosV1UpdateVideoVisibilityResponse
 	resp, err := c.Client.UpdateVideoVisibility(ctx, projectId, videoId, body, reqEditors...)
@@ -639,16 +648,19 @@ func (c *SimpleClient) UpdateVideoVisibility(ctx context.Context, projectId stri
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }
 
 // GetVideo makes a GET request to /media/v1/videos/{video_id} and returns the parsed response.
 // GetVideo
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) GetVideo(ctx context.Context, videoId string, reqEditors ...RequestEditorFn) (models.VideosV1GetVideoResponse, error) {
 	var result models.VideosV1GetVideoResponse
 	resp, err := c.Client.GetVideo(ctx, videoId, reqEditors...)
@@ -669,9 +681,12 @@ func (c *SimpleClient) GetVideo(ctx context.Context, videoId string, reqEditors 
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }

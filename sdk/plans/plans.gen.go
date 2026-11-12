@@ -289,7 +289,7 @@ func NewSimpleClient(server string, opts ...ClientOption) (*SimpleClient, error)
 
 // ListPlans makes a GET request to /billing/v1/plans and returns the parsed response.
 // ListPlans
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) ListPlans(ctx context.Context, params *ListPlansParams, reqEditors ...RequestEditorFn) (models.BillingV1ListPlansResponse, error) {
 	var result models.BillingV1ListPlansResponse
 	resp, err := c.Client.ListPlans(ctx, params, reqEditors...)
@@ -310,16 +310,19 @@ func (c *SimpleClient) ListPlans(ctx context.Context, params *ListPlansParams, r
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }
 
 // GetPlan makes a GET request to /billing/v1/plans/{plan_id} and returns the parsed response.
 // GetPlan
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) GetPlan(ctx context.Context, planId string, reqEditors ...RequestEditorFn) (models.BillingV1GetPlanResponse, error) {
 	var result models.BillingV1GetPlanResponse
 	resp, err := c.Client.GetPlan(ctx, planId, reqEditors...)
@@ -340,9 +343,12 @@ func (c *SimpleClient) GetPlan(ctx context.Context, planId string, reqEditors ..
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }

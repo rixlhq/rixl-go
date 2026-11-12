@@ -772,7 +772,7 @@ func NewSimpleClient(server string, opts ...ClientOption) (*SimpleClient, error)
 
 // ListProjects makes a GET request to /organizations/{org_id}/projects/v1 and returns the parsed response.
 // ListProjects
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) ListProjects(ctx context.Context, orgId string, reqEditors ...RequestEditorFn) (models.ProjectV1ListProjectsResponse, error) {
 	var result models.ProjectV1ListProjectsResponse
 	resp, err := c.Client.ListProjects(ctx, orgId, reqEditors...)
@@ -793,16 +793,19 @@ func (c *SimpleClient) ListProjects(ctx context.Context, orgId string, reqEditor
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }
 
 // CreateProject makes a POST request to /organizations/{org_id}/projects/v1 and returns the parsed response.
 // CreateProject
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) CreateProject(ctx context.Context, orgId string, body CreateProjectJSONRequestBody, reqEditors ...RequestEditorFn) (models.ProjectV1Project, error) {
 	var result models.ProjectV1Project
 	resp, err := c.Client.CreateProject(ctx, orgId, body, reqEditors...)
@@ -823,16 +826,19 @@ func (c *SimpleClient) CreateProject(ctx context.Context, orgId string, body Cre
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }
 
 // DeleteProject makes a DELETE request to /organizations/{org_id}/projects/v1/{project_id} and returns the parsed response.
 // DeleteProject
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) DeleteProject(ctx context.Context, orgId string, projectId string, reqEditors ...RequestEditorFn) (models.ProjectV1Project, error) {
 	var result models.ProjectV1Project
 	resp, err := c.Client.DeleteProject(ctx, orgId, projectId, reqEditors...)
@@ -853,16 +859,19 @@ func (c *SimpleClient) DeleteProject(ctx context.Context, orgId string, projectI
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }
 
 // GetProject makes a GET request to /organizations/{org_id}/projects/v1/{project_id} and returns the parsed response.
 // GetProject
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) GetProject(ctx context.Context, orgId string, projectId string, reqEditors ...RequestEditorFn) (models.ProjectV1Project, error) {
 	var result models.ProjectV1Project
 	resp, err := c.Client.GetProject(ctx, orgId, projectId, reqEditors...)
@@ -883,16 +892,19 @@ func (c *SimpleClient) GetProject(ctx context.Context, orgId string, projectId s
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }
 
 // RemoveCustomDomain makes a DELETE request to /organizations/{org_id}/projects/v1/{project_id}/custom-domain and returns the parsed response.
 // RemoveCustomDomain
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) RemoveCustomDomain(ctx context.Context, orgId string, projectId string, reqEditors ...RequestEditorFn) (models.ProjectV1Project, error) {
 	var result models.ProjectV1Project
 	resp, err := c.Client.RemoveCustomDomain(ctx, orgId, projectId, reqEditors...)
@@ -913,16 +925,19 @@ func (c *SimpleClient) RemoveCustomDomain(ctx context.Context, orgId string, pro
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }
 
 // SetCustomDomain makes a PUT request to /organizations/{org_id}/projects/v1/{project_id}/custom-domain and returns the parsed response.
 // SetCustomDomain
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) SetCustomDomain(ctx context.Context, orgId string, projectId string, body SetCustomDomainJSONRequestBody, reqEditors ...RequestEditorFn) (models.ProjectV1Project, error) {
 	var result models.ProjectV1Project
 	resp, err := c.Client.SetCustomDomain(ctx, orgId, projectId, body, reqEditors...)
@@ -943,16 +958,19 @@ func (c *SimpleClient) SetCustomDomain(ctx context.Context, orgId string, projec
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }
 
 // MoveProject makes a POST request to /organizations/{org_id}/projects/v1/{project_id}/move and returns the parsed response.
 // MoveProject
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) MoveProject(ctx context.Context, orgId string, projectId string, body MoveProjectJSONRequestBody, reqEditors ...RequestEditorFn) (models.ProjectV1Project, error) {
 	var result models.ProjectV1Project
 	resp, err := c.Client.MoveProject(ctx, orgId, projectId, body, reqEditors...)
@@ -973,16 +991,19 @@ func (c *SimpleClient) MoveProject(ctx context.Context, orgId string, projectId 
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }
 
 // UpdateProjectName makes a PATCH request to /organizations/{org_id}/projects/v1/{project_id}/name and returns the parsed response.
 // UpdateProjectName
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) UpdateProjectName(ctx context.Context, orgId string, projectId string, body UpdateProjectNameJSONRequestBody, reqEditors ...RequestEditorFn) (models.ProjectV1Project, error) {
 	var result models.ProjectV1Project
 	resp, err := c.Client.UpdateProjectName(ctx, orgId, projectId, body, reqEditors...)
@@ -1003,16 +1024,19 @@ func (c *SimpleClient) UpdateProjectName(ctx context.Context, orgId string, proj
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }
 
 // UpdateVideoQuality makes a PATCH request to /organizations/{org_id}/projects/v1/{project_id}/video-quality and returns the parsed response.
 // UpdateVideoQuality
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) UpdateVideoQuality(ctx context.Context, orgId string, projectId string, body UpdateVideoQualityJSONRequestBody, reqEditors ...RequestEditorFn) (models.ProjectV1Project, error) {
 	var result models.ProjectV1Project
 	resp, err := c.Client.UpdateVideoQuality(ctx, orgId, projectId, body, reqEditors...)
@@ -1033,9 +1057,12 @@ func (c *SimpleClient) UpdateVideoQuality(ctx context.Context, orgId string, pro
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }

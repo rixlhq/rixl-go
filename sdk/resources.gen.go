@@ -44,6 +44,7 @@ import (
 	"github.com/rixlhq/rixl-go/sdk/videoanalytics"
 	"github.com/rixlhq/rixl-go/sdk/videoconversion"
 	"github.com/rixlhq/rixl-go/sdk/videos"
+	"github.com/rixlhq/rixl-go/sdk/webhooks"
 )
 
 // resources holds one typed client per OpenAPI tag. Client embeds it, so each
@@ -90,6 +91,7 @@ type resources struct {
 	VideoAnalytics    *videoanalytics.SimpleClient
 	VideoConversion   *videoconversion.SimpleClient
 	Videos            *videos.SimpleClient
+	Webhooks          *webhooks.SimpleClient
 }
 
 func newResources(cfg config) (*resources, error) {
@@ -587,6 +589,18 @@ func newResources(cfg config) (*resources, error) {
 			opts = append(opts, videos.WithRequestEditorFn(edit))
 		}
 		if r.Videos, err = videos.NewSimpleClient(baseURL, opts...); err != nil {
+			return nil, err
+		}
+	}
+	{
+		opts := make([]webhooks.ClientOption, 0, len(cfg.editors)+1)
+		if cfg.httpClient != nil {
+			opts = append(opts, webhooks.WithHTTPClient(cfg.httpClient))
+		}
+		for _, edit := range cfg.editors {
+			opts = append(opts, webhooks.WithRequestEditorFn(edit))
+		}
+		if r.Webhooks, err = webhooks.NewSimpleClient(baseURL, opts...); err != nil {
 			return nil, err
 		}
 	}

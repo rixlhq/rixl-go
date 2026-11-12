@@ -489,7 +489,7 @@ func NewSimpleClient(server string, opts ...ClientOption) (*SimpleClient, error)
 
 // SendBlogBroadcast makes a POST request to /auth/v1/blog/broadcast and returns the parsed response.
 // SendBlogBroadcast
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) SendBlogBroadcast(ctx context.Context, body SendBlogBroadcastJSONRequestBody, reqEditors ...RequestEditorFn) (models.AuthV1SendBlogBroadcastResponse, error) {
 	var result models.AuthV1SendBlogBroadcastResponse
 	resp, err := c.Client.SendBlogBroadcast(ctx, body, reqEditors...)
@@ -510,16 +510,19 @@ func (c *SimpleClient) SendBlogBroadcast(ctx context.Context, body SendBlogBroad
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }
 
 // SubscribeBlog makes a POST request to /auth/v1/blog/subscribe and returns the parsed response.
 // SubscribeBlog
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) SubscribeBlog(ctx context.Context, params *SubscribeBlogParams, reqEditors ...RequestEditorFn) (models.GoogleProtobufEmpty, error) {
 	var result models.GoogleProtobufEmpty
 	resp, err := c.Client.SubscribeBlog(ctx, params, reqEditors...)
@@ -540,16 +543,19 @@ func (c *SimpleClient) SubscribeBlog(ctx context.Context, params *SubscribeBlogP
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }
 
 // GetBlogSubscription makes a GET request to /auth/v1/blog/subscription and returns the parsed response.
 // GetBlogSubscription
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) GetBlogSubscription(ctx context.Context, params *GetBlogSubscriptionParams, reqEditors ...RequestEditorFn) (models.AuthV1BlogSubscriptionResponse, error) {
 	var result models.AuthV1BlogSubscriptionResponse
 	resp, err := c.Client.GetBlogSubscription(ctx, params, reqEditors...)
@@ -570,16 +576,19 @@ func (c *SimpleClient) GetBlogSubscription(ctx context.Context, params *GetBlogS
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }
 
 // UnsubscribeBlog makes a POST request to /auth/v1/blog/unsubscribe and returns the parsed response.
 // UnsubscribeBlog
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) UnsubscribeBlog(ctx context.Context, params *UnsubscribeBlogParams, reqEditors ...RequestEditorFn) (models.GoogleProtobufEmpty, error) {
 	var result models.GoogleProtobufEmpty
 	resp, err := c.Client.UnsubscribeBlog(ctx, params, reqEditors...)
@@ -600,16 +609,19 @@ func (c *SimpleClient) UnsubscribeBlog(ctx context.Context, params *UnsubscribeB
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }
 
 // UnsubscribeBlogByEmail makes a POST request to /auth/v1/blog/unsubscribe/email and returns the parsed response.
 // UnsubscribeBlogByEmail
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) UnsubscribeBlogByEmail(ctx context.Context, body UnsubscribeBlogByEmailJSONRequestBody, reqEditors ...RequestEditorFn) (models.GoogleProtobufEmpty, error) {
 	var result models.GoogleProtobufEmpty
 	resp, err := c.Client.UnsubscribeBlogByEmail(ctx, body, reqEditors...)
@@ -630,9 +642,12 @@ func (c *SimpleClient) UnsubscribeBlogByEmail(ctx context.Context, body Unsubscr
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }

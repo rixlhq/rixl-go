@@ -528,7 +528,7 @@ func NewSimpleClient(server string, opts ...ClientOption) (*SimpleClient, error)
 
 // GetImage makes a GET request to /media/v1/images/{image_id} and returns the parsed response.
 // GetImage
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) GetImage(ctx context.Context, imageId string, reqEditors ...RequestEditorFn) (models.ImagesV1GetImageResponse, error) {
 	var result models.ImagesV1GetImageResponse
 	resp, err := c.Client.GetImage(ctx, imageId, reqEditors...)
@@ -549,16 +549,19 @@ func (c *SimpleClient) GetImage(ctx context.Context, imageId string, reqEditors 
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }
 
 // ListImages makes a GET request to /media/v1/projects/{project_id}/images and returns the parsed response.
 // ListImages
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) ListImages(ctx context.Context, projectId string, params *ListImagesParams, reqEditors ...RequestEditorFn) (models.ImagesV1ListImagesResponse, error) {
 	var result models.ImagesV1ListImagesResponse
 	resp, err := c.Client.ListImages(ctx, projectId, params, reqEditors...)
@@ -579,16 +582,19 @@ func (c *SimpleClient) ListImages(ctx context.Context, projectId string, params 
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }
 
 // CreateImageUpload makes a POST request to /media/v1/projects/{project_id}/images/upload and returns the parsed response.
 // CreateImageUpload
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) CreateImageUpload(ctx context.Context, projectId string, body CreateImageUploadJSONRequestBody, reqEditors ...RequestEditorFn) (models.ImagesV1ImageUpload, error) {
 	var result models.ImagesV1ImageUpload
 	resp, err := c.Client.CreateImageUpload(ctx, projectId, body, reqEditors...)
@@ -609,16 +615,19 @@ func (c *SimpleClient) CreateImageUpload(ctx context.Context, projectId string, 
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }
 
 // DeleteImage makes a DELETE request to /media/v1/projects/{project_id}/images/{image_id} and returns the parsed response.
 // DeleteImage
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) DeleteImage(ctx context.Context, projectId string, imageId string, reqEditors ...RequestEditorFn) (models.GoogleProtobufEmpty, error) {
 	var result models.GoogleProtobufEmpty
 	resp, err := c.Client.DeleteImage(ctx, projectId, imageId, reqEditors...)
@@ -639,16 +648,19 @@ func (c *SimpleClient) DeleteImage(ctx context.Context, projectId string, imageI
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }
 
 // UpdateImageVisibility makes a PATCH request to /media/v1/projects/{project_id}/images/{image_id}/visibility and returns the parsed response.
 // UpdateImageVisibility
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) UpdateImageVisibility(ctx context.Context, projectId string, imageId string, body UpdateImageVisibilityJSONRequestBody, reqEditors ...RequestEditorFn) (models.ImagesV1UpdateImageVisibilityResponse, error) {
 	var result models.ImagesV1UpdateImageVisibilityResponse
 	resp, err := c.Client.UpdateImageVisibility(ctx, projectId, imageId, body, reqEditors...)
@@ -669,9 +681,12 @@ func (c *SimpleClient) UpdateImageVisibility(ctx context.Context, projectId stri
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }

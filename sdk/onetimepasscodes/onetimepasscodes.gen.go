@@ -556,7 +556,7 @@ func NewSimpleClient(server string, opts ...ClientOption) (*SimpleClient, error)
 
 // RegenerateBackupCodes makes a POST request to /auth/v1/users/current/totp/backup-codes/regenerate and returns the parsed response.
 // RegenerateBackupCodes
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) RegenerateBackupCodes(ctx context.Context, params *RegenerateBackupCodesParams, reqEditors ...RequestEditorFn) (models.AuthV1BackupCodesResponse, error) {
 	var result models.AuthV1BackupCodesResponse
 	resp, err := c.Client.RegenerateBackupCodes(ctx, params, reqEditors...)
@@ -577,16 +577,19 @@ func (c *SimpleClient) RegenerateBackupCodes(ctx context.Context, params *Regene
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }
 
 // DeleteOTP makes a DELETE request to /auth/v1/users/current/totp/delete and returns the parsed response.
 // DeleteOTP
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) DeleteOTP(ctx context.Context, params *DeleteOTPParams, reqEditors ...RequestEditorFn) (models.GoogleProtobufEmpty, error) {
 	var result models.GoogleProtobufEmpty
 	resp, err := c.Client.DeleteOTP(ctx, params, reqEditors...)
@@ -607,16 +610,19 @@ func (c *SimpleClient) DeleteOTP(ctx context.Context, params *DeleteOTPParams, r
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }
 
 // SetupOTP makes a POST request to /auth/v1/users/current/totp/setup and returns the parsed response.
 // SetupOTP
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) SetupOTP(ctx context.Context, params *SetupOTPParams, reqEditors ...RequestEditorFn) (models.AuthV1SetupOTPResponse, error) {
 	var result models.AuthV1SetupOTPResponse
 	resp, err := c.Client.SetupOTP(ctx, params, reqEditors...)
@@ -637,16 +643,19 @@ func (c *SimpleClient) SetupOTP(ctx context.Context, params *SetupOTPParams, req
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }
 
 // GetOTPStatus makes a GET request to /auth/v1/users/current/totp/status and returns the parsed response.
 // GetOTPStatus
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) GetOTPStatus(ctx context.Context, params *GetOTPStatusParams, reqEditors ...RequestEditorFn) (models.AuthV1OTPStatusResponse, error) {
 	var result models.AuthV1OTPStatusResponse
 	resp, err := c.Client.GetOTPStatus(ctx, params, reqEditors...)
@@ -667,16 +676,19 @@ func (c *SimpleClient) GetOTPStatus(ctx context.Context, params *GetOTPStatusPar
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }
 
 // VerifyOTP makes a POST request to /auth/v1/users/current/totp/verify and returns the parsed response.
 // VerifyOTP
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) VerifyOTP(ctx context.Context, body VerifyOTPJSONRequestBody, reqEditors ...RequestEditorFn) (models.AuthV1TokenResponse, error) {
 	var result models.AuthV1TokenResponse
 	resp, err := c.Client.VerifyOTP(ctx, body, reqEditors...)
@@ -697,16 +709,19 @@ func (c *SimpleClient) VerifyOTP(ctx context.Context, body VerifyOTPJSONRequestB
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }
 
 // VerifyTOTPForLogin makes a POST request to /auth/v1/verify-totp and returns the parsed response.
 // VerifyTOTPForLogin
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) VerifyTOTPForLogin(ctx context.Context, body VerifyTOTPForLoginJSONRequestBody, reqEditors ...RequestEditorFn) (models.AuthV1TokenResponse, error) {
 	var result models.AuthV1TokenResponse
 	resp, err := c.Client.VerifyTOTPForLogin(ctx, body, reqEditors...)
@@ -727,9 +742,12 @@ func (c *SimpleClient) VerifyTOTPForLogin(ctx context.Context, body VerifyTOTPFo
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }

@@ -1107,7 +1107,7 @@ func NewSimpleClient(server string, opts ...ClientOption) (*SimpleClient, error)
 
 // ListPosts3 makes a GET request to /posts/v1/feeds/{feed_id} and returns the parsed response.
 // ListPosts
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) ListPosts3(ctx context.Context, feedId string, params *ListPosts3Params, reqEditors ...RequestEditorFn) (models.PostsV1ListPostsResponse, error) {
 	var result models.PostsV1ListPostsResponse
 	resp, err := c.Client.ListPosts3(ctx, feedId, params, reqEditors...)
@@ -1128,16 +1128,19 @@ func (c *SimpleClient) ListPosts3(ctx context.Context, feedId string, params *Li
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }
 
 // ListPosts4 makes a GET request to /posts/v1/feeds/{feed_id}/creators/{creator_id} and returns the parsed response.
 // ListPosts
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) ListPosts4(ctx context.Context, feedId string, creatorId string, params *ListPosts4Params, reqEditors ...RequestEditorFn) (models.PostsV1ListPostsResponse, error) {
 	var result models.PostsV1ListPostsResponse
 	resp, err := c.Client.ListPosts4(ctx, feedId, creatorId, params, reqEditors...)
@@ -1158,16 +1161,19 @@ func (c *SimpleClient) ListPosts4(ctx context.Context, feedId string, creatorId 
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }
 
 // GetPost3 makes a GET request to /posts/v1/feeds/{feed_id}/{post_id} and returns the parsed response.
 // GetPost
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) GetPost3(ctx context.Context, feedId string, postId string, params *GetPost3Params, reqEditors ...RequestEditorFn) (models.PostsV1GetPostResponse, error) {
 	var result models.PostsV1GetPostResponse
 	resp, err := c.Client.GetPost3(ctx, feedId, postId, params, reqEditors...)
@@ -1188,16 +1194,19 @@ func (c *SimpleClient) GetPost3(ctx context.Context, feedId string, postId strin
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }
 
 // ListPosts makes a GET request to /posts/v1/projects/{project_id}/feeds/{feed_id}/posts and returns the parsed response.
 // ListPosts
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) ListPosts(ctx context.Context, projectId string, feedId string, params *ListPostsParams, reqEditors ...RequestEditorFn) (models.PostsV1ListPostsResponse, error) {
 	var result models.PostsV1ListPostsResponse
 	resp, err := c.Client.ListPosts(ctx, projectId, feedId, params, reqEditors...)
@@ -1218,16 +1227,19 @@ func (c *SimpleClient) ListPosts(ctx context.Context, projectId string, feedId s
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }
 
 // CreatePost makes a POST request to /posts/v1/projects/{project_id}/feeds/{feed_id}/posts and returns the parsed response.
 // CreatePost
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) CreatePost(ctx context.Context, projectId string, feedId string, body CreatePostJSONRequestBody, reqEditors ...RequestEditorFn) (models.PostsV1CreatePostResponse, error) {
 	var result models.PostsV1CreatePostResponse
 	resp, err := c.Client.CreatePost(ctx, projectId, feedId, body, reqEditors...)
@@ -1248,16 +1260,19 @@ func (c *SimpleClient) CreatePost(ctx context.Context, projectId string, feedId 
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }
 
 // ListPosts2 makes a GET request to /posts/v1/projects/{project_id}/feeds/{feed_id}/posts/creators/{creator_id} and returns the parsed response.
 // ListPosts
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) ListPosts2(ctx context.Context, projectId string, feedId string, creatorId string, params *ListPosts2Params, reqEditors ...RequestEditorFn) (models.PostsV1ListPostsResponse, error) {
 	var result models.PostsV1ListPostsResponse
 	resp, err := c.Client.ListPosts2(ctx, projectId, feedId, creatorId, params, reqEditors...)
@@ -1278,16 +1293,19 @@ func (c *SimpleClient) ListPosts2(ctx context.Context, projectId string, feedId 
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }
 
 // CreatePostUpload makes a POST request to /posts/v1/projects/{project_id}/feeds/{feed_id}/posts/upload and returns the parsed response.
 // CreatePostUpload
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) CreatePostUpload(ctx context.Context, projectId string, feedId string, body CreatePostUploadJSONRequestBody, reqEditors ...RequestEditorFn) (models.PostsV1PostUpload, error) {
 	var result models.PostsV1PostUpload
 	resp, err := c.Client.CreatePostUpload(ctx, projectId, feedId, body, reqEditors...)
@@ -1308,16 +1326,19 @@ func (c *SimpleClient) CreatePostUpload(ctx context.Context, projectId string, f
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }
 
 // DeletePost2 makes a DELETE request to /posts/v1/projects/{project_id}/feeds/{feed_id}/posts/{post_id} and returns the parsed response.
 // DeletePost
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) DeletePost2(ctx context.Context, projectId string, feedId string, postId string, reqEditors ...RequestEditorFn) (models.GoogleProtobufEmpty, error) {
 	var result models.GoogleProtobufEmpty
 	resp, err := c.Client.DeletePost2(ctx, projectId, feedId, postId, reqEditors...)
@@ -1338,16 +1359,19 @@ func (c *SimpleClient) DeletePost2(ctx context.Context, projectId string, feedId
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }
 
 // GetPost2 makes a GET request to /posts/v1/projects/{project_id}/feeds/{feed_id}/posts/{post_id} and returns the parsed response.
 // GetPost
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) GetPost2(ctx context.Context, projectId string, feedId string, postId string, reqEditors ...RequestEditorFn) (models.PostsV1GetPostResponse, error) {
 	var result models.PostsV1GetPostResponse
 	resp, err := c.Client.GetPost2(ctx, projectId, feedId, postId, reqEditors...)
@@ -1368,16 +1392,19 @@ func (c *SimpleClient) GetPost2(ctx context.Context, projectId string, feedId st
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }
 
 // DeletePost makes a DELETE request to /posts/v1/projects/{project_id}/posts/{post_id} and returns the parsed response.
 // DeletePost
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) DeletePost(ctx context.Context, projectId string, postId string, params *DeletePostParams, reqEditors ...RequestEditorFn) (models.GoogleProtobufEmpty, error) {
 	var result models.GoogleProtobufEmpty
 	resp, err := c.Client.DeletePost(ctx, projectId, postId, params, reqEditors...)
@@ -1398,16 +1425,19 @@ func (c *SimpleClient) DeletePost(ctx context.Context, projectId string, postId 
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }
 
 // GetPost makes a GET request to /posts/v1/projects/{project_id}/posts/{post_id} and returns the parsed response.
 // GetPost
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) GetPost(ctx context.Context, projectId string, postId string, params *GetPostParams, reqEditors ...RequestEditorFn) (models.PostsV1GetPostResponse, error) {
 	var result models.PostsV1GetPostResponse
 	resp, err := c.Client.GetPost(ctx, projectId, postId, params, reqEditors...)
@@ -1428,9 +1458,12 @@ func (c *SimpleClient) GetPost(ctx context.Context, projectId string, postId str
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }

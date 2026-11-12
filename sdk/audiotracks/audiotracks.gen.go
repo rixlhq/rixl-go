@@ -454,7 +454,7 @@ func NewSimpleClient(server string, opts ...ClientOption) (*SimpleClient, error)
 
 // DeleteAllAudioTracks makes a DELETE request to /media/v1/projects/{project_id}/videos/{video_id}/audio-tracks and returns the parsed response.
 // DeleteAllAudioTracks
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) DeleteAllAudioTracks(ctx context.Context, projectId string, videoId string, reqEditors ...RequestEditorFn) (models.GoogleProtobufEmpty, error) {
 	var result models.GoogleProtobufEmpty
 	resp, err := c.Client.DeleteAllAudioTracks(ctx, projectId, videoId, reqEditors...)
@@ -475,16 +475,19 @@ func (c *SimpleClient) DeleteAllAudioTracks(ctx context.Context, projectId strin
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }
 
 // DeleteAudioTracksByLanguage makes a DELETE request to /media/v1/projects/{project_id}/videos/{video_id}/audio-tracks/language/{language_code} and returns the parsed response.
 // DeleteAudioTracksByLanguage
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) DeleteAudioTracksByLanguage(ctx context.Context, projectId string, videoId string, languageCode string, reqEditors ...RequestEditorFn) (models.GoogleProtobufEmpty, error) {
 	var result models.GoogleProtobufEmpty
 	resp, err := c.Client.DeleteAudioTracksByLanguage(ctx, projectId, videoId, languageCode, reqEditors...)
@@ -505,16 +508,19 @@ func (c *SimpleClient) DeleteAudioTracksByLanguage(ctx context.Context, projectI
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }
 
 // CreateAudioTrackUpload makes a POST request to /media/v1/projects/{project_id}/videos/{video_id}/audio-tracks/upload and returns the parsed response.
 // CreateAudioTrackUpload
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) CreateAudioTrackUpload(ctx context.Context, projectId string, videoId string, body CreateAudioTrackUploadJSONRequestBody, reqEditors ...RequestEditorFn) (models.VideosV1TrackUpload, error) {
 	var result models.VideosV1TrackUpload
 	resp, err := c.Client.CreateAudioTrackUpload(ctx, projectId, videoId, body, reqEditors...)
@@ -535,16 +541,19 @@ func (c *SimpleClient) CreateAudioTrackUpload(ctx context.Context, projectId str
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }
 
 // DeleteAudioTrack makes a DELETE request to /media/v1/projects/{project_id}/videos/{video_id}/audio-tracks/{track_id} and returns the parsed response.
 // DeleteAudioTrack
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) DeleteAudioTrack(ctx context.Context, projectId string, videoId string, trackId string, reqEditors ...RequestEditorFn) (models.GoogleProtobufEmpty, error) {
 	var result models.GoogleProtobufEmpty
 	resp, err := c.Client.DeleteAudioTrack(ctx, projectId, videoId, trackId, reqEditors...)
@@ -565,16 +574,19 @@ func (c *SimpleClient) DeleteAudioTrack(ctx context.Context, projectId string, v
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }
 
 // ListAudioTracks makes a GET request to /media/v1/videos/{video_id}/audio-tracks and returns the parsed response.
 // ListAudioTracks
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) ListAudioTracks(ctx context.Context, videoId string, reqEditors ...RequestEditorFn) (models.VideosV1ListAudioTracksResponse, error) {
 	var result models.VideosV1ListAudioTracksResponse
 	resp, err := c.Client.ListAudioTracks(ctx, videoId, reqEditors...)
@@ -595,9 +607,12 @@ func (c *SimpleClient) ListAudioTracks(ctx context.Context, videoId string, reqE
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }

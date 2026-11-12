@@ -514,7 +514,7 @@ func NewSimpleClient(server string, opts ...ClientOption) (*SimpleClient, error)
 
 // GetSubscription makes a GET request to /billing/v1/subscription and returns the parsed response.
 // GetSubscription
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) GetSubscription(ctx context.Context, params *GetSubscriptionParams, reqEditors ...RequestEditorFn) (models.BillingV1Subscription, error) {
 	var result models.BillingV1Subscription
 	resp, err := c.Client.GetSubscription(ctx, params, reqEditors...)
@@ -535,16 +535,19 @@ func (c *SimpleClient) GetSubscription(ctx context.Context, params *GetSubscript
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }
 
 // CreateSubscription makes a POST request to /billing/v1/subscription and returns the parsed response.
 // CreateSubscription
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) CreateSubscription(ctx context.Context, body CreateSubscriptionJSONRequestBody, reqEditors ...RequestEditorFn) (models.BillingV1CreateSubscriptionResponse, error) {
 	var result models.BillingV1CreateSubscriptionResponse
 	resp, err := c.Client.CreateSubscription(ctx, body, reqEditors...)
@@ -565,16 +568,19 @@ func (c *SimpleClient) CreateSubscription(ctx context.Context, body CreateSubscr
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }
 
 // CancelSubscription makes a POST request to /billing/v1/subscription/cancel and returns the parsed response.
 // CancelSubscription
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) CancelSubscription(ctx context.Context, params *CancelSubscriptionParams, reqEditors ...RequestEditorFn) (models.GoogleProtobufEmpty, error) {
 	var result models.GoogleProtobufEmpty
 	resp, err := c.Client.CancelSubscription(ctx, params, reqEditors...)
@@ -595,16 +601,19 @@ func (c *SimpleClient) CancelSubscription(ctx context.Context, params *CancelSub
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }
 
 // GetSubscriptionHistory makes a GET request to /billing/v1/subscription/history and returns the parsed response.
 // GetSubscriptionHistory
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) GetSubscriptionHistory(ctx context.Context, params *GetSubscriptionHistoryParams, reqEditors ...RequestEditorFn) (models.BillingV1GetSubscriptionHistoryResponse, error) {
 	var result models.BillingV1GetSubscriptionHistoryResponse
 	resp, err := c.Client.GetSubscriptionHistory(ctx, params, reqEditors...)
@@ -625,16 +634,19 @@ func (c *SimpleClient) GetSubscriptionHistory(ctx context.Context, params *GetSu
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }
 
 // ReactivateSubscription makes a POST request to /billing/v1/subscription/reactivate and returns the parsed response.
 // ReactivateSubscription
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) ReactivateSubscription(ctx context.Context, params *ReactivateSubscriptionParams, reqEditors ...RequestEditorFn) (models.GoogleProtobufEmpty, error) {
 	var result models.GoogleProtobufEmpty
 	resp, err := c.Client.ReactivateSubscription(ctx, params, reqEditors...)
@@ -655,9 +667,12 @@ func (c *SimpleClient) ReactivateSubscription(ctx context.Context, params *React
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }

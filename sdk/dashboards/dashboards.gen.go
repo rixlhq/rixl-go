@@ -1494,7 +1494,7 @@ func NewSimpleClient(server string, opts ...ClientOption) (*SimpleClient, error)
 
 // GetDashboardStats makes a GET request to /analytics/v1/dashboard and returns the parsed response.
 // GetDashboardStats
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) GetDashboardStats(ctx context.Context, params *GetDashboardStatsParams, reqEditors ...RequestEditorFn) (models.AnalyticsV1DashboardStatsResponse, error) {
 	var result models.AnalyticsV1DashboardStatsResponse
 	resp, err := c.Client.GetDashboardStats(ctx, params, reqEditors...)
@@ -1515,16 +1515,19 @@ func (c *SimpleClient) GetDashboardStats(ctx context.Context, params *GetDashboa
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }
 
 // QueryChart makes a POST request to /analytics/v1/dashboard/chart-query and returns the parsed response.
 // QueryChart
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) QueryChart(ctx context.Context, body QueryChartJSONRequestBody, reqEditors ...RequestEditorFn) (models.AnalyticsV1ChartQueryResponse, error) {
 	var result models.AnalyticsV1ChartQueryResponse
 	resp, err := c.Client.QueryChart(ctx, body, reqEditors...)
@@ -1545,16 +1548,19 @@ func (c *SimpleClient) QueryChart(ctx context.Context, body QueryChartJSONReques
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }
 
 // BatchQueryChart makes a POST request to /analytics/v1/dashboard/chart-query/batch and returns the parsed response.
 // BatchQueryChart
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) BatchQueryChart(ctx context.Context, body BatchQueryChartJSONRequestBody, reqEditors ...RequestEditorFn) (models.AnalyticsV1BatchChartQueryResponse, error) {
 	var result models.AnalyticsV1BatchChartQueryResponse
 	resp, err := c.Client.BatchQueryChart(ctx, body, reqEditors...)
@@ -1575,16 +1581,19 @@ func (c *SimpleClient) BatchQueryChart(ctx context.Context, body BatchQueryChart
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }
 
 // ListDatasets makes a GET request to /analytics/v1/dashboard/datasets and returns the parsed response.
 // ListDatasets
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) ListDatasets(ctx context.Context, reqEditors ...RequestEditorFn) (models.AnalyticsV1ListDatasetsResponse, error) {
 	var result models.AnalyticsV1ListDatasetsResponse
 	resp, err := c.Client.ListDatasets(ctx, reqEditors...)
@@ -1605,16 +1614,19 @@ func (c *SimpleClient) ListDatasets(ctx context.Context, reqEditors ...RequestEd
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }
 
 // GetFilterOptions makes a POST request to /analytics/v1/dashboard/filter-options and returns the parsed response.
 // GetFilterOptions
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) GetFilterOptions(ctx context.Context, body GetFilterOptionsJSONRequestBody, reqEditors ...RequestEditorFn) (models.AnalyticsV1GetFilterOptionsResponse, error) {
 	var result models.AnalyticsV1GetFilterOptionsResponse
 	resp, err := c.Client.GetFilterOptions(ctx, body, reqEditors...)
@@ -1635,16 +1647,19 @@ func (c *SimpleClient) GetFilterOptions(ctx context.Context, body GetFilterOptio
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }
 
 // GetScopeTree makes a POST request to /analytics/v1/dashboard/scope-tree and returns the parsed response.
 // GetScopeTree
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) GetScopeTree(ctx context.Context, body GetScopeTreeJSONRequestBody, reqEditors ...RequestEditorFn) (models.AnalyticsV1GetScopeTreeResponse, error) {
 	var result models.AnalyticsV1GetScopeTreeResponse
 	resp, err := c.Client.GetScopeTree(ctx, body, reqEditors...)
@@ -1665,16 +1680,19 @@ func (c *SimpleClient) GetScopeTree(ctx context.Context, body GetScopeTreeJSONRe
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }
 
 // ListDashboards makes a GET request to /analytics/v1/dashboards and returns the parsed response.
 // ListDashboards
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) ListDashboards(ctx context.Context, params *ListDashboardsParams, reqEditors ...RequestEditorFn) (models.AnalyticsV1ListDashboardsResponse, error) {
 	var result models.AnalyticsV1ListDashboardsResponse
 	resp, err := c.Client.ListDashboards(ctx, params, reqEditors...)
@@ -1695,16 +1713,19 @@ func (c *SimpleClient) ListDashboards(ctx context.Context, params *ListDashboard
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }
 
 // CreateDashboard makes a POST request to /analytics/v1/dashboards and returns the parsed response.
 // CreateDashboard
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) CreateDashboard(ctx context.Context, body CreateDashboardJSONRequestBody, reqEditors ...RequestEditorFn) (models.AnalyticsV1Dashboard, error) {
 	var result models.AnalyticsV1Dashboard
 	resp, err := c.Client.CreateDashboard(ctx, body, reqEditors...)
@@ -1725,16 +1746,19 @@ func (c *SimpleClient) CreateDashboard(ctx context.Context, body CreateDashboard
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }
 
 // DeleteWidget makes a DELETE request to /analytics/v1/dashboards/widgets/{id} and returns the parsed response.
 // DeleteWidget
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) DeleteWidget(ctx context.Context, id string, params *DeleteWidgetParams, reqEditors ...RequestEditorFn) (models.AnalyticsV1DeleteWidgetResponse, error) {
 	var result models.AnalyticsV1DeleteWidgetResponse
 	resp, err := c.Client.DeleteWidget(ctx, id, params, reqEditors...)
@@ -1755,16 +1779,19 @@ func (c *SimpleClient) DeleteWidget(ctx context.Context, id string, params *Dele
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }
 
 // UpdateWidget makes a PATCH request to /analytics/v1/dashboards/widgets/{id} and returns the parsed response.
 // UpdateWidget
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) UpdateWidget(ctx context.Context, id string, body UpdateWidgetJSONRequestBody, reqEditors ...RequestEditorFn) (models.AnalyticsV1Widget, error) {
 	var result models.AnalyticsV1Widget
 	resp, err := c.Client.UpdateWidget(ctx, id, body, reqEditors...)
@@ -1785,16 +1812,19 @@ func (c *SimpleClient) UpdateWidget(ctx context.Context, id string, body UpdateW
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }
 
 // ExportDashboard makes a POST request to /analytics/v1/dashboards/{dashboard_id}/export and returns the parsed response.
 // ExportDashboard
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) ExportDashboard(ctx context.Context, dashboardId string, body ExportDashboardJSONRequestBody, reqEditors ...RequestEditorFn) (models.AnalyticsV1ExportDashboardResponse, error) {
 	var result models.AnalyticsV1ExportDashboardResponse
 	resp, err := c.Client.ExportDashboard(ctx, dashboardId, body, reqEditors...)
@@ -1815,16 +1845,19 @@ func (c *SimpleClient) ExportDashboard(ctx context.Context, dashboardId string, 
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }
 
 // UpdateDashboardLayout makes a POST request to /analytics/v1/dashboards/{dashboard_id}/layout and returns the parsed response.
 // UpdateDashboardLayout
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) UpdateDashboardLayout(ctx context.Context, dashboardId string, body UpdateDashboardLayoutJSONRequestBody, reqEditors ...RequestEditorFn) (models.AnalyticsV1Dashboard, error) {
 	var result models.AnalyticsV1Dashboard
 	resp, err := c.Client.UpdateDashboardLayout(ctx, dashboardId, body, reqEditors...)
@@ -1845,16 +1878,19 @@ func (c *SimpleClient) UpdateDashboardLayout(ctx context.Context, dashboardId st
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }
 
 // CreateWidget makes a POST request to /analytics/v1/dashboards/{dashboard_id}/widgets and returns the parsed response.
 // CreateWidget
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) CreateWidget(ctx context.Context, dashboardId string, params *CreateWidgetParams, body CreateWidgetJSONRequestBody, reqEditors ...RequestEditorFn) (models.AnalyticsV1Widget, error) {
 	var result models.AnalyticsV1Widget
 	resp, err := c.Client.CreateWidget(ctx, dashboardId, params, body, reqEditors...)
@@ -1875,16 +1911,19 @@ func (c *SimpleClient) CreateWidget(ctx context.Context, dashboardId string, par
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }
 
 // DeleteDashboard makes a DELETE request to /analytics/v1/dashboards/{id} and returns the parsed response.
 // DeleteDashboard
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) DeleteDashboard(ctx context.Context, id string, params *DeleteDashboardParams, reqEditors ...RequestEditorFn) (models.GoogleProtobufEmpty, error) {
 	var result models.GoogleProtobufEmpty
 	resp, err := c.Client.DeleteDashboard(ctx, id, params, reqEditors...)
@@ -1905,16 +1944,19 @@ func (c *SimpleClient) DeleteDashboard(ctx context.Context, id string, params *D
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }
 
 // GetDashboard makes a GET request to /analytics/v1/dashboards/{id} and returns the parsed response.
 // GetDashboard
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) GetDashboard(ctx context.Context, id string, reqEditors ...RequestEditorFn) (models.AnalyticsV1Dashboard, error) {
 	var result models.AnalyticsV1Dashboard
 	resp, err := c.Client.GetDashboard(ctx, id, reqEditors...)
@@ -1935,16 +1977,19 @@ func (c *SimpleClient) GetDashboard(ctx context.Context, id string, reqEditors .
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }
 
 // UpdateDashboard makes a PATCH request to /analytics/v1/dashboards/{id} and returns the parsed response.
 // UpdateDashboard
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) UpdateDashboard(ctx context.Context, id string, body UpdateDashboardJSONRequestBody, reqEditors ...RequestEditorFn) (models.AnalyticsV1Dashboard, error) {
 	var result models.AnalyticsV1Dashboard
 	resp, err := c.Client.UpdateDashboard(ctx, id, body, reqEditors...)
@@ -1965,16 +2010,19 @@ func (c *SimpleClient) UpdateDashboard(ctx context.Context, id string, body Upda
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }
 
 // SetDefaultDashboard makes a POST request to /analytics/v1/dashboards/{id}/default and returns the parsed response.
 // SetDefaultDashboard
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) SetDefaultDashboard(ctx context.Context, id string, reqEditors ...RequestEditorFn) (models.AnalyticsV1Dashboard, error) {
 	var result models.AnalyticsV1Dashboard
 	resp, err := c.Client.SetDefaultDashboard(ctx, id, reqEditors...)
@@ -1995,9 +2043,12 @@ func (c *SimpleClient) SetDefaultDashboard(ctx context.Context, id string, reqEd
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }

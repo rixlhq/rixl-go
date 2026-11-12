@@ -1728,7 +1728,7 @@ func NewSimpleClient(server string, opts ...ClientOption) (*SimpleClient, error)
 
 // AcceptInvitation makes a POST request to /auth/v1/invitations/{token}/accept and returns the parsed response.
 // AcceptInvitation
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) AcceptInvitation(ctx context.Context, token string, reqEditors ...RequestEditorFn) (models.AuthV1AcceptInvitationResponse, error) {
 	var result models.AuthV1AcceptInvitationResponse
 	resp, err := c.Client.AcceptInvitation(ctx, token, reqEditors...)
@@ -1749,16 +1749,19 @@ func (c *SimpleClient) AcceptInvitation(ctx context.Context, token string, reqEd
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }
 
 // DeclineInvitation makes a POST request to /auth/v1/invitations/{token}/decline and returns the parsed response.
 // DeclineInvitation
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) DeclineInvitation(ctx context.Context, token string, reqEditors ...RequestEditorFn) (models.GoogleProtobufEmpty, error) {
 	var result models.GoogleProtobufEmpty
 	resp, err := c.Client.DeclineInvitation(ctx, token, reqEditors...)
@@ -1779,16 +1782,19 @@ func (c *SimpleClient) DeclineInvitation(ctx context.Context, token string, reqE
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }
 
 // ListMembershipApplications makes a GET request to /auth/v1/membership-applications and returns the parsed response.
 // ListMembershipApplications
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) ListMembershipApplications(ctx context.Context, params *ListMembershipApplicationsParams, reqEditors ...RequestEditorFn) (models.AuthV1ListMembershipApplicationsResponse, error) {
 	var result models.AuthV1ListMembershipApplicationsResponse
 	resp, err := c.Client.ListMembershipApplications(ctx, params, reqEditors...)
@@ -1809,16 +1815,19 @@ func (c *SimpleClient) ListMembershipApplications(ctx context.Context, params *L
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }
 
 // RespondToMembershipApplication makes a PATCH request to /auth/v1/membership-applications/{org_id}/state and returns the parsed response.
 // RespondToMembershipApplication
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) RespondToMembershipApplication(ctx context.Context, orgId string, body RespondToMembershipApplicationJSONRequestBody, reqEditors ...RequestEditorFn) (models.AuthV1MembershipMutation, error) {
 	var result models.AuthV1MembershipMutation
 	resp, err := c.Client.RespondToMembershipApplication(ctx, orgId, body, reqEditors...)
@@ -1839,16 +1848,19 @@ func (c *SimpleClient) RespondToMembershipApplication(ctx context.Context, orgId
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }
 
 // ListMemberships makes a GET request to /auth/v1/memberships and returns the parsed response.
 // ListMemberships
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) ListMemberships(ctx context.Context, params *ListMembershipsParams, reqEditors ...RequestEditorFn) (models.AuthV1ListMembershipsResponse, error) {
 	var result models.AuthV1ListMembershipsResponse
 	resp, err := c.Client.ListMemberships(ctx, params, reqEditors...)
@@ -1869,16 +1881,19 @@ func (c *SimpleClient) ListMemberships(ctx context.Context, params *ListMembersh
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }
 
 // UpdateActiveMembership makes a PATCH request to /auth/v1/memberships/active and returns the parsed response.
 // UpdateActiveMembership
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) UpdateActiveMembership(ctx context.Context, body UpdateActiveMembershipJSONRequestBody, reqEditors ...RequestEditorFn) (models.AuthV1MembershipMutation, error) {
 	var result models.AuthV1MembershipMutation
 	resp, err := c.Client.UpdateActiveMembership(ctx, body, reqEditors...)
@@ -1899,16 +1914,19 @@ func (c *SimpleClient) UpdateActiveMembership(ctx context.Context, body UpdateAc
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }
 
 // CheckMembership makes a GET request to /auth/v1/memberships/{org_id}/check and returns the parsed response.
 // CheckMembership
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) CheckMembership(ctx context.Context, orgId string, params *CheckMembershipParams, reqEditors ...RequestEditorFn) (models.AuthV1CheckMembershipResponse, error) {
 	var result models.AuthV1CheckMembershipResponse
 	resp, err := c.Client.CheckMembership(ctx, orgId, params, reqEditors...)
@@ -1929,16 +1947,19 @@ func (c *SimpleClient) CheckMembership(ctx context.Context, orgId string, params
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }
 
 // GetInternalMembershipInfo makes a GET request to /auth/v1/memberships/{org_id}/info and returns the parsed response.
 // GetInternalMembershipInfo
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) GetInternalMembershipInfo(ctx context.Context, orgId string, params *GetInternalMembershipInfoParams, reqEditors ...RequestEditorFn) (models.AuthV1GetInternalMembershipInfoResponse, error) {
 	var result models.AuthV1GetInternalMembershipInfoResponse
 	resp, err := c.Client.GetInternalMembershipInfo(ctx, orgId, params, reqEditors...)
@@ -1959,16 +1980,19 @@ func (c *SimpleClient) GetInternalMembershipInfo(ctx context.Context, orgId stri
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }
 
 // LeaveOrganization makes a POST request to /auth/v1/memberships/{org_id}/leave and returns the parsed response.
 // LeaveOrganization
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) LeaveOrganization(ctx context.Context, orgId string, params *LeaveOrganizationParams, reqEditors ...RequestEditorFn) (models.GoogleProtobufEmpty, error) {
 	var result models.GoogleProtobufEmpty
 	resp, err := c.Client.LeaveOrganization(ctx, orgId, params, reqEditors...)
@@ -1989,16 +2013,19 @@ func (c *SimpleClient) LeaveOrganization(ctx context.Context, orgId string, para
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }
 
 // InviteMember makes a POST request to /auth/v1/memberships/{user.org_id}/invite and returns the parsed response.
 // InviteMember
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) InviteMember(ctx context.Context, userOrgId string, body InviteMemberJSONRequestBody, reqEditors ...RequestEditorFn) (models.AuthV1MembershipApplication, error) {
 	var result models.AuthV1MembershipApplication
 	resp, err := c.Client.InviteMember(ctx, userOrgId, body, reqEditors...)
@@ -2019,16 +2046,19 @@ func (c *SimpleClient) InviteMember(ctx context.Context, userOrgId string, body 
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }
 
 // ResendInvitation makes a POST request to /auth/v1/memberships/{user.org_id}/invite/resend and returns the parsed response.
 // ResendInvitation
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) ResendInvitation(ctx context.Context, userOrgId string, body ResendInvitationJSONRequestBody, reqEditors ...RequestEditorFn) (models.GoogleProtobufEmpty, error) {
 	var result models.GoogleProtobufEmpty
 	resp, err := c.Client.ResendInvitation(ctx, userOrgId, body, reqEditors...)
@@ -2049,16 +2079,19 @@ func (c *SimpleClient) ResendInvitation(ctx context.Context, userOrgId string, b
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }
 
 // CancelInvitation makes a DELETE request to /auth/v1/memberships/{user.org_id}/invite/{user_id} and returns the parsed response.
 // CancelInvitation
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) CancelInvitation(ctx context.Context, userOrgId string, userId string, params *CancelInvitationParams, reqEditors ...RequestEditorFn) (models.GoogleProtobufEmpty, error) {
 	var result models.GoogleProtobufEmpty
 	resp, err := c.Client.CancelInvitation(ctx, userOrgId, userId, params, reqEditors...)
@@ -2079,16 +2112,19 @@ func (c *SimpleClient) CancelInvitation(ctx context.Context, userOrgId string, u
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }
 
 // ListOrganizationMembers makes a GET request to /auth/v1/memberships/{user.org_id}/members and returns the parsed response.
 // ListOrganizationMembers
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) ListOrganizationMembers(ctx context.Context, userOrgId string, params *ListOrganizationMembersParams, reqEditors ...RequestEditorFn) (models.AuthV1ListOrgMembersResponse, error) {
 	var result models.AuthV1ListOrgMembersResponse
 	resp, err := c.Client.ListOrganizationMembers(ctx, userOrgId, params, reqEditors...)
@@ -2109,16 +2145,19 @@ func (c *SimpleClient) ListOrganizationMembers(ctx context.Context, userOrgId st
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }
 
 // RemoveMember makes a DELETE request to /auth/v1/memberships/{user.org_id}/members/{user_id} and returns the parsed response.
 // RemoveMember
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) RemoveMember(ctx context.Context, userOrgId string, userId string, params *RemoveMemberParams, reqEditors ...RequestEditorFn) (models.GoogleProtobufEmpty, error) {
 	var result models.GoogleProtobufEmpty
 	resp, err := c.Client.RemoveMember(ctx, userOrgId, userId, params, reqEditors...)
@@ -2139,16 +2178,19 @@ func (c *SimpleClient) RemoveMember(ctx context.Context, userOrgId string, userI
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }
 
 // ReactivateMember makes a PATCH request to /auth/v1/memberships/{user.org_id}/members/{user_id}/reactivate and returns the parsed response.
 // ReactivateMember
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) ReactivateMember(ctx context.Context, userOrgId string, userId string, params *ReactivateMemberParams, reqEditors ...RequestEditorFn) (models.AuthV1MembershipMutation, error) {
 	var result models.AuthV1MembershipMutation
 	resp, err := c.Client.ReactivateMember(ctx, userOrgId, userId, params, reqEditors...)
@@ -2169,16 +2211,19 @@ func (c *SimpleClient) ReactivateMember(ctx context.Context, userOrgId string, u
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }
 
 // UpdateMemberRole makes a PATCH request to /auth/v1/memberships/{user.org_id}/members/{user_id}/role and returns the parsed response.
 // UpdateMemberRole
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) UpdateMemberRole(ctx context.Context, userOrgId string, userId string, body UpdateMemberRoleJSONRequestBody, reqEditors ...RequestEditorFn) (models.AuthV1MembershipMutation, error) {
 	var result models.AuthV1MembershipMutation
 	resp, err := c.Client.UpdateMemberRole(ctx, userOrgId, userId, body, reqEditors...)
@@ -2199,16 +2244,19 @@ func (c *SimpleClient) UpdateMemberRole(ctx context.Context, userOrgId string, u
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }
 
 // SuspendMember makes a PATCH request to /auth/v1/memberships/{user.org_id}/members/{user_id}/suspend and returns the parsed response.
 // SuspendMember
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) SuspendMember(ctx context.Context, userOrgId string, userId string, params *SuspendMemberParams, reqEditors ...RequestEditorFn) (models.AuthV1MembershipMutation, error) {
 	var result models.AuthV1MembershipMutation
 	resp, err := c.Client.SuspendMember(ctx, userOrgId, userId, params, reqEditors...)
@@ -2229,16 +2277,19 @@ func (c *SimpleClient) SuspendMember(ctx context.Context, userOrgId string, user
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }
 
 // UpdateOrgName makes a PATCH request to /auth/v1/memberships/{user.org_id}/name and returns the parsed response.
 // UpdateOrgName
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) UpdateOrgName(ctx context.Context, userOrgId string, body UpdateOrgNameJSONRequestBody, reqEditors ...RequestEditorFn) (models.AuthV1UpdateOrgNameResponse, error) {
 	var result models.AuthV1UpdateOrgNameResponse
 	resp, err := c.Client.UpdateOrgName(ctx, userOrgId, body, reqEditors...)
@@ -2259,16 +2310,19 @@ func (c *SimpleClient) UpdateOrgName(ctx context.Context, userOrgId string, body
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }
 
 // UpdateMembershipState makes a PATCH request to /auth/v1/memberships/{user.org_id}/state and returns the parsed response.
 // UpdateMembershipState
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) UpdateMembershipState(ctx context.Context, userOrgId string, body UpdateMembershipStateJSONRequestBody, reqEditors ...RequestEditorFn) (models.AuthV1MembershipMutation, error) {
 	var result models.AuthV1MembershipMutation
 	resp, err := c.Client.UpdateMembershipState(ctx, userOrgId, body, reqEditors...)
@@ -2289,16 +2343,19 @@ func (c *SimpleClient) UpdateMembershipState(ctx context.Context, userOrgId stri
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }
 
 // UpdateOrgUsername makes a PATCH request to /auth/v1/memberships/{user.org_id}/username and returns the parsed response.
 // UpdateOrgUsername
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) UpdateOrgUsername(ctx context.Context, userOrgId string, body UpdateOrgUsernameJSONRequestBody, reqEditors ...RequestEditorFn) (models.AuthV1UpdateOrgUsernameResponse, error) {
 	var result models.AuthV1UpdateOrgUsernameResponse
 	resp, err := c.Client.UpdateOrgUsername(ctx, userOrgId, body, reqEditors...)
@@ -2319,9 +2376,12 @@ func (c *SimpleClient) UpdateOrgUsername(ctx context.Context, userOrgId string, 
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }

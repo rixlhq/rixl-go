@@ -134,6 +134,8 @@ type ClientInterface interface {
 	// CreateCheckoutSessionWithBody makes a POST request to /billing/v1/checkout
 	CreateCheckoutSessionWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 	CreateCheckoutSession(ctx context.Context, body CreateCheckoutSessionJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// GetBillingConfig makes a GET request to /billing/v1/config
+	GetBillingConfig(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
 	// ListPaymentMethods makes a GET request to /billing/v1/payment-methods
 	ListPaymentMethods(ctx context.Context, params *ListPaymentMethodsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 	// UpsertPaymentMethodWithBody makes a PUT request to /billing/v1/payment-methods
@@ -249,6 +251,20 @@ func (c *Client) CreateCheckoutSessionWithBody(ctx context.Context, contentType 
 // CreateCheckoutSession makes a POST request to /billing/v1/checkout with application/json body
 func (c *Client) CreateCheckoutSession(ctx context.Context, body CreateCheckoutSessionJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewCreateCheckoutSessionRequest(c.Server, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// GetBillingConfig makes a GET request to /billing/v1/config
+// GetBillingConfig
+func (c *Client) GetBillingConfig(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetBillingConfigRequest(c.Server)
 	if err != nil {
 		return nil, err
 	}
@@ -571,6 +587,33 @@ func NewCreateCheckoutSessionRequestWithBody(server string, contentType string, 
 	}
 
 	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
+// NewGetBillingConfigRequest creates a GET request for /billing/v1/config
+func NewGetBillingConfigRequest(server string) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/billing/v1/config")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	reqURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", reqURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
 
 	return req, nil
 }
@@ -1004,7 +1047,7 @@ func NewSimpleClient(server string, opts ...ClientOption) (*SimpleClient, error)
 
 // GetBillingAddress makes a GET request to /billing/v1/address and returns the parsed response.
 // GetBillingAddress
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) GetBillingAddress(ctx context.Context, params *GetBillingAddressParams, reqEditors ...RequestEditorFn) (models.BillingV1BillingAddress, error) {
 	var result models.BillingV1BillingAddress
 	resp, err := c.Client.GetBillingAddress(ctx, params, reqEditors...)
@@ -1025,16 +1068,19 @@ func (c *SimpleClient) GetBillingAddress(ctx context.Context, params *GetBilling
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }
 
 // UpsertBillingAddress makes a PUT request to /billing/v1/address and returns the parsed response.
 // UpsertBillingAddress
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) UpsertBillingAddress(ctx context.Context, body UpsertBillingAddressJSONRequestBody, reqEditors ...RequestEditorFn) (models.BillingV1BillingAddress, error) {
 	var result models.BillingV1BillingAddress
 	resp, err := c.Client.UpsertBillingAddress(ctx, body, reqEditors...)
@@ -1055,16 +1101,19 @@ func (c *SimpleClient) UpsertBillingAddress(ctx context.Context, body UpsertBill
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }
 
 // CreateCheckoutSession makes a POST request to /billing/v1/checkout and returns the parsed response.
 // CreateCheckoutSession
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) CreateCheckoutSession(ctx context.Context, body CreateCheckoutSessionJSONRequestBody, reqEditors ...RequestEditorFn) (models.BillingV1HostedCheckoutSessionResponse, error) {
 	var result models.BillingV1HostedCheckoutSessionResponse
 	resp, err := c.Client.CreateCheckoutSession(ctx, body, reqEditors...)
@@ -1085,16 +1134,52 @@ func (c *SimpleClient) CreateCheckoutSession(ctx context.Context, body CreateChe
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
+		RawBody:    rawBody,
+	}
+}
+
+// GetBillingConfig makes a GET request to /billing/v1/config and returns the parsed response.
+// GetBillingConfig
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
+func (c *SimpleClient) GetBillingConfig(ctx context.Context, reqEditors ...RequestEditorFn) (models.BillingV1BillingConfig, error) {
+	var result models.BillingV1BillingConfig
+	resp, err := c.Client.GetBillingConfig(ctx, reqEditors...)
+	if err != nil {
+		return result, err
+	}
+	defer resp.Body.Close()
+
+	rawBody, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return result, err
+	}
+
+	if resp.StatusCode >= 200 && resp.StatusCode < 300 {
+		if err := json.Unmarshal(rawBody, &result); err != nil {
+			return result, err
+		}
+		return result, nil
+	}
+
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
+		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }
 
 // ListPaymentMethods makes a GET request to /billing/v1/payment-methods and returns the parsed response.
 // ListPaymentMethods
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) ListPaymentMethods(ctx context.Context, params *ListPaymentMethodsParams, reqEditors ...RequestEditorFn) (models.BillingV1ListPaymentMethodsResponse, error) {
 	var result models.BillingV1ListPaymentMethodsResponse
 	resp, err := c.Client.ListPaymentMethods(ctx, params, reqEditors...)
@@ -1115,16 +1200,19 @@ func (c *SimpleClient) ListPaymentMethods(ctx context.Context, params *ListPayme
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }
 
 // UpsertPaymentMethod makes a PUT request to /billing/v1/payment-methods and returns the parsed response.
 // UpsertPaymentMethod
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) UpsertPaymentMethod(ctx context.Context, body UpsertPaymentMethodJSONRequestBody, reqEditors ...RequestEditorFn) (models.BillingV1PaymentMethodDetails, error) {
 	var result models.BillingV1PaymentMethodDetails
 	resp, err := c.Client.UpsertPaymentMethod(ctx, body, reqEditors...)
@@ -1145,16 +1233,19 @@ func (c *SimpleClient) UpsertPaymentMethod(ctx context.Context, body UpsertPayme
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }
 
 // GetPaymentMethodFromPaymentIntent makes a GET request to /billing/v1/payment-methods/from-payment-intent and returns the parsed response.
 // GetPaymentMethodFromPaymentIntent
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) GetPaymentMethodFromPaymentIntent(ctx context.Context, params *GetPaymentMethodFromPaymentIntentParams, reqEditors ...RequestEditorFn) (models.BillingV1PaymentMethodIDResponse, error) {
 	var result models.BillingV1PaymentMethodIDResponse
 	resp, err := c.Client.GetPaymentMethodFromPaymentIntent(ctx, params, reqEditors...)
@@ -1175,16 +1266,19 @@ func (c *SimpleClient) GetPaymentMethodFromPaymentIntent(ctx context.Context, pa
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }
 
 // GetPaymentMethodFromSetupIntent makes a GET request to /billing/v1/payment-methods/from-setup-intent and returns the parsed response.
 // GetPaymentMethodFromSetupIntent
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) GetPaymentMethodFromSetupIntent(ctx context.Context, params *GetPaymentMethodFromSetupIntentParams, reqEditors ...RequestEditorFn) (models.BillingV1PaymentMethodIDResponse, error) {
 	var result models.BillingV1PaymentMethodIDResponse
 	resp, err := c.Client.GetPaymentMethodFromSetupIntent(ctx, params, reqEditors...)
@@ -1205,16 +1299,19 @@ func (c *SimpleClient) GetPaymentMethodFromSetupIntent(ctx context.Context, para
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }
 
 // DeletePaymentMethod makes a DELETE request to /billing/v1/payment-methods/{payment_method_id} and returns the parsed response.
 // DeletePaymentMethod
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) DeletePaymentMethod(ctx context.Context, paymentMethodId string, params *DeletePaymentMethodParams, reqEditors ...RequestEditorFn) (models.GoogleProtobufEmpty, error) {
 	var result models.GoogleProtobufEmpty
 	resp, err := c.Client.DeletePaymentMethod(ctx, paymentMethodId, params, reqEditors...)
@@ -1235,16 +1332,19 @@ func (c *SimpleClient) DeletePaymentMethod(ctx context.Context, paymentMethodId 
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }
 
 // CreateSetupIntent makes a POST request to /billing/v1/setup-intent and returns the parsed response.
 // CreateSetupIntent
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) CreateSetupIntent(ctx context.Context, body CreateSetupIntentJSONRequestBody, reqEditors ...RequestEditorFn) (models.BillingV1SetupIntentResponse, error) {
 	var result models.BillingV1SetupIntentResponse
 	resp, err := c.Client.CreateSetupIntent(ctx, body, reqEditors...)
@@ -1265,16 +1365,19 @@ func (c *SimpleClient) CreateSetupIntent(ctx context.Context, body CreateSetupIn
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }
 
 // UpgradeSubscription makes a POST request to /billing/v1/subscription/upgrade and returns the parsed response.
 // UpgradeSubscription
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) UpgradeSubscription(ctx context.Context, body UpgradeSubscriptionJSONRequestBody, reqEditors ...RequestEditorFn) (models.BillingV1UpgradeSubscriptionResponse, error) {
 	var result models.BillingV1UpgradeSubscriptionResponse
 	resp, err := c.Client.UpgradeSubscription(ctx, body, reqEditors...)
@@ -1295,16 +1398,19 @@ func (c *SimpleClient) UpgradeSubscription(ctx context.Context, body UpgradeSubs
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }
 
 // CalculateTax makes a POST request to /billing/v1/tax/calculate and returns the parsed response.
 // CalculateTax
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) CalculateTax(ctx context.Context, body CalculateTaxJSONRequestBody, reqEditors ...RequestEditorFn) (models.BillingV1PlanTaxCalculationResponse, error) {
 	var result models.BillingV1PlanTaxCalculationResponse
 	resp, err := c.Client.CalculateTax(ctx, body, reqEditors...)
@@ -1325,16 +1431,19 @@ func (c *SimpleClient) CalculateTax(ctx context.Context, body CalculateTaxJSONRe
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }
 
 // CalculateGenericTax makes a POST request to /billing/v1/tax/calculate-generic and returns the parsed response.
 // CalculateGenericTax
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) CalculateGenericTax(ctx context.Context, body CalculateGenericTaxJSONRequestBody, reqEditors ...RequestEditorFn) (models.BillingV1TaxCalculationResponse, error) {
 	var result models.BillingV1TaxCalculationResponse
 	resp, err := c.Client.CalculateGenericTax(ctx, body, reqEditors...)
@@ -1355,9 +1464,12 @@ func (c *SimpleClient) CalculateGenericTax(ctx context.Context, body CalculateGe
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }

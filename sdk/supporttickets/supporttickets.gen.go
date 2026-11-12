@@ -18,8 +18,6 @@ import (
 
 type CreateTicketJSONRequestBody = models.SupportV1CreateTicketRequest
 
-type CloseTicketJSONRequestBody = any
-
 type AddTicketMessageJSONRequestBody = any
 
 // RequestEditorFn is the function signature for the RequestEditor callback function.
@@ -129,9 +127,8 @@ type ClientInterface interface {
 	CreateTicket(ctx context.Context, body CreateTicketJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 	// GetTicket makes a GET request to /support/v1/tickets/{ticket_id}
 	GetTicket(ctx context.Context, ticketId string, reqEditors ...RequestEditorFn) (*http.Response, error)
-	// CloseTicketWithBody makes a POST request to /support/v1/tickets/{ticket_id}/close
-	CloseTicketWithBody(ctx context.Context, ticketId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
-	CloseTicket(ctx context.Context, ticketId string, body CloseTicketJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// CloseTicket makes a POST request to /support/v1/tickets/{ticket_id}/close
+	CloseTicket(ctx context.Context, ticketId string, reqEditors ...RequestEditorFn) (*http.Response, error)
 	// AddTicketMessageWithBody makes a POST request to /support/v1/tickets/{ticket_id}/messages
 	AddTicketMessageWithBody(ctx context.Context, ticketId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 	AddTicketMessage(ctx context.Context, ticketId string, body AddTicketMessageJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -246,23 +243,10 @@ func (c *Client) GetTicket(ctx context.Context, ticketId string, reqEditors ...R
 	return c.Client.Do(req)
 }
 
-// CloseTicketWithBody makes a POST request to /support/v1/tickets/{ticket_id}/close
+// CloseTicket makes a POST request to /support/v1/tickets/{ticket_id}/close
 // CloseTicket
-func (c *Client) CloseTicketWithBody(ctx context.Context, ticketId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewCloseTicketRequestWithBody(c.Server, ticketId, contentType, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-// CloseTicket makes a POST request to /support/v1/tickets/{ticket_id}/close with application/json body
-func (c *Client) CloseTicket(ctx context.Context, ticketId string, body CloseTicketJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewCloseTicketRequest(c.Server, ticketId, body)
+func (c *Client) CloseTicket(ctx context.Context, ticketId string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCloseTicketRequest(c.Server, ticketId)
 	if err != nil {
 		return nil, err
 	}
@@ -536,19 +520,8 @@ func NewGetTicketRequest(server string, ticketId string) (*http.Request, error) 
 	return req, nil
 }
 
-// NewCloseTicketRequest creates a POST request for /support/v1/tickets/{ticket_id}/close with application/json body
-func NewCloseTicketRequest(server string, ticketId string, body CloseTicketJSONRequestBody) (*http.Request, error) {
-	var bodyReader io.Reader
-	buf, err := json.Marshal(body)
-	if err != nil {
-		return nil, err
-	}
-	bodyReader = bytes.NewReader(buf)
-	return NewCloseTicketRequestWithBody(server, ticketId, "application/json", bodyReader)
-}
-
-// NewCloseTicketRequestWithBody creates a POST request for /support/v1/tickets/{ticket_id}/close with any body
-func NewCloseTicketRequestWithBody(server string, ticketId string, contentType string, body io.Reader) (*http.Request, error) {
+// NewCloseTicketRequest creates a POST request for /support/v1/tickets/{ticket_id}/close
+func NewCloseTicketRequest(server string, ticketId string) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -572,12 +545,10 @@ func NewCloseTicketRequestWithBody(server string, ticketId string, contentType s
 		return nil, err
 	}
 
-	req, err := http.NewRequest("POST", reqURL.String(), body)
+	req, err := http.NewRequest("POST", reqURL.String(), nil)
 	if err != nil {
 		return nil, err
 	}
-
-	req.Header.Add("Content-Type", contentType)
 
 	return req, nil
 }
@@ -716,7 +687,7 @@ func NewSimpleClient(server string, opts ...ClientOption) (*SimpleClient, error)
 
 // ListCategories makes a GET request to /support/v1/categories and returns the parsed response.
 // ListCategories
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) ListCategories(ctx context.Context, reqEditors ...RequestEditorFn) (models.SupportV1ListCategoriesResponse, error) {
 	var result models.SupportV1ListCategoriesResponse
 	resp, err := c.Client.ListCategories(ctx, reqEditors...)
@@ -737,16 +708,19 @@ func (c *SimpleClient) ListCategories(ctx context.Context, reqEditors ...Request
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }
 
 // ListTopics2 makes a GET request to /support/v1/categories/{category_id}/topics and returns the parsed response.
 // ListTopics
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) ListTopics2(ctx context.Context, categoryId string, params *ListTopics2Params, reqEditors ...RequestEditorFn) (models.SupportV1ListTopicsResponse, error) {
 	var result models.SupportV1ListTopicsResponse
 	resp, err := c.Client.ListTopics2(ctx, categoryId, params, reqEditors...)
@@ -767,16 +741,19 @@ func (c *SimpleClient) ListTopics2(ctx context.Context, categoryId string, param
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }
 
 // ListTickets makes a GET request to /support/v1/tickets and returns the parsed response.
 // ListTickets
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) ListTickets(ctx context.Context, params *ListTicketsParams, reqEditors ...RequestEditorFn) (models.SupportV1ListTicketsResponse, error) {
 	var result models.SupportV1ListTicketsResponse
 	resp, err := c.Client.ListTickets(ctx, params, reqEditors...)
@@ -797,16 +774,19 @@ func (c *SimpleClient) ListTickets(ctx context.Context, params *ListTicketsParam
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }
 
 // CreateTicket makes a POST request to /support/v1/tickets and returns the parsed response.
 // CreateTicket
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) CreateTicket(ctx context.Context, body CreateTicketJSONRequestBody, reqEditors ...RequestEditorFn) (models.SupportV1CreateTicketResponse, error) {
 	var result models.SupportV1CreateTicketResponse
 	resp, err := c.Client.CreateTicket(ctx, body, reqEditors...)
@@ -827,16 +807,19 @@ func (c *SimpleClient) CreateTicket(ctx context.Context, body CreateTicketJSONRe
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }
 
 // GetTicket makes a GET request to /support/v1/tickets/{ticket_id} and returns the parsed response.
 // GetTicket
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) GetTicket(ctx context.Context, ticketId string, reqEditors ...RequestEditorFn) (models.SupportV1GetTicketResponse, error) {
 	var result models.SupportV1GetTicketResponse
 	resp, err := c.Client.GetTicket(ctx, ticketId, reqEditors...)
@@ -857,19 +840,22 @@ func (c *SimpleClient) GetTicket(ctx context.Context, ticketId string, reqEditor
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }
 
 // CloseTicket makes a POST request to /support/v1/tickets/{ticket_id}/close and returns the parsed response.
 // CloseTicket
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
-func (c *SimpleClient) CloseTicket(ctx context.Context, ticketId string, body CloseTicketJSONRequestBody, reqEditors ...RequestEditorFn) (models.SupportV1CloseTicketResponse, error) {
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
+func (c *SimpleClient) CloseTicket(ctx context.Context, ticketId string, reqEditors ...RequestEditorFn) (models.SupportV1CloseTicketResponse, error) {
 	var result models.SupportV1CloseTicketResponse
-	resp, err := c.Client.CloseTicket(ctx, ticketId, body, reqEditors...)
+	resp, err := c.Client.CloseTicket(ctx, ticketId, reqEditors...)
 	if err != nil {
 		return result, err
 	}
@@ -887,16 +873,19 @@ func (c *SimpleClient) CloseTicket(ctx context.Context, ticketId string, body Cl
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }
 
 // AddTicketMessage makes a POST request to /support/v1/tickets/{ticket_id}/messages and returns the parsed response.
 // AddTicketMessage
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) AddTicketMessage(ctx context.Context, ticketId string, body AddTicketMessageJSONRequestBody, reqEditors ...RequestEditorFn) (models.SupportV1AddTicketMessageResponse, error) {
 	var result models.SupportV1AddTicketMessageResponse
 	resp, err := c.Client.AddTicketMessage(ctx, ticketId, body, reqEditors...)
@@ -917,16 +906,19 @@ func (c *SimpleClient) AddTicketMessage(ctx context.Context, ticketId string, bo
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }
 
 // ListTopics makes a GET request to /support/v1/topics and returns the parsed response.
 // ListTopics
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[struct{}].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) ListTopics(ctx context.Context, params *ListTopicsParams, reqEditors ...RequestEditorFn) (models.SupportV1ListTopicsResponse, error) {
 	var result models.SupportV1ListTopicsResponse
 	resp, err := c.Client.ListTopics(ctx, params, reqEditors...)
@@ -947,9 +939,12 @@ func (c *SimpleClient) ListTopics(ctx context.Context, params *ListTopicsParams,
 		return result, nil
 	}
 
-	// No typed error response defined
-	return result, &ClientHttpError[struct{}]{
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
 		StatusCode: resp.StatusCode,
+		Body:       errBody,
 		RawBody:    rawBody,
 	}
 }
