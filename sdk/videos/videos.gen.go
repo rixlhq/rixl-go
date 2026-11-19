@@ -119,8 +119,8 @@ type ClientInterface interface {
 	// ListVideos makes a GET request to /media/v1/projects/{project_id}/videos
 	ListVideos(ctx context.Context, projectId string, params *ListVideosParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 	// CreateVideoUploadWithBody makes a POST request to /media/v1/projects/{project_id}/videos/upload
-	CreateVideoUploadWithBody(ctx context.Context, projectId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
-	CreateVideoUpload(ctx context.Context, projectId string, body CreateVideoUploadJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+	CreateVideoUploadWithBody(ctx context.Context, projectId string, params *CreateVideoUploadParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+	CreateVideoUpload(ctx context.Context, projectId string, params *CreateVideoUploadParams, body CreateVideoUploadJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 	// DeleteVideo makes a DELETE request to /media/v1/projects/{project_id}/videos/{video_id}
 	DeleteVideo(ctx context.Context, projectId string, videoId string, reqEditors ...RequestEditorFn) (*http.Response, error)
 	// UpdateVideoVisibilityWithBody makes a PATCH request to /media/v1/projects/{project_id}/videos/{video_id}/visibility
@@ -142,6 +142,12 @@ type ListVideosParams struct {
 	SortDirection *string `form:"sort_direction" json:"sort_direction"`
 }
 
+// CreateVideoUploadParams defines parameters for CreateVideoUpload.
+type CreateVideoUploadParams struct {
+	// Idempotency-Key (header)
+	IdempotencyKey *string
+}
+
 // ListVideos makes a GET request to /media/v1/projects/{project_id}/videos
 // ListVideos
 func (c *Client) ListVideos(ctx context.Context, projectId string, params *ListVideosParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
@@ -158,8 +164,8 @@ func (c *Client) ListVideos(ctx context.Context, projectId string, params *ListV
 
 // CreateVideoUploadWithBody makes a POST request to /media/v1/projects/{project_id}/videos/upload
 // CreateVideoUpload
-func (c *Client) CreateVideoUploadWithBody(ctx context.Context, projectId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewCreateVideoUploadRequestWithBody(c.Server, projectId, contentType, body)
+func (c *Client) CreateVideoUploadWithBody(ctx context.Context, projectId string, params *CreateVideoUploadParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateVideoUploadRequestWithBody(c.Server, projectId, params, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -171,8 +177,8 @@ func (c *Client) CreateVideoUploadWithBody(ctx context.Context, projectId string
 }
 
 // CreateVideoUpload makes a POST request to /media/v1/projects/{project_id}/videos/upload with application/json body
-func (c *Client) CreateVideoUpload(ctx context.Context, projectId string, body CreateVideoUploadJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewCreateVideoUploadRequest(c.Server, projectId, body)
+func (c *Client) CreateVideoUpload(ctx context.Context, projectId string, params *CreateVideoUploadParams, body CreateVideoUploadJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateVideoUploadRequest(c.Server, projectId, params, body)
 	if err != nil {
 		return nil, err
 	}
@@ -329,18 +335,18 @@ func NewListVideosRequest(server string, projectId string, params *ListVideosPar
 }
 
 // NewCreateVideoUploadRequest creates a POST request for /media/v1/projects/{project_id}/videos/upload with application/json body
-func NewCreateVideoUploadRequest(server string, projectId string, body CreateVideoUploadJSONRequestBody) (*http.Request, error) {
+func NewCreateVideoUploadRequest(server string, projectId string, params *CreateVideoUploadParams, body CreateVideoUploadJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return NewCreateVideoUploadRequestWithBody(server, projectId, "application/json", bodyReader)
+	return NewCreateVideoUploadRequestWithBody(server, projectId, params, "application/json", bodyReader)
 }
 
 // NewCreateVideoUploadRequestWithBody creates a POST request for /media/v1/projects/{project_id}/videos/upload with any body
-func NewCreateVideoUploadRequestWithBody(server string, projectId string, contentType string, body io.Reader) (*http.Request, error) {
+func NewCreateVideoUploadRequestWithBody(server string, projectId string, params *CreateVideoUploadParams, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -370,6 +376,17 @@ func NewCreateVideoUploadRequestWithBody(server string, projectId string, conten
 	}
 
 	req.Header.Add("Content-Type", contentType)
+
+	if params != nil {
+		if params.IdempotencyKey != nil {
+			var headerParam0 string
+			headerParam0, err = oapiCodegenParamsPkg.StyleParameter("Idempotency-Key", *params.IdempotencyKey, oapiCodegenParamsPkg.ParameterOptions{Style: "simple", ParamLocation: oapiCodegenParamsPkg.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: "", AllowReserved: false})
+			if err != nil {
+				return nil, err
+			}
+			req.Header.Set("Idempotency-Key", headerParam0)
+		}
+	}
 
 	return req, nil
 }
@@ -562,9 +579,9 @@ func (c *SimpleClient) ListVideos(ctx context.Context, projectId string, params 
 // CreateVideoUpload makes a POST request to /media/v1/projects/{project_id}/videos/upload and returns the parsed response.
 // CreateVideoUpload
 // On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
-func (c *SimpleClient) CreateVideoUpload(ctx context.Context, projectId string, body CreateVideoUploadJSONRequestBody, reqEditors ...RequestEditorFn) (models.VideosV1VideoUpload, error) {
+func (c *SimpleClient) CreateVideoUpload(ctx context.Context, projectId string, params *CreateVideoUploadParams, body CreateVideoUploadJSONRequestBody, reqEditors ...RequestEditorFn) (models.VideosV1VideoUpload, error) {
 	var result models.VideosV1VideoUpload
-	resp, err := c.Client.CreateVideoUpload(ctx, projectId, body, reqEditors...)
+	resp, err := c.Client.CreateVideoUpload(ctx, projectId, params, body, reqEditors...)
 	if err != nil {
 		return result, err
 	}
