@@ -18,7 +18,6 @@ import (
 	"github.com/rixlhq/rixl-go/sdk/funnels"
 	"github.com/rixlhq/rixl-go/sdk/heatmaps"
 	"github.com/rixlhq/rixl-go/sdk/imageanalytics"
-	"github.com/rixlhq/rixl-go/sdk/imageconversion"
 	"github.com/rixlhq/rixl-go/sdk/images"
 	"github.com/rixlhq/rixl-go/sdk/invoices"
 	"github.com/rixlhq/rixl-go/sdk/languages"
@@ -42,7 +41,6 @@ import (
 	"github.com/rixlhq/rixl-go/sdk/usage"
 	"github.com/rixlhq/rixl-go/sdk/users"
 	"github.com/rixlhq/rixl-go/sdk/videoanalytics"
-	"github.com/rixlhq/rixl-go/sdk/videoconversion"
 	"github.com/rixlhq/rixl-go/sdk/videos"
 	"github.com/rixlhq/rixl-go/sdk/webhooks"
 )
@@ -65,7 +63,6 @@ type resources struct {
 	Funnels           *funnels.SimpleClient
 	Heatmaps          *heatmaps.SimpleClient
 	ImageAnalytics    *imageanalytics.SimpleClient
-	ImageConversion   *imageconversion.SimpleClient
 	Images            *images.SimpleClient
 	Invoices          *invoices.SimpleClient
 	Languages         *languages.SimpleClient
@@ -89,7 +86,6 @@ type resources struct {
 	Usage             *usage.SimpleClient
 	Users             *users.SimpleClient
 	VideoAnalytics    *videoanalytics.SimpleClient
-	VideoConversion   *videoconversion.SimpleClient
 	Videos            *videos.SimpleClient
 	Webhooks          *webhooks.SimpleClient
 }
@@ -277,18 +273,6 @@ func newResources(cfg config) (*resources, error) {
 			opts = append(opts, imageanalytics.WithRequestEditorFn(edit))
 		}
 		if r.ImageAnalytics, err = imageanalytics.NewSimpleClient(baseURL, opts...); err != nil {
-			return nil, err
-		}
-	}
-	{
-		opts := make([]imageconversion.ClientOption, 0, len(cfg.editors)+1)
-		if cfg.httpClient != nil {
-			opts = append(opts, imageconversion.WithHTTPClient(cfg.httpClient))
-		}
-		for _, edit := range cfg.editors {
-			opts = append(opts, imageconversion.WithRequestEditorFn(edit))
-		}
-		if r.ImageConversion, err = imageconversion.NewSimpleClient(baseURL, opts...); err != nil {
 			return nil, err
 		}
 	}
@@ -565,18 +549,6 @@ func newResources(cfg config) (*resources, error) {
 			opts = append(opts, videoanalytics.WithRequestEditorFn(edit))
 		}
 		if r.VideoAnalytics, err = videoanalytics.NewSimpleClient(baseURL, opts...); err != nil {
-			return nil, err
-		}
-	}
-	{
-		opts := make([]videoconversion.ClientOption, 0, len(cfg.editors)+1)
-		if cfg.httpClient != nil {
-			opts = append(opts, videoconversion.WithHTTPClient(cfg.httpClient))
-		}
-		for _, edit := range cfg.editors {
-			opts = append(opts, videoconversion.WithRequestEditorFn(edit))
-		}
-		if r.VideoConversion, err = videoconversion.NewSimpleClient(baseURL, opts...); err != nil {
 			return nil, err
 		}
 	}
