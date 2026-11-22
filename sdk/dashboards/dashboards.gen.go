@@ -1825,8 +1825,8 @@ func (c *SimpleClient) UpdateWidget(ctx context.Context, id string, body UpdateW
 // ExportDashboard makes a POST request to /analytics/v1/dashboards/{dashboard_id}/export and returns the parsed response.
 // ExportDashboard
 // On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
-func (c *SimpleClient) ExportDashboard(ctx context.Context, dashboardId string, body ExportDashboardJSONRequestBody, reqEditors ...RequestEditorFn) (models.AnalyticsV1ExportDashboardResponse, error) {
-	var result models.AnalyticsV1ExportDashboardResponse
+func (c *SimpleClient) ExportDashboard(ctx context.Context, dashboardId string, body ExportDashboardJSONRequestBody, reqEditors ...RequestEditorFn) (models.GoogleAPIHTTPBody, error) {
+	var result models.GoogleAPIHTTPBody
 	resp, err := c.Client.ExportDashboard(ctx, dashboardId, body, reqEditors...)
 	if err != nil {
 		return result, err
