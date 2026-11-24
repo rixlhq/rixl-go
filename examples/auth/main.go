@@ -4,7 +4,7 @@
 //   - Client auth: RIXL_CLIENT_ID=..., RIXL_CLIENT_SECRET=..., RIXL_SUBJECT=...
 //     (RIXL_PROJECT_ID optional)
 //
-// Copy the credentials from the RIXL dashboard.
+// Copy the credentials from the Rixl dashboard.
 package main
 
 import (
