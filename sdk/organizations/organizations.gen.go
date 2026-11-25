@@ -16,7 +16,11 @@ import (
 	oapiCodegenParamsPkg "github.com/rixlhq/rixl-go/sdk/runtime/params"
 )
 
+type CreateOrganizationJSONRequestBody = models.AuthV1CreateOrganizationRequest
+
 type UpdateOrganizationJSONRequestBody = any
+
+type TransferOwnershipJSONRequestBody = any
 
 // RequestEditorFn is the function signature for the RequestEditor callback function.
 type RequestEditorFn func(ctx context.Context, req *http.Request) error
@@ -116,6 +120,9 @@ func (c *Client) applyEditors(ctx context.Context, req *http.Request, additional
 type ClientInterface interface {
 	// ListOrganizations makes a GET request to /auth/v1/organizations
 	ListOrganizations(ctx context.Context, params *ListOrganizationsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// CreateOrganizationWithBody makes a POST request to /auth/v1/organizations
+	CreateOrganizationWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+	CreateOrganization(ctx context.Context, body CreateOrganizationJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 	// GetOrganization makes a GET request to /auth/v1/organizations/{org_id}
 	GetOrganization(ctx context.Context, orgId string, reqEditors ...RequestEditorFn) (*http.Response, error)
 	// UpdateOrganizationWithBody makes a PATCH request to /auth/v1/organizations/{org_id}
@@ -125,6 +132,11 @@ type ClientInterface interface {
 	ListOrganizationAuditEvents(ctx context.Context, orgId string, params *ListOrganizationAuditEventsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 	// CreateOrganizationAvatarUpload makes a POST request to /auth/v1/organizations/{org_id}/avatar/upload
 	CreateOrganizationAvatarUpload(ctx context.Context, orgId string, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// ConvertToTeamOrganization makes a POST request to /auth/v1/organizations/{org_id}/convert-to-team
+	ConvertToTeamOrganization(ctx context.Context, orgId string, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// TransferOwnershipWithBody makes a POST request to /auth/v1/organizations/{org_id}/transfer-ownership
+	TransferOwnershipWithBody(ctx context.Context, orgId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+	TransferOwnership(ctx context.Context, orgId string, body TransferOwnershipJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 }
 
 // ListOrganizationsParams defines parameters for ListOrganizations.
@@ -149,6 +161,33 @@ type ListOrganizationAuditEventsParams struct {
 // ListOrganizations
 func (c *Client) ListOrganizations(ctx context.Context, params *ListOrganizationsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewListOrganizationsRequest(c.Server, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// CreateOrganizationWithBody makes a POST request to /auth/v1/organizations
+// CreateOrganization
+func (c *Client) CreateOrganizationWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateOrganizationRequestWithBody(c.Server, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// CreateOrganization makes a POST request to /auth/v1/organizations with application/json body
+func (c *Client) CreateOrganization(ctx context.Context, body CreateOrganizationJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateOrganizationRequest(c.Server, body)
 	if err != nil {
 		return nil, err
 	}
@@ -228,6 +267,47 @@ func (c *Client) CreateOrganizationAvatarUpload(ctx context.Context, orgId strin
 	return c.Client.Do(req)
 }
 
+// ConvertToTeamOrganization makes a POST request to /auth/v1/organizations/{org_id}/convert-to-team
+// ConvertToTeamOrganization
+func (c *Client) ConvertToTeamOrganization(ctx context.Context, orgId string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewConvertToTeamOrganizationRequest(c.Server, orgId)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// TransferOwnershipWithBody makes a POST request to /auth/v1/organizations/{org_id}/transfer-ownership
+// TransferOwnership
+func (c *Client) TransferOwnershipWithBody(ctx context.Context, orgId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewTransferOwnershipRequestWithBody(c.Server, orgId, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// TransferOwnership makes a POST request to /auth/v1/organizations/{org_id}/transfer-ownership with application/json body
+func (c *Client) TransferOwnership(ctx context.Context, orgId string, body TransferOwnershipJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewTransferOwnershipRequest(c.Server, orgId, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
 // NewListOrganizationsRequest creates a GET request for /auth/v1/organizations
 func NewListOrganizationsRequest(server string, params *ListOrganizationsParams) (*http.Request, error) {
 	var err error
@@ -295,6 +375,46 @@ func NewListOrganizationsRequest(server string, params *ListOrganizationsParams)
 	if err != nil {
 		return nil, err
 	}
+
+	return req, nil
+}
+
+// NewCreateOrganizationRequest creates a POST request for /auth/v1/organizations with application/json body
+func NewCreateOrganizationRequest(server string, body CreateOrganizationJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewCreateOrganizationRequestWithBody(server, "application/json", bodyReader)
+}
+
+// NewCreateOrganizationRequestWithBody creates a POST request for /auth/v1/organizations with any body
+func NewCreateOrganizationRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/auth/v1/organizations")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	reqURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("POST", reqURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
 
 	return req, nil
 }
@@ -475,6 +595,85 @@ func NewCreateOrganizationAvatarUploadRequest(server string, orgId string) (*htt
 	return req, nil
 }
 
+// NewConvertToTeamOrganizationRequest creates a POST request for /auth/v1/organizations/{org_id}/convert-to-team
+func NewConvertToTeamOrganizationRequest(server string, orgId string) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+	pathParam0, err = oapiCodegenParamsPkg.StyleParameter("org_id", orgId, oapiCodegenParamsPkg.ParameterOptions{Style: "simple", ParamLocation: oapiCodegenParamsPkg.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", AllowReserved: false})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/auth/v1/organizations/%s/convert-to-team", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	reqURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("POST", reqURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewTransferOwnershipRequest creates a POST request for /auth/v1/organizations/{org_id}/transfer-ownership with application/json body
+func NewTransferOwnershipRequest(server string, orgId string, body TransferOwnershipJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewTransferOwnershipRequestWithBody(server, orgId, "application/json", bodyReader)
+}
+
+// NewTransferOwnershipRequestWithBody creates a POST request for /auth/v1/organizations/{org_id}/transfer-ownership with any body
+func NewTransferOwnershipRequestWithBody(server string, orgId string, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+	pathParam0, err = oapiCodegenParamsPkg.StyleParameter("org_id", orgId, oapiCodegenParamsPkg.ParameterOptions{Style: "simple", ParamLocation: oapiCodegenParamsPkg.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", AllowReserved: false})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/auth/v1/organizations/%s/transfer-ownership", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	reqURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("POST", reqURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
 // ClientHttpError represents an HTTP error response.
 // The type parameter E is the type of the parsed error body.
 type ClientHttpError[E any] struct {
@@ -509,6 +708,39 @@ func NewSimpleClient(server string, opts ...ClientOption) (*SimpleClient, error)
 func (c *SimpleClient) ListOrganizations(ctx context.Context, params *ListOrganizationsParams, reqEditors ...RequestEditorFn) (models.AuthV1ListOrganizationsResponse, error) {
 	var result models.AuthV1ListOrganizationsResponse
 	resp, err := c.Client.ListOrganizations(ctx, params, reqEditors...)
+	if err != nil {
+		return result, err
+	}
+	defer resp.Body.Close()
+
+	rawBody, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return result, err
+	}
+
+	if resp.StatusCode >= 200 && resp.StatusCode < 300 {
+		if err := json.Unmarshal(rawBody, &result); err != nil {
+			return result, err
+		}
+		return result, nil
+	}
+
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
+		StatusCode: resp.StatusCode,
+		Body:       errBody,
+		RawBody:    rawBody,
+	}
+}
+
+// CreateOrganization makes a POST request to /auth/v1/organizations and returns the parsed response.
+// CreateOrganization
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
+func (c *SimpleClient) CreateOrganization(ctx context.Context, body CreateOrganizationJSONRequestBody, reqEditors ...RequestEditorFn) (models.AuthV1Organization, error) {
+	var result models.AuthV1Organization
+	resp, err := c.Client.CreateOrganization(ctx, body, reqEditors...)
 	if err != nil {
 		return result, err
 	}
@@ -641,6 +873,72 @@ func (c *SimpleClient) ListOrganizationAuditEvents(ctx context.Context, orgId st
 func (c *SimpleClient) CreateOrganizationAvatarUpload(ctx context.Context, orgId string, reqEditors ...RequestEditorFn) (models.AuthV1CreateAvatarUploadResponse, error) {
 	var result models.AuthV1CreateAvatarUploadResponse
 	resp, err := c.Client.CreateOrganizationAvatarUpload(ctx, orgId, reqEditors...)
+	if err != nil {
+		return result, err
+	}
+	defer resp.Body.Close()
+
+	rawBody, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return result, err
+	}
+
+	if resp.StatusCode >= 200 && resp.StatusCode < 300 {
+		if err := json.Unmarshal(rawBody, &result); err != nil {
+			return result, err
+		}
+		return result, nil
+	}
+
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
+		StatusCode: resp.StatusCode,
+		Body:       errBody,
+		RawBody:    rawBody,
+	}
+}
+
+// ConvertToTeamOrganization makes a POST request to /auth/v1/organizations/{org_id}/convert-to-team and returns the parsed response.
+// ConvertToTeamOrganization
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
+func (c *SimpleClient) ConvertToTeamOrganization(ctx context.Context, orgId string, reqEditors ...RequestEditorFn) (models.AuthV1ConvertToTeamOrganizationResponse, error) {
+	var result models.AuthV1ConvertToTeamOrganizationResponse
+	resp, err := c.Client.ConvertToTeamOrganization(ctx, orgId, reqEditors...)
+	if err != nil {
+		return result, err
+	}
+	defer resp.Body.Close()
+
+	rawBody, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return result, err
+	}
+
+	if resp.StatusCode >= 200 && resp.StatusCode < 300 {
+		if err := json.Unmarshal(rawBody, &result); err != nil {
+			return result, err
+		}
+		return result, nil
+	}
+
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
+		StatusCode: resp.StatusCode,
+		Body:       errBody,
+		RawBody:    rawBody,
+	}
+}
+
+// TransferOwnership makes a POST request to /auth/v1/organizations/{org_id}/transfer-ownership and returns the parsed response.
+// TransferOwnership
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
+func (c *SimpleClient) TransferOwnership(ctx context.Context, orgId string, body TransferOwnershipJSONRequestBody, reqEditors ...RequestEditorFn) (models.AuthV1Organization, error) {
+	var result models.AuthV1Organization
+	resp, err := c.Client.TransferOwnership(ctx, orgId, body, reqEditors...)
 	if err != nil {
 		return result, err
 	}

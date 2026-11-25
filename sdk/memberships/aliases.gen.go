@@ -4,5 +4,4 @@ package memberships
 
 import "github.com/rixlhq/rixl-go/sdk/models"
 
-type AuthV1MembershipApplicationState = models.AuthV1MembershipApplicationState
 type AuthV1MembershipState = models.AuthV1MembershipState

@@ -127,6 +127,8 @@ type ClientInterface interface {
 	UpdateUserAvatar(ctx context.Context, body UpdateUserAvatarJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 	// CreateAvatarUpload makes a POST request to /auth/v1/users/current/avatar/upload
 	CreateAvatarUpload(ctx context.Context, params *CreateAvatarUploadParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// GetUserDeletionPreview makes a GET request to /auth/v1/users/current/deletion-preview
+	GetUserDeletionPreview(ctx context.Context, params *GetUserDeletionPreviewParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 	// UpdateNameWithBody makes a PATCH request to /auth/v1/users/current/name
 	UpdateNameWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 	UpdateName(ctx context.Context, body UpdateNameJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -151,6 +153,14 @@ type GetUserParams struct {
 type CreateAvatarUploadParams struct {
 	// user_id (optional)
 	UserId *string `form:"user_id" json:"user_id"`
+}
+
+// GetUserDeletionPreviewParams defines parameters for GetUserDeletionPreview.
+type GetUserDeletionPreviewParams struct {
+	// page_size (optional)
+	PageSize *int32 `form:"page_size" json:"page_size"`
+	// page_token (optional)
+	PageToken *string `form:"page_token" json:"page_token"`
 }
 
 // GetUserInfo makes a GET request to /auth/v1/userinfo
@@ -212,6 +222,20 @@ func (c *Client) UpdateUserAvatar(ctx context.Context, body UpdateUserAvatarJSON
 // CreateAvatarUpload
 func (c *Client) CreateAvatarUpload(ctx context.Context, params *CreateAvatarUploadParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewCreateAvatarUploadRequest(c.Server, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// GetUserDeletionPreview makes a GET request to /auth/v1/users/current/deletion-preview
+// GetUserDeletionPreview
+func (c *Client) GetUserDeletionPreview(ctx context.Context, params *GetUserDeletionPreviewParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetUserDeletionPreviewRequest(c.Server, params)
 	if err != nil {
 		return nil, err
 	}
@@ -451,6 +475,64 @@ func NewCreateAvatarUploadRequest(server string, params *CreateAvatarUploadParam
 	return req, nil
 }
 
+// NewGetUserDeletionPreviewRequest creates a GET request for /auth/v1/users/current/deletion-preview
+func NewGetUserDeletionPreviewRequest(server string, params *GetUserDeletionPreviewParams) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/auth/v1/users/current/deletion-preview")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	reqURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		queryValues := reqURL.Query()
+		if params.PageSize != nil {
+			if queryFrag, err := oapiCodegenParamsPkg.StyleParameter("page_size", *params.PageSize, oapiCodegenParamsPkg.ParameterOptions{Style: "form", ParamLocation: oapiCodegenParamsPkg.ParamLocationQuery, Explode: true, Required: false, Type: "integer", Format: "int32", AllowReserved: false}); err != nil {
+				return nil, err
+			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+				return nil, err
+			} else {
+				for k, v := range parsed {
+					for _, v2 := range v {
+						queryValues.Add(k, v2)
+					}
+				}
+			}
+		}
+		if params.PageToken != nil {
+			if queryFrag, err := oapiCodegenParamsPkg.StyleParameter("page_token", *params.PageToken, oapiCodegenParamsPkg.ParameterOptions{Style: "form", ParamLocation: oapiCodegenParamsPkg.ParamLocationQuery, Explode: true, Required: false, Type: "string", Format: "", AllowReserved: false}); err != nil {
+				return nil, err
+			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+				return nil, err
+			} else {
+				for k, v := range parsed {
+					for _, v2 := range v {
+						queryValues.Add(k, v2)
+					}
+				}
+			}
+		}
+		reqURL.RawQuery = queryValues.Encode()
+	}
+
+	req, err := http.NewRequest("GET", reqURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
 // NewUpdateNameRequest creates a PATCH request for /auth/v1/users/current/name with application/json body
 func NewUpdateNameRequest(server string, body UpdateNameJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
@@ -664,6 +746,39 @@ func (c *SimpleClient) UpdateUserAvatar(ctx context.Context, body UpdateUserAvat
 func (c *SimpleClient) CreateAvatarUpload(ctx context.Context, params *CreateAvatarUploadParams, reqEditors ...RequestEditorFn) (models.AuthV1CreateAvatarUploadResponse, error) {
 	var result models.AuthV1CreateAvatarUploadResponse
 	resp, err := c.Client.CreateAvatarUpload(ctx, params, reqEditors...)
+	if err != nil {
+		return result, err
+	}
+	defer resp.Body.Close()
+
+	rawBody, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return result, err
+	}
+
+	if resp.StatusCode >= 200 && resp.StatusCode < 300 {
+		if err := json.Unmarshal(rawBody, &result); err != nil {
+			return result, err
+		}
+		return result, nil
+	}
+
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
+		StatusCode: resp.StatusCode,
+		Body:       errBody,
+		RawBody:    rawBody,
+	}
+}
+
+// GetUserDeletionPreview makes a GET request to /auth/v1/users/current/deletion-preview and returns the parsed response.
+// GetUserDeletionPreview
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
+func (c *SimpleClient) GetUserDeletionPreview(ctx context.Context, params *GetUserDeletionPreviewParams, reqEditors ...RequestEditorFn) (models.AuthV1GetUserDeletionPreviewResponse, error) {
+	var result models.AuthV1GetUserDeletionPreviewResponse
+	resp, err := c.Client.GetUserDeletionPreview(ctx, params, reqEditors...)
 	if err != nil {
 		return result, err
 	}

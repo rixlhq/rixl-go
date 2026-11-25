@@ -32,6 +32,8 @@ type AddEmailJSONRequestBody = models.AuthV1AddEmailRequest
 
 type InitiateEmailChangeJSONRequestBody = models.AuthV1InitiateEmailChangeRequest
 
+type VerifyEmailChangeJSONRequestBody = models.AuthV1VerifyEmailChangeRequest
+
 // RequestEditorFn is the function signature for the RequestEditor callback function.
 type RequestEditorFn func(ctx context.Context, req *http.Request) error
 
@@ -154,6 +156,9 @@ type ClientInterface interface {
 	InitiateEmailChange(ctx context.Context, body InitiateEmailChangeJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 	// GetUserEmailStatus makes a GET request to /auth/v1/users/current/emails/status
 	GetUserEmailStatus(ctx context.Context, params *GetUserEmailStatusParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// VerifyEmailChangeWithBody makes a POST request to /auth/v1/users/current/emails/verify
+	VerifyEmailChangeWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+	VerifyEmailChange(ctx context.Context, body VerifyEmailChangeJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 }
 
 // GetUserEmailStatusParams defines parameters for GetUserEmailStatus.
@@ -382,6 +387,33 @@ func (c *Client) InitiateEmailChange(ctx context.Context, body InitiateEmailChan
 // GetUserEmailStatus
 func (c *Client) GetUserEmailStatus(ctx context.Context, params *GetUserEmailStatusParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewGetUserEmailStatusRequest(c.Server, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// VerifyEmailChangeWithBody makes a POST request to /auth/v1/users/current/emails/verify
+// VerifyEmailChange
+func (c *Client) VerifyEmailChangeWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewVerifyEmailChangeRequestWithBody(c.Server, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// VerifyEmailChange makes a POST request to /auth/v1/users/current/emails/verify with application/json body
+func (c *Client) VerifyEmailChange(ctx context.Context, body VerifyEmailChangeJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewVerifyEmailChangeRequest(c.Server, body)
 	if err != nil {
 		return nil, err
 	}
@@ -757,6 +789,46 @@ func NewGetUserEmailStatusRequest(server string, params *GetUserEmailStatusParam
 	return req, nil
 }
 
+// NewVerifyEmailChangeRequest creates a POST request for /auth/v1/users/current/emails/verify with application/json body
+func NewVerifyEmailChangeRequest(server string, body VerifyEmailChangeJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewVerifyEmailChangeRequestWithBody(server, "application/json", bodyReader)
+}
+
+// NewVerifyEmailChangeRequestWithBody creates a POST request for /auth/v1/users/current/emails/verify with any body
+func NewVerifyEmailChangeRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/auth/v1/users/current/emails/verify")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	reqURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("POST", reqURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
 // ClientHttpError represents an HTTP error response.
 // The type parameter E is the type of the parsed error body.
 type ClientHttpError[E any] struct {
@@ -1055,6 +1127,39 @@ func (c *SimpleClient) InitiateEmailChange(ctx context.Context, body InitiateEma
 func (c *SimpleClient) GetUserEmailStatus(ctx context.Context, params *GetUserEmailStatusParams, reqEditors ...RequestEditorFn) (models.AuthV1EmailStatusResponse, error) {
 	var result models.AuthV1EmailStatusResponse
 	resp, err := c.Client.GetUserEmailStatus(ctx, params, reqEditors...)
+	if err != nil {
+		return result, err
+	}
+	defer resp.Body.Close()
+
+	rawBody, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return result, err
+	}
+
+	if resp.StatusCode >= 200 && resp.StatusCode < 300 {
+		if err := json.Unmarshal(rawBody, &result); err != nil {
+			return result, err
+		}
+		return result, nil
+	}
+
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
+		StatusCode: resp.StatusCode,
+		Body:       errBody,
+		RawBody:    rawBody,
+	}
+}
+
+// VerifyEmailChange makes a POST request to /auth/v1/users/current/emails/verify and returns the parsed response.
+// VerifyEmailChange
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
+func (c *SimpleClient) VerifyEmailChange(ctx context.Context, body VerifyEmailChangeJSONRequestBody, reqEditors ...RequestEditorFn) (models.AuthV1VerifyEmailResponse, error) {
+	var result models.AuthV1VerifyEmailResponse
+	resp, err := c.Client.VerifyEmailChange(ctx, body, reqEditors...)
 	if err != nil {
 		return result, err
 	}

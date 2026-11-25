@@ -120,40 +120,16 @@ type ClientInterface interface {
 	LogoutWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 	Logout(ctx context.Context, body LogoutJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 	// LogoutAll makes a POST request to /auth/v1/logout/all
-	LogoutAll(ctx context.Context, params *LogoutAllParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+	LogoutAll(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
 	// ListSignIns makes a GET request to /auth/v1/sign-ins
-	ListSignIns(ctx context.Context, params *ListSignInsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+	ListSignIns(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
 	// RevokeOtherSignIns makes a POST request to /auth/v1/sign-ins/revoke-others
-	RevokeOtherSignIns(ctx context.Context, params *RevokeOtherSignInsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+	RevokeOtherSignIns(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
 	// RevokeSignIn makes a DELETE request to /auth/v1/sign-ins/{sign_in_id}
-	RevokeSignIn(ctx context.Context, signInId string, params *RevokeSignInParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+	RevokeSignIn(ctx context.Context, signInId string, reqEditors ...RequestEditorFn) (*http.Response, error)
 	// RefreshTokenWithBody makes a POST request to /auth/v1/token
 	RefreshTokenWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 	RefreshToken(ctx context.Context, body RefreshTokenJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
-}
-
-// LogoutAllParams defines parameters for LogoutAll.
-type LogoutAllParams struct {
-	// user_id (optional)
-	UserId *string `form:"user_id" json:"user_id"`
-}
-
-// ListSignInsParams defines parameters for ListSignIns.
-type ListSignInsParams struct {
-	// user_id (optional)
-	UserId *string `form:"user_id" json:"user_id"`
-}
-
-// RevokeOtherSignInsParams defines parameters for RevokeOtherSignIns.
-type RevokeOtherSignInsParams struct {
-	// user_id (optional)
-	UserId *string `form:"user_id" json:"user_id"`
-}
-
-// RevokeSignInParams defines parameters for RevokeSignIn.
-type RevokeSignInParams struct {
-	// user.user_id (optional)
-	UserUserId *string `form:"user.user_id" json:"user.user_id"`
 }
 
 // LogoutWithBody makes a POST request to /auth/v1/logout
@@ -185,8 +161,8 @@ func (c *Client) Logout(ctx context.Context, body LogoutJSONRequestBody, reqEdit
 
 // LogoutAll makes a POST request to /auth/v1/logout/all
 // LogoutAll
-func (c *Client) LogoutAll(ctx context.Context, params *LogoutAllParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewLogoutAllRequest(c.Server, params)
+func (c *Client) LogoutAll(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewLogoutAllRequest(c.Server)
 	if err != nil {
 		return nil, err
 	}
@@ -199,8 +175,8 @@ func (c *Client) LogoutAll(ctx context.Context, params *LogoutAllParams, reqEdit
 
 // ListSignIns makes a GET request to /auth/v1/sign-ins
 // ListSignIns
-func (c *Client) ListSignIns(ctx context.Context, params *ListSignInsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewListSignInsRequest(c.Server, params)
+func (c *Client) ListSignIns(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListSignInsRequest(c.Server)
 	if err != nil {
 		return nil, err
 	}
@@ -213,8 +189,8 @@ func (c *Client) ListSignIns(ctx context.Context, params *ListSignInsParams, req
 
 // RevokeOtherSignIns makes a POST request to /auth/v1/sign-ins/revoke-others
 // RevokeOtherSignIns
-func (c *Client) RevokeOtherSignIns(ctx context.Context, params *RevokeOtherSignInsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewRevokeOtherSignInsRequest(c.Server, params)
+func (c *Client) RevokeOtherSignIns(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewRevokeOtherSignInsRequest(c.Server)
 	if err != nil {
 		return nil, err
 	}
@@ -227,8 +203,8 @@ func (c *Client) RevokeOtherSignIns(ctx context.Context, params *RevokeOtherSign
 
 // RevokeSignIn makes a DELETE request to /auth/v1/sign-ins/{sign_in_id}
 // RevokeSignIn
-func (c *Client) RevokeSignIn(ctx context.Context, signInId string, params *RevokeSignInParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewRevokeSignInRequest(c.Server, signInId, params)
+func (c *Client) RevokeSignIn(ctx context.Context, signInId string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewRevokeSignInRequest(c.Server, signInId)
 	if err != nil {
 		return nil, err
 	}
@@ -307,7 +283,7 @@ func NewLogoutRequestWithBody(server string, contentType string, body io.Reader)
 }
 
 // NewLogoutAllRequest creates a POST request for /auth/v1/logout/all
-func NewLogoutAllRequest(server string, params *LogoutAllParams) (*http.Request, error) {
+func NewLogoutAllRequest(server string) (*http.Request, error) {
 	var err error
 
 	serverURL, err := url.Parse(server)
@@ -325,24 +301,6 @@ func NewLogoutAllRequest(server string, params *LogoutAllParams) (*http.Request,
 		return nil, err
 	}
 
-	if params != nil {
-		queryValues := reqURL.Query()
-		if params.UserId != nil {
-			if queryFrag, err := oapiCodegenParamsPkg.StyleParameter("user_id", *params.UserId, oapiCodegenParamsPkg.ParameterOptions{Style: "form", ParamLocation: oapiCodegenParamsPkg.ParamLocationQuery, Explode: true, Required: false, Type: "string", Format: "", AllowReserved: false}); err != nil {
-				return nil, err
-			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-				return nil, err
-			} else {
-				for k, v := range parsed {
-					for _, v2 := range v {
-						queryValues.Add(k, v2)
-					}
-				}
-			}
-		}
-		reqURL.RawQuery = queryValues.Encode()
-	}
-
 	req, err := http.NewRequest("POST", reqURL.String(), nil)
 	if err != nil {
 		return nil, err
@@ -352,7 +310,7 @@ func NewLogoutAllRequest(server string, params *LogoutAllParams) (*http.Request,
 }
 
 // NewListSignInsRequest creates a GET request for /auth/v1/sign-ins
-func NewListSignInsRequest(server string, params *ListSignInsParams) (*http.Request, error) {
+func NewListSignInsRequest(server string) (*http.Request, error) {
 	var err error
 
 	serverURL, err := url.Parse(server)
@@ -370,24 +328,6 @@ func NewListSignInsRequest(server string, params *ListSignInsParams) (*http.Requ
 		return nil, err
 	}
 
-	if params != nil {
-		queryValues := reqURL.Query()
-		if params.UserId != nil {
-			if queryFrag, err := oapiCodegenParamsPkg.StyleParameter("user_id", *params.UserId, oapiCodegenParamsPkg.ParameterOptions{Style: "form", ParamLocation: oapiCodegenParamsPkg.ParamLocationQuery, Explode: true, Required: false, Type: "string", Format: "", AllowReserved: false}); err != nil {
-				return nil, err
-			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-				return nil, err
-			} else {
-				for k, v := range parsed {
-					for _, v2 := range v {
-						queryValues.Add(k, v2)
-					}
-				}
-			}
-		}
-		reqURL.RawQuery = queryValues.Encode()
-	}
-
 	req, err := http.NewRequest("GET", reqURL.String(), nil)
 	if err != nil {
 		return nil, err
@@ -397,7 +337,7 @@ func NewListSignInsRequest(server string, params *ListSignInsParams) (*http.Requ
 }
 
 // NewRevokeOtherSignInsRequest creates a POST request for /auth/v1/sign-ins/revoke-others
-func NewRevokeOtherSignInsRequest(server string, params *RevokeOtherSignInsParams) (*http.Request, error) {
+func NewRevokeOtherSignInsRequest(server string) (*http.Request, error) {
 	var err error
 
 	serverURL, err := url.Parse(server)
@@ -415,24 +355,6 @@ func NewRevokeOtherSignInsRequest(server string, params *RevokeOtherSignInsParam
 		return nil, err
 	}
 
-	if params != nil {
-		queryValues := reqURL.Query()
-		if params.UserId != nil {
-			if queryFrag, err := oapiCodegenParamsPkg.StyleParameter("user_id", *params.UserId, oapiCodegenParamsPkg.ParameterOptions{Style: "form", ParamLocation: oapiCodegenParamsPkg.ParamLocationQuery, Explode: true, Required: false, Type: "string", Format: "", AllowReserved: false}); err != nil {
-				return nil, err
-			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-				return nil, err
-			} else {
-				for k, v := range parsed {
-					for _, v2 := range v {
-						queryValues.Add(k, v2)
-					}
-				}
-			}
-		}
-		reqURL.RawQuery = queryValues.Encode()
-	}
-
 	req, err := http.NewRequest("POST", reqURL.String(), nil)
 	if err != nil {
 		return nil, err
@@ -442,7 +364,7 @@ func NewRevokeOtherSignInsRequest(server string, params *RevokeOtherSignInsParam
 }
 
 // NewRevokeSignInRequest creates a DELETE request for /auth/v1/sign-ins/{sign_in_id}
-func NewRevokeSignInRequest(server string, signInId string, params *RevokeSignInParams) (*http.Request, error) {
+func NewRevokeSignInRequest(server string, signInId string) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -464,24 +386,6 @@ func NewRevokeSignInRequest(server string, signInId string, params *RevokeSignIn
 	reqURL, err := serverURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
-	}
-
-	if params != nil {
-		queryValues := reqURL.Query()
-		if params.UserUserId != nil {
-			if queryFrag, err := oapiCodegenParamsPkg.StyleParameter("user.user_id", *params.UserUserId, oapiCodegenParamsPkg.ParameterOptions{Style: "form", ParamLocation: oapiCodegenParamsPkg.ParamLocationQuery, Explode: true, Required: false, Type: "string", Format: "", AllowReserved: false}); err != nil {
-				return nil, err
-			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-				return nil, err
-			} else {
-				for k, v := range parsed {
-					for _, v2 := range v {
-						queryValues.Add(k, v2)
-					}
-				}
-			}
-		}
-		reqURL.RawQuery = queryValues.Encode()
 	}
 
 	req, err := http.NewRequest("DELETE", reqURL.String(), nil)
@@ -596,9 +500,9 @@ func (c *SimpleClient) Logout(ctx context.Context, body LogoutJSONRequestBody, r
 // LogoutAll makes a POST request to /auth/v1/logout/all and returns the parsed response.
 // LogoutAll
 // On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
-func (c *SimpleClient) LogoutAll(ctx context.Context, params *LogoutAllParams, reqEditors ...RequestEditorFn) (models.GoogleProtobufEmpty, error) {
+func (c *SimpleClient) LogoutAll(ctx context.Context, reqEditors ...RequestEditorFn) (models.GoogleProtobufEmpty, error) {
 	var result models.GoogleProtobufEmpty
-	resp, err := c.Client.LogoutAll(ctx, params, reqEditors...)
+	resp, err := c.Client.LogoutAll(ctx, reqEditors...)
 	if err != nil {
 		return result, err
 	}
@@ -629,9 +533,9 @@ func (c *SimpleClient) LogoutAll(ctx context.Context, params *LogoutAllParams, r
 // ListSignIns makes a GET request to /auth/v1/sign-ins and returns the parsed response.
 // ListSignIns
 // On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
-func (c *SimpleClient) ListSignIns(ctx context.Context, params *ListSignInsParams, reqEditors ...RequestEditorFn) (models.AuthV1ListSignInsResponse, error) {
+func (c *SimpleClient) ListSignIns(ctx context.Context, reqEditors ...RequestEditorFn) (models.AuthV1ListSignInsResponse, error) {
 	var result models.AuthV1ListSignInsResponse
-	resp, err := c.Client.ListSignIns(ctx, params, reqEditors...)
+	resp, err := c.Client.ListSignIns(ctx, reqEditors...)
 	if err != nil {
 		return result, err
 	}
@@ -662,9 +566,9 @@ func (c *SimpleClient) ListSignIns(ctx context.Context, params *ListSignInsParam
 // RevokeOtherSignIns makes a POST request to /auth/v1/sign-ins/revoke-others and returns the parsed response.
 // RevokeOtherSignIns
 // On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
-func (c *SimpleClient) RevokeOtherSignIns(ctx context.Context, params *RevokeOtherSignInsParams, reqEditors ...RequestEditorFn) (models.GoogleProtobufEmpty, error) {
+func (c *SimpleClient) RevokeOtherSignIns(ctx context.Context, reqEditors ...RequestEditorFn) (models.GoogleProtobufEmpty, error) {
 	var result models.GoogleProtobufEmpty
-	resp, err := c.Client.RevokeOtherSignIns(ctx, params, reqEditors...)
+	resp, err := c.Client.RevokeOtherSignIns(ctx, reqEditors...)
 	if err != nil {
 		return result, err
 	}
@@ -695,9 +599,9 @@ func (c *SimpleClient) RevokeOtherSignIns(ctx context.Context, params *RevokeOth
 // RevokeSignIn makes a DELETE request to /auth/v1/sign-ins/{sign_in_id} and returns the parsed response.
 // RevokeSignIn
 // On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
-func (c *SimpleClient) RevokeSignIn(ctx context.Context, signInId string, params *RevokeSignInParams, reqEditors ...RequestEditorFn) (models.GoogleProtobufEmpty, error) {
+func (c *SimpleClient) RevokeSignIn(ctx context.Context, signInId string, reqEditors ...RequestEditorFn) (models.GoogleProtobufEmpty, error) {
 	var result models.GoogleProtobufEmpty
-	resp, err := c.Client.RevokeSignIn(ctx, signInId, params, reqEditors...)
+	resp, err := c.Client.RevokeSignIn(ctx, signInId, reqEditors...)
 	if err != nil {
 		return result, err
 	}
