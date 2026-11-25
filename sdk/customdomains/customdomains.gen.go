@@ -122,16 +122,16 @@ type ClientInterface interface {
 	RemoveDomain(ctx context.Context, orgId string, params *RemoveDomainParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 	// GetDomainStatus makes a GET request to /auth/v1/organizations/{org_id}/domain
 	GetDomainStatus(ctx context.Context, orgId string, params *GetDomainStatusParams, reqEditors ...RequestEditorFn) (*http.Response, error)
-	// CreateDomainVerificationWithBody makes a POST request to /auth/v1/organizations/{org_id}/domain
-	CreateDomainVerificationWithBody(ctx context.Context, orgId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
-	CreateDomainVerification(ctx context.Context, orgId string, body CreateDomainVerificationJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 	// GetDomainSuggestJoin makes a GET request to /auth/v1/organizations/{org_id}/domain/suggest-join
 	GetDomainSuggestJoin(ctx context.Context, orgId string, params *GetDomainSuggestJoinParams, reqEditors ...RequestEditorFn) (*http.Response, error)
-	// SetDomainSuggestJoinWithBody makes a PUT request to /auth/v1/organizations/{org_id}/domain/suggest-join
-	SetDomainSuggestJoinWithBody(ctx context.Context, orgId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
-	SetDomainSuggestJoin(ctx context.Context, orgId string, body SetDomainSuggestJoinJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 	// CheckDomainVerification makes a POST request to /auth/v1/organizations/{org_id}/domain/verify
 	CheckDomainVerification(ctx context.Context, orgId string, params *CheckDomainVerificationParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// CreateDomainVerificationWithBody makes a POST request to /auth/v1/organizations/{user.org_id}/domain
+	CreateDomainVerificationWithBody(ctx context.Context, userOrgId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+	CreateDomainVerification(ctx context.Context, userOrgId string, body CreateDomainVerificationJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// SetDomainSuggestJoinWithBody makes a PUT request to /auth/v1/organizations/{user.org_id}/domain/suggest-join
+	SetDomainSuggestJoinWithBody(ctx context.Context, userOrgId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+	SetDomainSuggestJoin(ctx context.Context, userOrgId string, body SetDomainSuggestJoinJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 	// ListDomainJoinSuggestions makes a GET request to /auth/v1/users/current/domain-join-suggestions
 	ListDomainJoinSuggestions(ctx context.Context, params *ListDomainJoinSuggestionsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 	// JoinSuggestedOrganizationWithBody makes a POST request to /auth/v1/users/current/domain-join-suggestions/join
@@ -199,33 +199,6 @@ func (c *Client) GetDomainStatus(ctx context.Context, orgId string, params *GetD
 	return c.Client.Do(req)
 }
 
-// CreateDomainVerificationWithBody makes a POST request to /auth/v1/organizations/{org_id}/domain
-// CreateDomainVerification
-func (c *Client) CreateDomainVerificationWithBody(ctx context.Context, orgId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewCreateDomainVerificationRequestWithBody(c.Server, orgId, contentType, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-// CreateDomainVerification makes a POST request to /auth/v1/organizations/{org_id}/domain with application/json body
-func (c *Client) CreateDomainVerification(ctx context.Context, orgId string, body CreateDomainVerificationJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewCreateDomainVerificationRequest(c.Server, orgId, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
 // GetDomainSuggestJoin makes a GET request to /auth/v1/organizations/{org_id}/domain/suggest-join
 // GetDomainSuggestJoin
 func (c *Client) GetDomainSuggestJoin(ctx context.Context, orgId string, params *GetDomainSuggestJoinParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
@@ -240,37 +213,64 @@ func (c *Client) GetDomainSuggestJoin(ctx context.Context, orgId string, params 
 	return c.Client.Do(req)
 }
 
-// SetDomainSuggestJoinWithBody makes a PUT request to /auth/v1/organizations/{org_id}/domain/suggest-join
-// SetDomainSuggestJoin
-func (c *Client) SetDomainSuggestJoinWithBody(ctx context.Context, orgId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewSetDomainSuggestJoinRequestWithBody(c.Server, orgId, contentType, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-// SetDomainSuggestJoin makes a PUT request to /auth/v1/organizations/{org_id}/domain/suggest-join with application/json body
-func (c *Client) SetDomainSuggestJoin(ctx context.Context, orgId string, body SetDomainSuggestJoinJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewSetDomainSuggestJoinRequest(c.Server, orgId, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
 // CheckDomainVerification makes a POST request to /auth/v1/organizations/{org_id}/domain/verify
 // CheckDomainVerification
 func (c *Client) CheckDomainVerification(ctx context.Context, orgId string, params *CheckDomainVerificationParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewCheckDomainVerificationRequest(c.Server, orgId, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// CreateDomainVerificationWithBody makes a POST request to /auth/v1/organizations/{user.org_id}/domain
+// CreateDomainVerification
+func (c *Client) CreateDomainVerificationWithBody(ctx context.Context, userOrgId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateDomainVerificationRequestWithBody(c.Server, userOrgId, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// CreateDomainVerification makes a POST request to /auth/v1/organizations/{user.org_id}/domain with application/json body
+func (c *Client) CreateDomainVerification(ctx context.Context, userOrgId string, body CreateDomainVerificationJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateDomainVerificationRequest(c.Server, userOrgId, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// SetDomainSuggestJoinWithBody makes a PUT request to /auth/v1/organizations/{user.org_id}/domain/suggest-join
+// SetDomainSuggestJoin
+func (c *Client) SetDomainSuggestJoinWithBody(ctx context.Context, userOrgId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewSetDomainSuggestJoinRequestWithBody(c.Server, userOrgId, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// SetDomainSuggestJoin makes a PUT request to /auth/v1/organizations/{user.org_id}/domain/suggest-join with application/json body
+func (c *Client) SetDomainSuggestJoin(ctx context.Context, userOrgId string, body SetDomainSuggestJoinJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewSetDomainSuggestJoinRequest(c.Server, userOrgId, body)
 	if err != nil {
 		return nil, err
 	}
@@ -424,52 +424,6 @@ func NewGetDomainStatusRequest(server string, orgId string, params *GetDomainSta
 	return req, nil
 }
 
-// NewCreateDomainVerificationRequest creates a POST request for /auth/v1/organizations/{org_id}/domain with application/json body
-func NewCreateDomainVerificationRequest(server string, orgId string, body CreateDomainVerificationJSONRequestBody) (*http.Request, error) {
-	var bodyReader io.Reader
-	buf, err := json.Marshal(body)
-	if err != nil {
-		return nil, err
-	}
-	bodyReader = bytes.NewReader(buf)
-	return NewCreateDomainVerificationRequestWithBody(server, orgId, "application/json", bodyReader)
-}
-
-// NewCreateDomainVerificationRequestWithBody creates a POST request for /auth/v1/organizations/{org_id}/domain with any body
-func NewCreateDomainVerificationRequestWithBody(server string, orgId string, contentType string, body io.Reader) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-	pathParam0, err = oapiCodegenParamsPkg.StyleParameter("org_id", orgId, oapiCodegenParamsPkg.ParameterOptions{Style: "simple", ParamLocation: oapiCodegenParamsPkg.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", AllowReserved: false})
-	if err != nil {
-		return nil, err
-	}
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/auth/v1/organizations/%s/domain", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	reqURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest("POST", reqURL.String(), body)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Add("Content-Type", contentType)
-
-	return req, nil
-}
-
 // NewGetDomainSuggestJoinRequest creates a GET request for /auth/v1/organizations/{org_id}/domain/suggest-join
 func NewGetDomainSuggestJoinRequest(server string, orgId string, params *GetDomainSuggestJoinParams) (*http.Request, error) {
 	var err error
@@ -521,52 +475,6 @@ func NewGetDomainSuggestJoinRequest(server string, orgId string, params *GetDoma
 	return req, nil
 }
 
-// NewSetDomainSuggestJoinRequest creates a PUT request for /auth/v1/organizations/{org_id}/domain/suggest-join with application/json body
-func NewSetDomainSuggestJoinRequest(server string, orgId string, body SetDomainSuggestJoinJSONRequestBody) (*http.Request, error) {
-	var bodyReader io.Reader
-	buf, err := json.Marshal(body)
-	if err != nil {
-		return nil, err
-	}
-	bodyReader = bytes.NewReader(buf)
-	return NewSetDomainSuggestJoinRequestWithBody(server, orgId, "application/json", bodyReader)
-}
-
-// NewSetDomainSuggestJoinRequestWithBody creates a PUT request for /auth/v1/organizations/{org_id}/domain/suggest-join with any body
-func NewSetDomainSuggestJoinRequestWithBody(server string, orgId string, contentType string, body io.Reader) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-	pathParam0, err = oapiCodegenParamsPkg.StyleParameter("org_id", orgId, oapiCodegenParamsPkg.ParameterOptions{Style: "simple", ParamLocation: oapiCodegenParamsPkg.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", AllowReserved: false})
-	if err != nil {
-		return nil, err
-	}
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/auth/v1/organizations/%s/domain/suggest-join", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	reqURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest("PUT", reqURL.String(), body)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Add("Content-Type", contentType)
-
-	return req, nil
-}
-
 // NewCheckDomainVerificationRequest creates a POST request for /auth/v1/organizations/{org_id}/domain/verify
 func NewCheckDomainVerificationRequest(server string, orgId string, params *CheckDomainVerificationParams) (*http.Request, error) {
 	var err error
@@ -614,6 +522,98 @@ func NewCheckDomainVerificationRequest(server string, orgId string, params *Chec
 	if err != nil {
 		return nil, err
 	}
+
+	return req, nil
+}
+
+// NewCreateDomainVerificationRequest creates a POST request for /auth/v1/organizations/{user.org_id}/domain with application/json body
+func NewCreateDomainVerificationRequest(server string, userOrgId string, body CreateDomainVerificationJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewCreateDomainVerificationRequestWithBody(server, userOrgId, "application/json", bodyReader)
+}
+
+// NewCreateDomainVerificationRequestWithBody creates a POST request for /auth/v1/organizations/{user.org_id}/domain with any body
+func NewCreateDomainVerificationRequestWithBody(server string, userOrgId string, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+	pathParam0, err = oapiCodegenParamsPkg.StyleParameter("user.org_id", userOrgId, oapiCodegenParamsPkg.ParameterOptions{Style: "simple", ParamLocation: oapiCodegenParamsPkg.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", AllowReserved: false})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/auth/v1/organizations/%s/domain", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	reqURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("POST", reqURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
+// NewSetDomainSuggestJoinRequest creates a PUT request for /auth/v1/organizations/{user.org_id}/domain/suggest-join with application/json body
+func NewSetDomainSuggestJoinRequest(server string, userOrgId string, body SetDomainSuggestJoinJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewSetDomainSuggestJoinRequestWithBody(server, userOrgId, "application/json", bodyReader)
+}
+
+// NewSetDomainSuggestJoinRequestWithBody creates a PUT request for /auth/v1/organizations/{user.org_id}/domain/suggest-join with any body
+func NewSetDomainSuggestJoinRequestWithBody(server string, userOrgId string, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+	pathParam0, err = oapiCodegenParamsPkg.StyleParameter("user.org_id", userOrgId, oapiCodegenParamsPkg.ParameterOptions{Style: "simple", ParamLocation: oapiCodegenParamsPkg.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", AllowReserved: false})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/auth/v1/organizations/%s/domain/suggest-join", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	reqURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("PUT", reqURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
 
 	return req, nil
 }
@@ -810,39 +810,6 @@ func (c *SimpleClient) GetDomainStatus(ctx context.Context, orgId string, params
 	}
 }
 
-// CreateDomainVerification makes a POST request to /auth/v1/organizations/{org_id}/domain and returns the parsed response.
-// CreateDomainVerification
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
-func (c *SimpleClient) CreateDomainVerification(ctx context.Context, orgId string, body CreateDomainVerificationJSONRequestBody, reqEditors ...RequestEditorFn) (models.AuthV1DomainResponse, error) {
-	var result models.AuthV1DomainResponse
-	resp, err := c.Client.CreateDomainVerification(ctx, orgId, body, reqEditors...)
-	if err != nil {
-		return result, err
-	}
-	defer resp.Body.Close()
-
-	rawBody, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return result, err
-	}
-
-	if resp.StatusCode >= 200 && resp.StatusCode < 300 {
-		if err := json.Unmarshal(rawBody, &result); err != nil {
-			return result, err
-		}
-		return result, nil
-	}
-
-	// Parse error response
-	var errBody models.GoogleRPCStatus
-	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
-	return result, &ClientHttpError[models.GoogleRPCStatus]{
-		StatusCode: resp.StatusCode,
-		Body:       errBody,
-		RawBody:    rawBody,
-	}
-}
-
 // GetDomainSuggestJoin makes a GET request to /auth/v1/organizations/{org_id}/domain/suggest-join and returns the parsed response.
 // GetDomainSuggestJoin
 // On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
@@ -876,12 +843,12 @@ func (c *SimpleClient) GetDomainSuggestJoin(ctx context.Context, orgId string, p
 	}
 }
 
-// SetDomainSuggestJoin makes a PUT request to /auth/v1/organizations/{org_id}/domain/suggest-join and returns the parsed response.
-// SetDomainSuggestJoin
+// CheckDomainVerification makes a POST request to /auth/v1/organizations/{org_id}/domain/verify and returns the parsed response.
+// CheckDomainVerification
 // On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
-func (c *SimpleClient) SetDomainSuggestJoin(ctx context.Context, orgId string, body SetDomainSuggestJoinJSONRequestBody, reqEditors ...RequestEditorFn) (models.AuthV1SuggestJoinSetting, error) {
-	var result models.AuthV1SuggestJoinSetting
-	resp, err := c.Client.SetDomainSuggestJoin(ctx, orgId, body, reqEditors...)
+func (c *SimpleClient) CheckDomainVerification(ctx context.Context, orgId string, params *CheckDomainVerificationParams, reqEditors ...RequestEditorFn) (models.AuthV1DomainResponse, error) {
+	var result models.AuthV1DomainResponse
+	resp, err := c.Client.CheckDomainVerification(ctx, orgId, params, reqEditors...)
 	if err != nil {
 		return result, err
 	}
@@ -909,12 +876,45 @@ func (c *SimpleClient) SetDomainSuggestJoin(ctx context.Context, orgId string, b
 	}
 }
 
-// CheckDomainVerification makes a POST request to /auth/v1/organizations/{org_id}/domain/verify and returns the parsed response.
-// CheckDomainVerification
+// CreateDomainVerification makes a POST request to /auth/v1/organizations/{user.org_id}/domain and returns the parsed response.
+// CreateDomainVerification
 // On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
-func (c *SimpleClient) CheckDomainVerification(ctx context.Context, orgId string, params *CheckDomainVerificationParams, reqEditors ...RequestEditorFn) (models.AuthV1DomainResponse, error) {
+func (c *SimpleClient) CreateDomainVerification(ctx context.Context, userOrgId string, body CreateDomainVerificationJSONRequestBody, reqEditors ...RequestEditorFn) (models.AuthV1DomainResponse, error) {
 	var result models.AuthV1DomainResponse
-	resp, err := c.Client.CheckDomainVerification(ctx, orgId, params, reqEditors...)
+	resp, err := c.Client.CreateDomainVerification(ctx, userOrgId, body, reqEditors...)
+	if err != nil {
+		return result, err
+	}
+	defer resp.Body.Close()
+
+	rawBody, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return result, err
+	}
+
+	if resp.StatusCode >= 200 && resp.StatusCode < 300 {
+		if err := json.Unmarshal(rawBody, &result); err != nil {
+			return result, err
+		}
+		return result, nil
+	}
+
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
+		StatusCode: resp.StatusCode,
+		Body:       errBody,
+		RawBody:    rawBody,
+	}
+}
+
+// SetDomainSuggestJoin makes a PUT request to /auth/v1/organizations/{user.org_id}/domain/suggest-join and returns the parsed response.
+// SetDomainSuggestJoin
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
+func (c *SimpleClient) SetDomainSuggestJoin(ctx context.Context, userOrgId string, body SetDomainSuggestJoinJSONRequestBody, reqEditors ...RequestEditorFn) (models.AuthV1SuggestJoinSetting, error) {
+	var result models.AuthV1SuggestJoinSetting
+	resp, err := c.Client.SetDomainSuggestJoin(ctx, userOrgId, body, reqEditors...)
 	if err != nil {
 		return result, err
 	}

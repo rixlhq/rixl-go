@@ -116,9 +116,9 @@ func (c *Client) applyEditors(ctx context.Context, req *http.Request, additional
 type ClientInterface interface {
 	// GetNotificationPreferences makes a GET request to /auth/v1/notifications/{org_id}/preferences
 	GetNotificationPreferences(ctx context.Context, orgId string, params *GetNotificationPreferencesParams, reqEditors ...RequestEditorFn) (*http.Response, error)
-	// UpdateNotificationPreferenceWithBody makes a PATCH request to /auth/v1/notifications/{org_id}/preferences
-	UpdateNotificationPreferenceWithBody(ctx context.Context, orgId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
-	UpdateNotificationPreference(ctx context.Context, orgId string, body UpdateNotificationPreferenceJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// UpdateNotificationPreferenceWithBody makes a PATCH request to /auth/v1/notifications/{user.org_id}/preferences
+	UpdateNotificationPreferenceWithBody(ctx context.Context, userOrgId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+	UpdateNotificationPreference(ctx context.Context, userOrgId string, body UpdateNotificationPreferenceJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 }
 
 // GetNotificationPreferencesParams defines parameters for GetNotificationPreferences.
@@ -141,10 +141,10 @@ func (c *Client) GetNotificationPreferences(ctx context.Context, orgId string, p
 	return c.Client.Do(req)
 }
 
-// UpdateNotificationPreferenceWithBody makes a PATCH request to /auth/v1/notifications/{org_id}/preferences
+// UpdateNotificationPreferenceWithBody makes a PATCH request to /auth/v1/notifications/{user.org_id}/preferences
 // UpdateNotificationPreference
-func (c *Client) UpdateNotificationPreferenceWithBody(ctx context.Context, orgId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewUpdateNotificationPreferenceRequestWithBody(c.Server, orgId, contentType, body)
+func (c *Client) UpdateNotificationPreferenceWithBody(ctx context.Context, userOrgId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpdateNotificationPreferenceRequestWithBody(c.Server, userOrgId, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -155,9 +155,9 @@ func (c *Client) UpdateNotificationPreferenceWithBody(ctx context.Context, orgId
 	return c.Client.Do(req)
 }
 
-// UpdateNotificationPreference makes a PATCH request to /auth/v1/notifications/{org_id}/preferences with application/json body
-func (c *Client) UpdateNotificationPreference(ctx context.Context, orgId string, body UpdateNotificationPreferenceJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewUpdateNotificationPreferenceRequest(c.Server, orgId, body)
+// UpdateNotificationPreference makes a PATCH request to /auth/v1/notifications/{user.org_id}/preferences with application/json body
+func (c *Client) UpdateNotificationPreference(ctx context.Context, userOrgId string, body UpdateNotificationPreferenceJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpdateNotificationPreferenceRequest(c.Server, userOrgId, body)
 	if err != nil {
 		return nil, err
 	}
@@ -219,23 +219,23 @@ func NewGetNotificationPreferencesRequest(server string, orgId string, params *G
 	return req, nil
 }
 
-// NewUpdateNotificationPreferenceRequest creates a PATCH request for /auth/v1/notifications/{org_id}/preferences with application/json body
-func NewUpdateNotificationPreferenceRequest(server string, orgId string, body UpdateNotificationPreferenceJSONRequestBody) (*http.Request, error) {
+// NewUpdateNotificationPreferenceRequest creates a PATCH request for /auth/v1/notifications/{user.org_id}/preferences with application/json body
+func NewUpdateNotificationPreferenceRequest(server string, userOrgId string, body UpdateNotificationPreferenceJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return NewUpdateNotificationPreferenceRequestWithBody(server, orgId, "application/json", bodyReader)
+	return NewUpdateNotificationPreferenceRequestWithBody(server, userOrgId, "application/json", bodyReader)
 }
 
-// NewUpdateNotificationPreferenceRequestWithBody creates a PATCH request for /auth/v1/notifications/{org_id}/preferences with any body
-func NewUpdateNotificationPreferenceRequestWithBody(server string, orgId string, contentType string, body io.Reader) (*http.Request, error) {
+// NewUpdateNotificationPreferenceRequestWithBody creates a PATCH request for /auth/v1/notifications/{user.org_id}/preferences with any body
+func NewUpdateNotificationPreferenceRequestWithBody(server string, userOrgId string, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
-	pathParam0, err = oapiCodegenParamsPkg.StyleParameter("org_id", orgId, oapiCodegenParamsPkg.ParameterOptions{Style: "simple", ParamLocation: oapiCodegenParamsPkg.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", AllowReserved: false})
+	pathParam0, err = oapiCodegenParamsPkg.StyleParameter("user.org_id", userOrgId, oapiCodegenParamsPkg.ParameterOptions{Style: "simple", ParamLocation: oapiCodegenParamsPkg.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", AllowReserved: false})
 	if err != nil {
 		return nil, err
 	}
@@ -326,12 +326,12 @@ func (c *SimpleClient) GetNotificationPreferences(ctx context.Context, orgId str
 	}
 }
 
-// UpdateNotificationPreference makes a PATCH request to /auth/v1/notifications/{org_id}/preferences and returns the parsed response.
+// UpdateNotificationPreference makes a PATCH request to /auth/v1/notifications/{user.org_id}/preferences and returns the parsed response.
 // UpdateNotificationPreference
 // On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
-func (c *SimpleClient) UpdateNotificationPreference(ctx context.Context, orgId string, body UpdateNotificationPreferenceJSONRequestBody, reqEditors ...RequestEditorFn) (models.AuthV1NotificationPreference, error) {
+func (c *SimpleClient) UpdateNotificationPreference(ctx context.Context, userOrgId string, body UpdateNotificationPreferenceJSONRequestBody, reqEditors ...RequestEditorFn) (models.AuthV1NotificationPreference, error) {
 	var result models.AuthV1NotificationPreference
-	resp, err := c.Client.UpdateNotificationPreference(ctx, orgId, body, reqEditors...)
+	resp, err := c.Client.UpdateNotificationPreference(ctx, userOrgId, body, reqEditors...)
 	if err != nil {
 		return result, err
 	}
