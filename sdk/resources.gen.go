@@ -22,7 +22,9 @@ import (
 	"github.com/rixlhq/rixl-go/sdk/invoices"
 	"github.com/rixlhq/rixl-go/sdk/languages"
 	"github.com/rixlhq/rixl-go/sdk/memberships"
+	"github.com/rixlhq/rixl-go/sdk/notificationpreferences"
 	"github.com/rixlhq/rixl-go/sdk/onetimepasscodes"
+	"github.com/rixlhq/rixl-go/sdk/organizations"
 	"github.com/rixlhq/rixl-go/sdk/passkeys"
 	"github.com/rixlhq/rixl-go/sdk/payments"
 	"github.com/rixlhq/rixl-go/sdk/plans"
@@ -32,7 +34,7 @@ import (
 	"github.com/rixlhq/rixl-go/sdk/projects"
 	"github.com/rixlhq/rixl-go/sdk/realtime"
 	"github.com/rixlhq/rixl-go/sdk/sales"
-	"github.com/rixlhq/rixl-go/sdk/sessions"
+	"github.com/rixlhq/rixl-go/sdk/signins"
 	"github.com/rixlhq/rixl-go/sdk/socialproviders"
 	"github.com/rixlhq/rixl-go/sdk/subscriptions"
 	"github.com/rixlhq/rixl-go/sdk/subtitles"
@@ -48,46 +50,48 @@ import (
 // resources holds one typed client per OpenAPI tag. Client embeds it, so each
 // one is reachable as client.<Resource>.
 type resources struct {
-	AccessPolicies    *accesspolicies.SimpleClient
-	APIKeys           *apikeys.SimpleClient
-	AudioTracks       *audiotracks.SimpleClient
-	Blog              *blog.SimpleClient
-	Chapters          *chapters.SimpleClient
-	ClientCredentials *clientcredentials.SimpleClient
-	CustomDomains     *customdomains.SimpleClient
-	Dashboards        *dashboards.SimpleClient
-	Email             *email.SimpleClient
-	Events            *events.SimpleClient
-	FeedAnalytics     *feedanalytics.SimpleClient
-	Feeds             *feeds.SimpleClient
-	Funnels           *funnels.SimpleClient
-	Heatmaps          *heatmaps.SimpleClient
-	ImageAnalytics    *imageanalytics.SimpleClient
-	Images            *images.SimpleClient
-	Invoices          *invoices.SimpleClient
-	Languages         *languages.SimpleClient
-	Memberships       *memberships.SimpleClient
-	OneTimePasscodes  *onetimepasscodes.SimpleClient
-	Passkeys          *passkeys.SimpleClient
-	Payments          *payments.SimpleClient
-	Plans             *plans.SimpleClient
-	PlatformAuth      *platformauth.SimpleClient
-	PostAnalytics     *postanalytics.SimpleClient
-	Posts             *posts.SimpleClient
-	Projects          *projects.SimpleClient
-	Realtime          *realtime.SimpleClient
-	Sales             *sales.SimpleClient
-	Sessions          *sessions.SimpleClient
-	SocialProviders   *socialproviders.SimpleClient
-	Subscriptions     *subscriptions.SimpleClient
-	Subtitles         *subtitles.SimpleClient
-	SupportChat       *supportchat.SimpleClient
-	SupportTickets    *supporttickets.SimpleClient
-	Usage             *usage.SimpleClient
-	Users             *users.SimpleClient
-	VideoAnalytics    *videoanalytics.SimpleClient
-	Videos            *videos.SimpleClient
-	Webhooks          *webhooks.SimpleClient
+	AccessPolicies          *accesspolicies.SimpleClient
+	APIKeys                 *apikeys.SimpleClient
+	AudioTracks             *audiotracks.SimpleClient
+	Blog                    *blog.SimpleClient
+	Chapters                *chapters.SimpleClient
+	ClientCredentials       *clientcredentials.SimpleClient
+	CustomDomains           *customdomains.SimpleClient
+	Dashboards              *dashboards.SimpleClient
+	Email                   *email.SimpleClient
+	Events                  *events.SimpleClient
+	FeedAnalytics           *feedanalytics.SimpleClient
+	Feeds                   *feeds.SimpleClient
+	Funnels                 *funnels.SimpleClient
+	Heatmaps                *heatmaps.SimpleClient
+	ImageAnalytics          *imageanalytics.SimpleClient
+	Images                  *images.SimpleClient
+	Invoices                *invoices.SimpleClient
+	Languages               *languages.SimpleClient
+	Memberships             *memberships.SimpleClient
+	NotificationPreferences *notificationpreferences.SimpleClient
+	OneTimePasscodes        *onetimepasscodes.SimpleClient
+	Organizations           *organizations.SimpleClient
+	Passkeys                *passkeys.SimpleClient
+	Payments                *payments.SimpleClient
+	Plans                   *plans.SimpleClient
+	PlatformAuth            *platformauth.SimpleClient
+	PostAnalytics           *postanalytics.SimpleClient
+	Posts                   *posts.SimpleClient
+	Projects                *projects.SimpleClient
+	Realtime                *realtime.SimpleClient
+	Sales                   *sales.SimpleClient
+	SignIns                 *signins.SimpleClient
+	SocialProviders         *socialproviders.SimpleClient
+	Subscriptions           *subscriptions.SimpleClient
+	Subtitles               *subtitles.SimpleClient
+	SupportChat             *supportchat.SimpleClient
+	SupportTickets          *supporttickets.SimpleClient
+	Usage                   *usage.SimpleClient
+	Users                   *users.SimpleClient
+	VideoAnalytics          *videoanalytics.SimpleClient
+	Videos                  *videos.SimpleClient
+	Webhooks                *webhooks.SimpleClient
 }
 
 func newResources(cfg config) (*resources, error) {
@@ -325,6 +329,18 @@ func newResources(cfg config) (*resources, error) {
 		}
 	}
 	{
+		opts := make([]notificationpreferences.ClientOption, 0, len(cfg.editors)+1)
+		if cfg.httpClient != nil {
+			opts = append(opts, notificationpreferences.WithHTTPClient(cfg.httpClient))
+		}
+		for _, edit := range cfg.editors {
+			opts = append(opts, notificationpreferences.WithRequestEditorFn(edit))
+		}
+		if r.NotificationPreferences, err = notificationpreferences.NewSimpleClient(baseURL, opts...); err != nil {
+			return nil, err
+		}
+	}
+	{
 		opts := make([]onetimepasscodes.ClientOption, 0, len(cfg.editors)+1)
 		if cfg.httpClient != nil {
 			opts = append(opts, onetimepasscodes.WithHTTPClient(cfg.httpClient))
@@ -333,6 +349,18 @@ func newResources(cfg config) (*resources, error) {
 			opts = append(opts, onetimepasscodes.WithRequestEditorFn(edit))
 		}
 		if r.OneTimePasscodes, err = onetimepasscodes.NewSimpleClient(baseURL, opts...); err != nil {
+			return nil, err
+		}
+	}
+	{
+		opts := make([]organizations.ClientOption, 0, len(cfg.editors)+1)
+		if cfg.httpClient != nil {
+			opts = append(opts, organizations.WithHTTPClient(cfg.httpClient))
+		}
+		for _, edit := range cfg.editors {
+			opts = append(opts, organizations.WithRequestEditorFn(edit))
+		}
+		if r.Organizations, err = organizations.NewSimpleClient(baseURL, opts...); err != nil {
 			return nil, err
 		}
 	}
@@ -445,14 +473,14 @@ func newResources(cfg config) (*resources, error) {
 		}
 	}
 	{
-		opts := make([]sessions.ClientOption, 0, len(cfg.editors)+1)
+		opts := make([]signins.ClientOption, 0, len(cfg.editors)+1)
 		if cfg.httpClient != nil {
-			opts = append(opts, sessions.WithHTTPClient(cfg.httpClient))
+			opts = append(opts, signins.WithHTTPClient(cfg.httpClient))
 		}
 		for _, edit := range cfg.editors {
-			opts = append(opts, sessions.WithRequestEditorFn(edit))
+			opts = append(opts, signins.WithRequestEditorFn(edit))
 		}
-		if r.Sessions, err = sessions.NewSimpleClient(baseURL, opts...); err != nil {
+		if r.SignIns, err = signins.NewSimpleClient(baseURL, opts...); err != nil {
 			return nil, err
 		}
 	}

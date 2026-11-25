@@ -18,19 +18,13 @@ import (
 
 type RespondToMembershipApplicationJSONRequestBody = any
 
-type UpdateActiveMembershipJSONRequestBody = models.AuthV1UpdateActiveMembershipRequest
+type UpdateMemberJSONRequestBody = any
 
 type InviteMemberJSONRequestBody = any
 
 type ResendInvitationJSONRequestBody = any
 
-type UpdateMemberRoleJSONRequestBody = any
-
-type UpdateOrgNameJSONRequestBody = any
-
 type UpdateMembershipStateJSONRequestBody = any
-
-type UpdateOrgUsernameJSONRequestBody = any
 
 // RequestEditorFn is the function signature for the RequestEditor callback function.
 type RequestEditorFn func(ctx context.Context, req *http.Request) error
@@ -137,81 +131,40 @@ type ClientInterface interface {
 	// RespondToMembershipApplicationWithBody makes a PATCH request to /auth/v1/membership-applications/{org_id}/state
 	RespondToMembershipApplicationWithBody(ctx context.Context, orgId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 	RespondToMembershipApplication(ctx context.Context, orgId string, body RespondToMembershipApplicationJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
-	// ListMemberships makes a GET request to /auth/v1/memberships
-	ListMemberships(ctx context.Context, params *ListMembershipsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
-	// UpdateActiveMembershipWithBody makes a PATCH request to /auth/v1/memberships/active
-	UpdateActiveMembershipWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
-	UpdateActiveMembership(ctx context.Context, body UpdateActiveMembershipJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
-	// CheckMembership makes a GET request to /auth/v1/memberships/{org_id}/check
-	CheckMembership(ctx context.Context, orgId string, params *CheckMembershipParams, reqEditors ...RequestEditorFn) (*http.Response, error)
-	// GetInternalMembershipInfo makes a GET request to /auth/v1/memberships/{org_id}/info
-	GetInternalMembershipInfo(ctx context.Context, orgId string, params *GetInternalMembershipInfoParams, reqEditors ...RequestEditorFn) (*http.Response, error)
-	// LeaveOrganization makes a POST request to /auth/v1/memberships/{org_id}/leave
+	// LeaveOrganization makes a DELETE request to /auth/v1/organizations/{org_id}/members/current
 	LeaveOrganization(ctx context.Context, orgId string, params *LeaveOrganizationParams, reqEditors ...RequestEditorFn) (*http.Response, error)
-	// InviteMemberWithBody makes a POST request to /auth/v1/memberships/{user.org_id}/invite
+	// CheckCurrentMembership makes a GET request to /auth/v1/organizations/{org_id}/members/current/check
+	CheckCurrentMembership(ctx context.Context, orgId string, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// RemoveMember makes a DELETE request to /auth/v1/organizations/{org_id}/members/{user_id}
+	RemoveMember(ctx context.Context, orgId string, userId string, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// UpdateMemberWithBody makes a PATCH request to /auth/v1/organizations/{org_id}/members/{user_id}
+	UpdateMemberWithBody(ctx context.Context, orgId string, userId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+	UpdateMember(ctx context.Context, orgId string, userId string, body UpdateMemberJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// InviteMemberWithBody makes a POST request to /auth/v1/organizations/{user.org_id}/invite
 	InviteMemberWithBody(ctx context.Context, userOrgId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 	InviteMember(ctx context.Context, userOrgId string, body InviteMemberJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
-	// ResendInvitationWithBody makes a POST request to /auth/v1/memberships/{user.org_id}/invite/resend
+	// ResendInvitationWithBody makes a POST request to /auth/v1/organizations/{user.org_id}/invite/resend
 	ResendInvitationWithBody(ctx context.Context, userOrgId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 	ResendInvitation(ctx context.Context, userOrgId string, body ResendInvitationJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
-	// CancelInvitation makes a DELETE request to /auth/v1/memberships/{user.org_id}/invite/{user_id}
+	// CancelInvitation makes a DELETE request to /auth/v1/organizations/{user.org_id}/invite/{user_id}
 	CancelInvitation(ctx context.Context, userOrgId string, userId string, params *CancelInvitationParams, reqEditors ...RequestEditorFn) (*http.Response, error)
-	// ListOrganizationMembers makes a GET request to /auth/v1/memberships/{user.org_id}/members
+	// ListOrganizationMembers makes a GET request to /auth/v1/organizations/{user.org_id}/members
 	ListOrganizationMembers(ctx context.Context, userOrgId string, params *ListOrganizationMembersParams, reqEditors ...RequestEditorFn) (*http.Response, error)
-	// RemoveMember makes a DELETE request to /auth/v1/memberships/{user.org_id}/members/{user_id}
-	RemoveMember(ctx context.Context, userOrgId string, userId string, params *RemoveMemberParams, reqEditors ...RequestEditorFn) (*http.Response, error)
-	// ReactivateMember makes a PATCH request to /auth/v1/memberships/{user.org_id}/members/{user_id}/reactivate
-	ReactivateMember(ctx context.Context, userOrgId string, userId string, params *ReactivateMemberParams, reqEditors ...RequestEditorFn) (*http.Response, error)
-	// UpdateMemberRoleWithBody makes a PATCH request to /auth/v1/memberships/{user.org_id}/members/{user_id}/role
-	UpdateMemberRoleWithBody(ctx context.Context, userOrgId string, userId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
-	UpdateMemberRole(ctx context.Context, userOrgId string, userId string, body UpdateMemberRoleJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
-	// SuspendMember makes a PATCH request to /auth/v1/memberships/{user.org_id}/members/{user_id}/suspend
-	SuspendMember(ctx context.Context, userOrgId string, userId string, params *SuspendMemberParams, reqEditors ...RequestEditorFn) (*http.Response, error)
-	// UpdateOrgNameWithBody makes a PATCH request to /auth/v1/memberships/{user.org_id}/name
-	UpdateOrgNameWithBody(ctx context.Context, userOrgId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
-	UpdateOrgName(ctx context.Context, userOrgId string, body UpdateOrgNameJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
-	// UpdateMembershipStateWithBody makes a PATCH request to /auth/v1/memberships/{user.org_id}/state
-	UpdateMembershipStateWithBody(ctx context.Context, userOrgId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
-	UpdateMembershipState(ctx context.Context, userOrgId string, body UpdateMembershipStateJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
-	// UpdateOrgUsernameWithBody makes a PATCH request to /auth/v1/memberships/{user.org_id}/username
-	UpdateOrgUsernameWithBody(ctx context.Context, userOrgId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
-	UpdateOrgUsername(ctx context.Context, userOrgId string, body UpdateOrgUsernameJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// UpdateMembershipStateWithBody makes a PATCH request to /auth/v1/organizations/{user.org_id}/membership-applications/{user_id}
+	UpdateMembershipStateWithBody(ctx context.Context, userOrgId string, userId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+	UpdateMembershipState(ctx context.Context, userOrgId string, userId string, body UpdateMembershipStateJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// ListMemberships makes a GET request to /auth/v1/users/current/memberships
+	ListMemberships(ctx context.Context, params *ListMembershipsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 }
 
 // ListMembershipApplicationsParams defines parameters for ListMembershipApplications.
 type ListMembershipApplicationsParams struct {
-	// user.user_id (optional)
-	UserUserId *string `form:"user.user_id" json:"user.user_id"`
 	// limit (optional)
 	Limit *int32 `form:"limit" json:"limit"`
 	// offset (optional)
 	Offset *int32 `form:"offset" json:"offset"`
 	// state (optional)
 	State *AuthV1MembershipApplicationState `form:"state" json:"state"`
-}
-
-// ListMembershipsParams defines parameters for ListMemberships.
-type ListMembershipsParams struct {
-	// user.user_id (optional)
-	UserUserId *string `form:"user.user_id" json:"user.user_id"`
-	// limit (optional)
-	Limit *int32 `form:"limit" json:"limit"`
-	// offset (optional)
-	Offset *int32 `form:"offset" json:"offset"`
-	// state (optional)
-	State *AuthV1MembershipState `form:"state" json:"state"`
-}
-
-// CheckMembershipParams defines parameters for CheckMembership.
-type CheckMembershipParams struct {
-	// user_id (optional)
-	UserId *string `form:"user_id" json:"user_id"`
-}
-
-// GetInternalMembershipInfoParams defines parameters for GetInternalMembershipInfo.
-type GetInternalMembershipInfoParams struct {
-	// user_id (optional)
-	UserId *string `form:"user_id" json:"user_id"`
 }
 
 // LeaveOrganizationParams defines parameters for LeaveOrganization.
@@ -236,22 +189,14 @@ type ListOrganizationMembersParams struct {
 	Offset *int32 `form:"offset" json:"offset"`
 }
 
-// RemoveMemberParams defines parameters for RemoveMember.
-type RemoveMemberParams struct {
-	// user.actor_id (optional)
-	UserActorId *string `form:"user.actor_id" json:"user.actor_id"`
-}
-
-// ReactivateMemberParams defines parameters for ReactivateMember.
-type ReactivateMemberParams struct {
-	// user.actor_id (optional)
-	UserActorId *string `form:"user.actor_id" json:"user.actor_id"`
-}
-
-// SuspendMemberParams defines parameters for SuspendMember.
-type SuspendMemberParams struct {
-	// user.actor_id (optional)
-	UserActorId *string `form:"user.actor_id" json:"user.actor_id"`
+// ListMembershipsParams defines parameters for ListMemberships.
+type ListMembershipsParams struct {
+	// limit (optional)
+	Limit *int32 `form:"limit" json:"limit"`
+	// offset (optional)
+	Offset *int32 `form:"offset" json:"offset"`
+	// state (optional)
+	State *AuthV1MembershipState `form:"state" json:"state"`
 }
 
 // AcceptInvitation makes a POST request to /auth/v1/invitations/{token}/accept
@@ -323,76 +268,7 @@ func (c *Client) RespondToMembershipApplication(ctx context.Context, orgId strin
 	return c.Client.Do(req)
 }
 
-// ListMemberships makes a GET request to /auth/v1/memberships
-// ListMemberships
-func (c *Client) ListMemberships(ctx context.Context, params *ListMembershipsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewListMembershipsRequest(c.Server, params)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-// UpdateActiveMembershipWithBody makes a PATCH request to /auth/v1/memberships/active
-// UpdateActiveMembership
-func (c *Client) UpdateActiveMembershipWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewUpdateActiveMembershipRequestWithBody(c.Server, contentType, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-// UpdateActiveMembership makes a PATCH request to /auth/v1/memberships/active with application/json body
-func (c *Client) UpdateActiveMembership(ctx context.Context, body UpdateActiveMembershipJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewUpdateActiveMembershipRequest(c.Server, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-// CheckMembership makes a GET request to /auth/v1/memberships/{org_id}/check
-// CheckMembership
-func (c *Client) CheckMembership(ctx context.Context, orgId string, params *CheckMembershipParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewCheckMembershipRequest(c.Server, orgId, params)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-// GetInternalMembershipInfo makes a GET request to /auth/v1/memberships/{org_id}/info
-// GetInternalMembershipInfo
-func (c *Client) GetInternalMembershipInfo(ctx context.Context, orgId string, params *GetInternalMembershipInfoParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewGetInternalMembershipInfoRequest(c.Server, orgId, params)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-// LeaveOrganization makes a POST request to /auth/v1/memberships/{org_id}/leave
+// LeaveOrganization makes a DELETE request to /auth/v1/organizations/{org_id}/members/current
 // LeaveOrganization
 func (c *Client) LeaveOrganization(ctx context.Context, orgId string, params *LeaveOrganizationParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewLeaveOrganizationRequest(c.Server, orgId, params)
@@ -406,7 +282,62 @@ func (c *Client) LeaveOrganization(ctx context.Context, orgId string, params *Le
 	return c.Client.Do(req)
 }
 
-// InviteMemberWithBody makes a POST request to /auth/v1/memberships/{user.org_id}/invite
+// CheckCurrentMembership makes a GET request to /auth/v1/organizations/{org_id}/members/current/check
+// CheckCurrentMembership
+func (c *Client) CheckCurrentMembership(ctx context.Context, orgId string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCheckCurrentMembershipRequest(c.Server, orgId)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// RemoveMember makes a DELETE request to /auth/v1/organizations/{org_id}/members/{user_id}
+// RemoveMember
+func (c *Client) RemoveMember(ctx context.Context, orgId string, userId string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewRemoveMemberRequest(c.Server, orgId, userId)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// UpdateMemberWithBody makes a PATCH request to /auth/v1/organizations/{org_id}/members/{user_id}
+// UpdateMember
+func (c *Client) UpdateMemberWithBody(ctx context.Context, orgId string, userId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpdateMemberRequestWithBody(c.Server, orgId, userId, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// UpdateMember makes a PATCH request to /auth/v1/organizations/{org_id}/members/{user_id} with application/json body
+func (c *Client) UpdateMember(ctx context.Context, orgId string, userId string, body UpdateMemberJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpdateMemberRequest(c.Server, orgId, userId, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// InviteMemberWithBody makes a POST request to /auth/v1/organizations/{user.org_id}/invite
 // InviteMember
 func (c *Client) InviteMemberWithBody(ctx context.Context, userOrgId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewInviteMemberRequestWithBody(c.Server, userOrgId, contentType, body)
@@ -420,7 +351,7 @@ func (c *Client) InviteMemberWithBody(ctx context.Context, userOrgId string, con
 	return c.Client.Do(req)
 }
 
-// InviteMember makes a POST request to /auth/v1/memberships/{user.org_id}/invite with application/json body
+// InviteMember makes a POST request to /auth/v1/organizations/{user.org_id}/invite with application/json body
 func (c *Client) InviteMember(ctx context.Context, userOrgId string, body InviteMemberJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewInviteMemberRequest(c.Server, userOrgId, body)
 	if err != nil {
@@ -433,7 +364,7 @@ func (c *Client) InviteMember(ctx context.Context, userOrgId string, body Invite
 	return c.Client.Do(req)
 }
 
-// ResendInvitationWithBody makes a POST request to /auth/v1/memberships/{user.org_id}/invite/resend
+// ResendInvitationWithBody makes a POST request to /auth/v1/organizations/{user.org_id}/invite/resend
 // ResendInvitation
 func (c *Client) ResendInvitationWithBody(ctx context.Context, userOrgId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewResendInvitationRequestWithBody(c.Server, userOrgId, contentType, body)
@@ -447,7 +378,7 @@ func (c *Client) ResendInvitationWithBody(ctx context.Context, userOrgId string,
 	return c.Client.Do(req)
 }
 
-// ResendInvitation makes a POST request to /auth/v1/memberships/{user.org_id}/invite/resend with application/json body
+// ResendInvitation makes a POST request to /auth/v1/organizations/{user.org_id}/invite/resend with application/json body
 func (c *Client) ResendInvitation(ctx context.Context, userOrgId string, body ResendInvitationJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewResendInvitationRequest(c.Server, userOrgId, body)
 	if err != nil {
@@ -460,7 +391,7 @@ func (c *Client) ResendInvitation(ctx context.Context, userOrgId string, body Re
 	return c.Client.Do(req)
 }
 
-// CancelInvitation makes a DELETE request to /auth/v1/memberships/{user.org_id}/invite/{user_id}
+// CancelInvitation makes a DELETE request to /auth/v1/organizations/{user.org_id}/invite/{user_id}
 // CancelInvitation
 func (c *Client) CancelInvitation(ctx context.Context, userOrgId string, userId string, params *CancelInvitationParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewCancelInvitationRequest(c.Server, userOrgId, userId, params)
@@ -474,7 +405,7 @@ func (c *Client) CancelInvitation(ctx context.Context, userOrgId string, userId 
 	return c.Client.Do(req)
 }
 
-// ListOrganizationMembers makes a GET request to /auth/v1/memberships/{user.org_id}/members
+// ListOrganizationMembers makes a GET request to /auth/v1/organizations/{user.org_id}/members
 // ListOrganizationMembers
 func (c *Client) ListOrganizationMembers(ctx context.Context, userOrgId string, params *ListOrganizationMembersParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewListOrganizationMembersRequest(c.Server, userOrgId, params)
@@ -488,106 +419,10 @@ func (c *Client) ListOrganizationMembers(ctx context.Context, userOrgId string, 
 	return c.Client.Do(req)
 }
 
-// RemoveMember makes a DELETE request to /auth/v1/memberships/{user.org_id}/members/{user_id}
-// RemoveMember
-func (c *Client) RemoveMember(ctx context.Context, userOrgId string, userId string, params *RemoveMemberParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewRemoveMemberRequest(c.Server, userOrgId, userId, params)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-// ReactivateMember makes a PATCH request to /auth/v1/memberships/{user.org_id}/members/{user_id}/reactivate
-// ReactivateMember
-func (c *Client) ReactivateMember(ctx context.Context, userOrgId string, userId string, params *ReactivateMemberParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewReactivateMemberRequest(c.Server, userOrgId, userId, params)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-// UpdateMemberRoleWithBody makes a PATCH request to /auth/v1/memberships/{user.org_id}/members/{user_id}/role
-// UpdateMemberRole
-func (c *Client) UpdateMemberRoleWithBody(ctx context.Context, userOrgId string, userId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewUpdateMemberRoleRequestWithBody(c.Server, userOrgId, userId, contentType, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-// UpdateMemberRole makes a PATCH request to /auth/v1/memberships/{user.org_id}/members/{user_id}/role with application/json body
-func (c *Client) UpdateMemberRole(ctx context.Context, userOrgId string, userId string, body UpdateMemberRoleJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewUpdateMemberRoleRequest(c.Server, userOrgId, userId, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-// SuspendMember makes a PATCH request to /auth/v1/memberships/{user.org_id}/members/{user_id}/suspend
-// SuspendMember
-func (c *Client) SuspendMember(ctx context.Context, userOrgId string, userId string, params *SuspendMemberParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewSuspendMemberRequest(c.Server, userOrgId, userId, params)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-// UpdateOrgNameWithBody makes a PATCH request to /auth/v1/memberships/{user.org_id}/name
-// UpdateOrgName
-func (c *Client) UpdateOrgNameWithBody(ctx context.Context, userOrgId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewUpdateOrgNameRequestWithBody(c.Server, userOrgId, contentType, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-// UpdateOrgName makes a PATCH request to /auth/v1/memberships/{user.org_id}/name with application/json body
-func (c *Client) UpdateOrgName(ctx context.Context, userOrgId string, body UpdateOrgNameJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewUpdateOrgNameRequest(c.Server, userOrgId, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-// UpdateMembershipStateWithBody makes a PATCH request to /auth/v1/memberships/{user.org_id}/state
+// UpdateMembershipStateWithBody makes a PATCH request to /auth/v1/organizations/{user.org_id}/membership-applications/{user_id}
 // UpdateMembershipState
-func (c *Client) UpdateMembershipStateWithBody(ctx context.Context, userOrgId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewUpdateMembershipStateRequestWithBody(c.Server, userOrgId, contentType, body)
+func (c *Client) UpdateMembershipStateWithBody(ctx context.Context, userOrgId string, userId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpdateMembershipStateRequestWithBody(c.Server, userOrgId, userId, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -598,9 +433,9 @@ func (c *Client) UpdateMembershipStateWithBody(ctx context.Context, userOrgId st
 	return c.Client.Do(req)
 }
 
-// UpdateMembershipState makes a PATCH request to /auth/v1/memberships/{user.org_id}/state with application/json body
-func (c *Client) UpdateMembershipState(ctx context.Context, userOrgId string, body UpdateMembershipStateJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewUpdateMembershipStateRequest(c.Server, userOrgId, body)
+// UpdateMembershipState makes a PATCH request to /auth/v1/organizations/{user.org_id}/membership-applications/{user_id} with application/json body
+func (c *Client) UpdateMembershipState(ctx context.Context, userOrgId string, userId string, body UpdateMembershipStateJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpdateMembershipStateRequest(c.Server, userOrgId, userId, body)
 	if err != nil {
 		return nil, err
 	}
@@ -611,23 +446,10 @@ func (c *Client) UpdateMembershipState(ctx context.Context, userOrgId string, bo
 	return c.Client.Do(req)
 }
 
-// UpdateOrgUsernameWithBody makes a PATCH request to /auth/v1/memberships/{user.org_id}/username
-// UpdateOrgUsername
-func (c *Client) UpdateOrgUsernameWithBody(ctx context.Context, userOrgId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewUpdateOrgUsernameRequestWithBody(c.Server, userOrgId, contentType, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-// UpdateOrgUsername makes a PATCH request to /auth/v1/memberships/{user.org_id}/username with application/json body
-func (c *Client) UpdateOrgUsername(ctx context.Context, userOrgId string, body UpdateOrgUsernameJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewUpdateOrgUsernameRequest(c.Server, userOrgId, body)
+// ListMemberships makes a GET request to /auth/v1/users/current/memberships
+// ListMemberships
+func (c *Client) ListMemberships(ctx context.Context, params *ListMembershipsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListMembershipsRequest(c.Server, params)
 	if err != nil {
 		return nil, err
 	}
@@ -725,19 +547,6 @@ func NewListMembershipApplicationsRequest(server string, params *ListMembershipA
 
 	if params != nil {
 		queryValues := reqURL.Query()
-		if params.UserUserId != nil {
-			if queryFrag, err := oapiCodegenParamsPkg.StyleParameter("user.user_id", *params.UserUserId, oapiCodegenParamsPkg.ParameterOptions{Style: "form", ParamLocation: oapiCodegenParamsPkg.ParamLocationQuery, Explode: true, Required: false, Type: "string", Format: "", AllowReserved: false}); err != nil {
-				return nil, err
-			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-				return nil, err
-			} else {
-				for k, v := range parsed {
-					for _, v2 := range v {
-						queryValues.Add(k, v2)
-					}
-				}
-			}
-		}
 		if params.Limit != nil {
 			if queryFrag, err := oapiCodegenParamsPkg.StyleParameter("limit", *params.Limit, oapiCodegenParamsPkg.ParameterOptions{Style: "form", ParamLocation: oapiCodegenParamsPkg.ParamLocationQuery, Explode: true, Required: false, Type: "integer", Format: "int32", AllowReserved: false}); err != nil {
 				return nil, err
@@ -834,16 +643,346 @@ func NewRespondToMembershipApplicationRequestWithBody(server string, orgId strin
 	return req, nil
 }
 
-// NewListMembershipsRequest creates a GET request for /auth/v1/memberships
-func NewListMembershipsRequest(server string, params *ListMembershipsParams) (*http.Request, error) {
+// NewLeaveOrganizationRequest creates a DELETE request for /auth/v1/organizations/{org_id}/members/current
+func NewLeaveOrganizationRequest(server string, orgId string, params *LeaveOrganizationParams) (*http.Request, error) {
 	var err error
+
+	var pathParam0 string
+	pathParam0, err = oapiCodegenParamsPkg.StyleParameter("org_id", orgId, oapiCodegenParamsPkg.ParameterOptions{Style: "simple", ParamLocation: oapiCodegenParamsPkg.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", AllowReserved: false})
+	if err != nil {
+		return nil, err
+	}
 
 	serverURL, err := url.Parse(server)
 	if err != nil {
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/auth/v1/memberships")
+	operationPath := fmt.Sprintf("/auth/v1/organizations/%s/members/current", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	reqURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		queryValues := reqURL.Query()
+		if params.UserId != nil {
+			if queryFrag, err := oapiCodegenParamsPkg.StyleParameter("user_id", *params.UserId, oapiCodegenParamsPkg.ParameterOptions{Style: "form", ParamLocation: oapiCodegenParamsPkg.ParamLocationQuery, Explode: true, Required: false, Type: "string", Format: "", AllowReserved: false}); err != nil {
+				return nil, err
+			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+				return nil, err
+			} else {
+				for k, v := range parsed {
+					for _, v2 := range v {
+						queryValues.Add(k, v2)
+					}
+				}
+			}
+		}
+		reqURL.RawQuery = queryValues.Encode()
+	}
+
+	req, err := http.NewRequest("DELETE", reqURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewCheckCurrentMembershipRequest creates a GET request for /auth/v1/organizations/{org_id}/members/current/check
+func NewCheckCurrentMembershipRequest(server string, orgId string) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+	pathParam0, err = oapiCodegenParamsPkg.StyleParameter("org_id", orgId, oapiCodegenParamsPkg.ParameterOptions{Style: "simple", ParamLocation: oapiCodegenParamsPkg.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", AllowReserved: false})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/auth/v1/organizations/%s/members/current/check", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	reqURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", reqURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewRemoveMemberRequest creates a DELETE request for /auth/v1/organizations/{org_id}/members/{user_id}
+func NewRemoveMemberRequest(server string, orgId string, userId string) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+	pathParam0, err = oapiCodegenParamsPkg.StyleParameter("org_id", orgId, oapiCodegenParamsPkg.ParameterOptions{Style: "simple", ParamLocation: oapiCodegenParamsPkg.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", AllowReserved: false})
+	if err != nil {
+		return nil, err
+	}
+
+	var pathParam1 string
+	pathParam1, err = oapiCodegenParamsPkg.StyleParameter("user_id", userId, oapiCodegenParamsPkg.ParameterOptions{Style: "simple", ParamLocation: oapiCodegenParamsPkg.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", AllowReserved: false})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/auth/v1/organizations/%s/members/%s", pathParam0, pathParam1)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	reqURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("DELETE", reqURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewUpdateMemberRequest creates a PATCH request for /auth/v1/organizations/{org_id}/members/{user_id} with application/json body
+func NewUpdateMemberRequest(server string, orgId string, userId string, body UpdateMemberJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewUpdateMemberRequestWithBody(server, orgId, userId, "application/json", bodyReader)
+}
+
+// NewUpdateMemberRequestWithBody creates a PATCH request for /auth/v1/organizations/{org_id}/members/{user_id} with any body
+func NewUpdateMemberRequestWithBody(server string, orgId string, userId string, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+	pathParam0, err = oapiCodegenParamsPkg.StyleParameter("org_id", orgId, oapiCodegenParamsPkg.ParameterOptions{Style: "simple", ParamLocation: oapiCodegenParamsPkg.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", AllowReserved: false})
+	if err != nil {
+		return nil, err
+	}
+
+	var pathParam1 string
+	pathParam1, err = oapiCodegenParamsPkg.StyleParameter("user_id", userId, oapiCodegenParamsPkg.ParameterOptions{Style: "simple", ParamLocation: oapiCodegenParamsPkg.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", AllowReserved: false})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/auth/v1/organizations/%s/members/%s", pathParam0, pathParam1)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	reqURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("PATCH", reqURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
+// NewInviteMemberRequest creates a POST request for /auth/v1/organizations/{user.org_id}/invite with application/json body
+func NewInviteMemberRequest(server string, userOrgId string, body InviteMemberJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewInviteMemberRequestWithBody(server, userOrgId, "application/json", bodyReader)
+}
+
+// NewInviteMemberRequestWithBody creates a POST request for /auth/v1/organizations/{user.org_id}/invite with any body
+func NewInviteMemberRequestWithBody(server string, userOrgId string, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+	pathParam0, err = oapiCodegenParamsPkg.StyleParameter("user.org_id", userOrgId, oapiCodegenParamsPkg.ParameterOptions{Style: "simple", ParamLocation: oapiCodegenParamsPkg.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", AllowReserved: false})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/auth/v1/organizations/%s/invite", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	reqURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("POST", reqURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
+// NewResendInvitationRequest creates a POST request for /auth/v1/organizations/{user.org_id}/invite/resend with application/json body
+func NewResendInvitationRequest(server string, userOrgId string, body ResendInvitationJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewResendInvitationRequestWithBody(server, userOrgId, "application/json", bodyReader)
+}
+
+// NewResendInvitationRequestWithBody creates a POST request for /auth/v1/organizations/{user.org_id}/invite/resend with any body
+func NewResendInvitationRequestWithBody(server string, userOrgId string, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+	pathParam0, err = oapiCodegenParamsPkg.StyleParameter("user.org_id", userOrgId, oapiCodegenParamsPkg.ParameterOptions{Style: "simple", ParamLocation: oapiCodegenParamsPkg.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", AllowReserved: false})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/auth/v1/organizations/%s/invite/resend", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	reqURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("POST", reqURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
+// NewCancelInvitationRequest creates a DELETE request for /auth/v1/organizations/{user.org_id}/invite/{user_id}
+func NewCancelInvitationRequest(server string, userOrgId string, userId string, params *CancelInvitationParams) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+	pathParam0, err = oapiCodegenParamsPkg.StyleParameter("user.org_id", userOrgId, oapiCodegenParamsPkg.ParameterOptions{Style: "simple", ParamLocation: oapiCodegenParamsPkg.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", AllowReserved: false})
+	if err != nil {
+		return nil, err
+	}
+
+	var pathParam1 string
+	pathParam1, err = oapiCodegenParamsPkg.StyleParameter("user_id", userId, oapiCodegenParamsPkg.ParameterOptions{Style: "simple", ParamLocation: oapiCodegenParamsPkg.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", AllowReserved: false})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/auth/v1/organizations/%s/invite/%s", pathParam0, pathParam1)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	reqURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		queryValues := reqURL.Query()
+		if params.UserActorId != nil {
+			if queryFrag, err := oapiCodegenParamsPkg.StyleParameter("user.actor_id", *params.UserActorId, oapiCodegenParamsPkg.ParameterOptions{Style: "form", ParamLocation: oapiCodegenParamsPkg.ParamLocationQuery, Explode: true, Required: false, Type: "string", Format: "", AllowReserved: false}); err != nil {
+				return nil, err
+			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+				return nil, err
+			} else {
+				for k, v := range parsed {
+					for _, v2 := range v {
+						queryValues.Add(k, v2)
+					}
+				}
+			}
+		}
+		reqURL.RawQuery = queryValues.Encode()
+	}
+
+	req, err := http.NewRequest("DELETE", reqURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewListOrganizationMembersRequest creates a GET request for /auth/v1/organizations/{user.org_id}/members
+func NewListOrganizationMembersRequest(server string, userOrgId string, params *ListOrganizationMembersParams) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+	pathParam0, err = oapiCodegenParamsPkg.StyleParameter("user.org_id", userOrgId, oapiCodegenParamsPkg.ParameterOptions{Style: "simple", ParamLocation: oapiCodegenParamsPkg.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", AllowReserved: false})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/auth/v1/organizations/%s/members", pathParam0)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
@@ -868,6 +1007,116 @@ func NewListMembershipsRequest(server string, params *ListMembershipsParams) (*h
 				}
 			}
 		}
+		if params.Limit != nil {
+			if queryFrag, err := oapiCodegenParamsPkg.StyleParameter("limit", *params.Limit, oapiCodegenParamsPkg.ParameterOptions{Style: "form", ParamLocation: oapiCodegenParamsPkg.ParamLocationQuery, Explode: true, Required: false, Type: "integer", Format: "int32", AllowReserved: false}); err != nil {
+				return nil, err
+			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+				return nil, err
+			} else {
+				for k, v := range parsed {
+					for _, v2 := range v {
+						queryValues.Add(k, v2)
+					}
+				}
+			}
+		}
+		if params.Offset != nil {
+			if queryFrag, err := oapiCodegenParamsPkg.StyleParameter("offset", *params.Offset, oapiCodegenParamsPkg.ParameterOptions{Style: "form", ParamLocation: oapiCodegenParamsPkg.ParamLocationQuery, Explode: true, Required: false, Type: "integer", Format: "int32", AllowReserved: false}); err != nil {
+				return nil, err
+			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+				return nil, err
+			} else {
+				for k, v := range parsed {
+					for _, v2 := range v {
+						queryValues.Add(k, v2)
+					}
+				}
+			}
+		}
+		reqURL.RawQuery = queryValues.Encode()
+	}
+
+	req, err := http.NewRequest("GET", reqURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewUpdateMembershipStateRequest creates a PATCH request for /auth/v1/organizations/{user.org_id}/membership-applications/{user_id} with application/json body
+func NewUpdateMembershipStateRequest(server string, userOrgId string, userId string, body UpdateMembershipStateJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewUpdateMembershipStateRequestWithBody(server, userOrgId, userId, "application/json", bodyReader)
+}
+
+// NewUpdateMembershipStateRequestWithBody creates a PATCH request for /auth/v1/organizations/{user.org_id}/membership-applications/{user_id} with any body
+func NewUpdateMembershipStateRequestWithBody(server string, userOrgId string, userId string, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+	pathParam0, err = oapiCodegenParamsPkg.StyleParameter("user.org_id", userOrgId, oapiCodegenParamsPkg.ParameterOptions{Style: "simple", ParamLocation: oapiCodegenParamsPkg.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", AllowReserved: false})
+	if err != nil {
+		return nil, err
+	}
+
+	var pathParam1 string
+	pathParam1, err = oapiCodegenParamsPkg.StyleParameter("user_id", userId, oapiCodegenParamsPkg.ParameterOptions{Style: "simple", ParamLocation: oapiCodegenParamsPkg.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", AllowReserved: false})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/auth/v1/organizations/%s/membership-applications/%s", pathParam0, pathParam1)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	reqURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("PATCH", reqURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
+// NewListMembershipsRequest creates a GET request for /auth/v1/users/current/memberships
+func NewListMembershipsRequest(server string, params *ListMembershipsParams) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/auth/v1/users/current/memberships")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	reqURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		queryValues := reqURL.Query()
 		if params.Limit != nil {
 			if queryFrag, err := oapiCodegenParamsPkg.StyleParameter("limit", *params.Limit, oapiCodegenParamsPkg.ParameterOptions{Style: "form", ParamLocation: oapiCodegenParamsPkg.ParamLocationQuery, Explode: true, Required: false, Type: "integer", Format: "int32", AllowReserved: false}); err != nil {
 				return nil, err
@@ -914,786 +1163,6 @@ func NewListMembershipsRequest(server string, params *ListMembershipsParams) (*h
 	if err != nil {
 		return nil, err
 	}
-
-	return req, nil
-}
-
-// NewUpdateActiveMembershipRequest creates a PATCH request for /auth/v1/memberships/active with application/json body
-func NewUpdateActiveMembershipRequest(server string, body UpdateActiveMembershipJSONRequestBody) (*http.Request, error) {
-	var bodyReader io.Reader
-	buf, err := json.Marshal(body)
-	if err != nil {
-		return nil, err
-	}
-	bodyReader = bytes.NewReader(buf)
-	return NewUpdateActiveMembershipRequestWithBody(server, "application/json", bodyReader)
-}
-
-// NewUpdateActiveMembershipRequestWithBody creates a PATCH request for /auth/v1/memberships/active with any body
-func NewUpdateActiveMembershipRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
-	var err error
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/auth/v1/memberships/active")
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	reqURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest("PATCH", reqURL.String(), body)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Add("Content-Type", contentType)
-
-	return req, nil
-}
-
-// NewCheckMembershipRequest creates a GET request for /auth/v1/memberships/{org_id}/check
-func NewCheckMembershipRequest(server string, orgId string, params *CheckMembershipParams) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-	pathParam0, err = oapiCodegenParamsPkg.StyleParameter("org_id", orgId, oapiCodegenParamsPkg.ParameterOptions{Style: "simple", ParamLocation: oapiCodegenParamsPkg.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", AllowReserved: false})
-	if err != nil {
-		return nil, err
-	}
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/auth/v1/memberships/%s/check", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	reqURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	if params != nil {
-		queryValues := reqURL.Query()
-		if params.UserId != nil {
-			if queryFrag, err := oapiCodegenParamsPkg.StyleParameter("user_id", *params.UserId, oapiCodegenParamsPkg.ParameterOptions{Style: "form", ParamLocation: oapiCodegenParamsPkg.ParamLocationQuery, Explode: true, Required: false, Type: "string", Format: "", AllowReserved: false}); err != nil {
-				return nil, err
-			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-				return nil, err
-			} else {
-				for k, v := range parsed {
-					for _, v2 := range v {
-						queryValues.Add(k, v2)
-					}
-				}
-			}
-		}
-		reqURL.RawQuery = queryValues.Encode()
-	}
-
-	req, err := http.NewRequest("GET", reqURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return req, nil
-}
-
-// NewGetInternalMembershipInfoRequest creates a GET request for /auth/v1/memberships/{org_id}/info
-func NewGetInternalMembershipInfoRequest(server string, orgId string, params *GetInternalMembershipInfoParams) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-	pathParam0, err = oapiCodegenParamsPkg.StyleParameter("org_id", orgId, oapiCodegenParamsPkg.ParameterOptions{Style: "simple", ParamLocation: oapiCodegenParamsPkg.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", AllowReserved: false})
-	if err != nil {
-		return nil, err
-	}
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/auth/v1/memberships/%s/info", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	reqURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	if params != nil {
-		queryValues := reqURL.Query()
-		if params.UserId != nil {
-			if queryFrag, err := oapiCodegenParamsPkg.StyleParameter("user_id", *params.UserId, oapiCodegenParamsPkg.ParameterOptions{Style: "form", ParamLocation: oapiCodegenParamsPkg.ParamLocationQuery, Explode: true, Required: false, Type: "string", Format: "", AllowReserved: false}); err != nil {
-				return nil, err
-			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-				return nil, err
-			} else {
-				for k, v := range parsed {
-					for _, v2 := range v {
-						queryValues.Add(k, v2)
-					}
-				}
-			}
-		}
-		reqURL.RawQuery = queryValues.Encode()
-	}
-
-	req, err := http.NewRequest("GET", reqURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return req, nil
-}
-
-// NewLeaveOrganizationRequest creates a POST request for /auth/v1/memberships/{org_id}/leave
-func NewLeaveOrganizationRequest(server string, orgId string, params *LeaveOrganizationParams) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-	pathParam0, err = oapiCodegenParamsPkg.StyleParameter("org_id", orgId, oapiCodegenParamsPkg.ParameterOptions{Style: "simple", ParamLocation: oapiCodegenParamsPkg.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", AllowReserved: false})
-	if err != nil {
-		return nil, err
-	}
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/auth/v1/memberships/%s/leave", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	reqURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	if params != nil {
-		queryValues := reqURL.Query()
-		if params.UserId != nil {
-			if queryFrag, err := oapiCodegenParamsPkg.StyleParameter("user_id", *params.UserId, oapiCodegenParamsPkg.ParameterOptions{Style: "form", ParamLocation: oapiCodegenParamsPkg.ParamLocationQuery, Explode: true, Required: false, Type: "string", Format: "", AllowReserved: false}); err != nil {
-				return nil, err
-			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-				return nil, err
-			} else {
-				for k, v := range parsed {
-					for _, v2 := range v {
-						queryValues.Add(k, v2)
-					}
-				}
-			}
-		}
-		reqURL.RawQuery = queryValues.Encode()
-	}
-
-	req, err := http.NewRequest("POST", reqURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return req, nil
-}
-
-// NewInviteMemberRequest creates a POST request for /auth/v1/memberships/{user.org_id}/invite with application/json body
-func NewInviteMemberRequest(server string, userOrgId string, body InviteMemberJSONRequestBody) (*http.Request, error) {
-	var bodyReader io.Reader
-	buf, err := json.Marshal(body)
-	if err != nil {
-		return nil, err
-	}
-	bodyReader = bytes.NewReader(buf)
-	return NewInviteMemberRequestWithBody(server, userOrgId, "application/json", bodyReader)
-}
-
-// NewInviteMemberRequestWithBody creates a POST request for /auth/v1/memberships/{user.org_id}/invite with any body
-func NewInviteMemberRequestWithBody(server string, userOrgId string, contentType string, body io.Reader) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-	pathParam0, err = oapiCodegenParamsPkg.StyleParameter("user.org_id", userOrgId, oapiCodegenParamsPkg.ParameterOptions{Style: "simple", ParamLocation: oapiCodegenParamsPkg.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", AllowReserved: false})
-	if err != nil {
-		return nil, err
-	}
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/auth/v1/memberships/%s/invite", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	reqURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest("POST", reqURL.String(), body)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Add("Content-Type", contentType)
-
-	return req, nil
-}
-
-// NewResendInvitationRequest creates a POST request for /auth/v1/memberships/{user.org_id}/invite/resend with application/json body
-func NewResendInvitationRequest(server string, userOrgId string, body ResendInvitationJSONRequestBody) (*http.Request, error) {
-	var bodyReader io.Reader
-	buf, err := json.Marshal(body)
-	if err != nil {
-		return nil, err
-	}
-	bodyReader = bytes.NewReader(buf)
-	return NewResendInvitationRequestWithBody(server, userOrgId, "application/json", bodyReader)
-}
-
-// NewResendInvitationRequestWithBody creates a POST request for /auth/v1/memberships/{user.org_id}/invite/resend with any body
-func NewResendInvitationRequestWithBody(server string, userOrgId string, contentType string, body io.Reader) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-	pathParam0, err = oapiCodegenParamsPkg.StyleParameter("user.org_id", userOrgId, oapiCodegenParamsPkg.ParameterOptions{Style: "simple", ParamLocation: oapiCodegenParamsPkg.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", AllowReserved: false})
-	if err != nil {
-		return nil, err
-	}
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/auth/v1/memberships/%s/invite/resend", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	reqURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest("POST", reqURL.String(), body)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Add("Content-Type", contentType)
-
-	return req, nil
-}
-
-// NewCancelInvitationRequest creates a DELETE request for /auth/v1/memberships/{user.org_id}/invite/{user_id}
-func NewCancelInvitationRequest(server string, userOrgId string, userId string, params *CancelInvitationParams) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-	pathParam0, err = oapiCodegenParamsPkg.StyleParameter("user.org_id", userOrgId, oapiCodegenParamsPkg.ParameterOptions{Style: "simple", ParamLocation: oapiCodegenParamsPkg.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", AllowReserved: false})
-	if err != nil {
-		return nil, err
-	}
-
-	var pathParam1 string
-	pathParam1, err = oapiCodegenParamsPkg.StyleParameter("user_id", userId, oapiCodegenParamsPkg.ParameterOptions{Style: "simple", ParamLocation: oapiCodegenParamsPkg.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", AllowReserved: false})
-	if err != nil {
-		return nil, err
-	}
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/auth/v1/memberships/%s/invite/%s", pathParam0, pathParam1)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	reqURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	if params != nil {
-		queryValues := reqURL.Query()
-		if params.UserActorId != nil {
-			if queryFrag, err := oapiCodegenParamsPkg.StyleParameter("user.actor_id", *params.UserActorId, oapiCodegenParamsPkg.ParameterOptions{Style: "form", ParamLocation: oapiCodegenParamsPkg.ParamLocationQuery, Explode: true, Required: false, Type: "string", Format: "", AllowReserved: false}); err != nil {
-				return nil, err
-			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-				return nil, err
-			} else {
-				for k, v := range parsed {
-					for _, v2 := range v {
-						queryValues.Add(k, v2)
-					}
-				}
-			}
-		}
-		reqURL.RawQuery = queryValues.Encode()
-	}
-
-	req, err := http.NewRequest("DELETE", reqURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return req, nil
-}
-
-// NewListOrganizationMembersRequest creates a GET request for /auth/v1/memberships/{user.org_id}/members
-func NewListOrganizationMembersRequest(server string, userOrgId string, params *ListOrganizationMembersParams) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-	pathParam0, err = oapiCodegenParamsPkg.StyleParameter("user.org_id", userOrgId, oapiCodegenParamsPkg.ParameterOptions{Style: "simple", ParamLocation: oapiCodegenParamsPkg.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", AllowReserved: false})
-	if err != nil {
-		return nil, err
-	}
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/auth/v1/memberships/%s/members", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	reqURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	if params != nil {
-		queryValues := reqURL.Query()
-		if params.UserUserId != nil {
-			if queryFrag, err := oapiCodegenParamsPkg.StyleParameter("user.user_id", *params.UserUserId, oapiCodegenParamsPkg.ParameterOptions{Style: "form", ParamLocation: oapiCodegenParamsPkg.ParamLocationQuery, Explode: true, Required: false, Type: "string", Format: "", AllowReserved: false}); err != nil {
-				return nil, err
-			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-				return nil, err
-			} else {
-				for k, v := range parsed {
-					for _, v2 := range v {
-						queryValues.Add(k, v2)
-					}
-				}
-			}
-		}
-		if params.Limit != nil {
-			if queryFrag, err := oapiCodegenParamsPkg.StyleParameter("limit", *params.Limit, oapiCodegenParamsPkg.ParameterOptions{Style: "form", ParamLocation: oapiCodegenParamsPkg.ParamLocationQuery, Explode: true, Required: false, Type: "integer", Format: "int32", AllowReserved: false}); err != nil {
-				return nil, err
-			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-				return nil, err
-			} else {
-				for k, v := range parsed {
-					for _, v2 := range v {
-						queryValues.Add(k, v2)
-					}
-				}
-			}
-		}
-		if params.Offset != nil {
-			if queryFrag, err := oapiCodegenParamsPkg.StyleParameter("offset", *params.Offset, oapiCodegenParamsPkg.ParameterOptions{Style: "form", ParamLocation: oapiCodegenParamsPkg.ParamLocationQuery, Explode: true, Required: false, Type: "integer", Format: "int32", AllowReserved: false}); err != nil {
-				return nil, err
-			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-				return nil, err
-			} else {
-				for k, v := range parsed {
-					for _, v2 := range v {
-						queryValues.Add(k, v2)
-					}
-				}
-			}
-		}
-		reqURL.RawQuery = queryValues.Encode()
-	}
-
-	req, err := http.NewRequest("GET", reqURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return req, nil
-}
-
-// NewRemoveMemberRequest creates a DELETE request for /auth/v1/memberships/{user.org_id}/members/{user_id}
-func NewRemoveMemberRequest(server string, userOrgId string, userId string, params *RemoveMemberParams) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-	pathParam0, err = oapiCodegenParamsPkg.StyleParameter("user.org_id", userOrgId, oapiCodegenParamsPkg.ParameterOptions{Style: "simple", ParamLocation: oapiCodegenParamsPkg.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", AllowReserved: false})
-	if err != nil {
-		return nil, err
-	}
-
-	var pathParam1 string
-	pathParam1, err = oapiCodegenParamsPkg.StyleParameter("user_id", userId, oapiCodegenParamsPkg.ParameterOptions{Style: "simple", ParamLocation: oapiCodegenParamsPkg.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", AllowReserved: false})
-	if err != nil {
-		return nil, err
-	}
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/auth/v1/memberships/%s/members/%s", pathParam0, pathParam1)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	reqURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	if params != nil {
-		queryValues := reqURL.Query()
-		if params.UserActorId != nil {
-			if queryFrag, err := oapiCodegenParamsPkg.StyleParameter("user.actor_id", *params.UserActorId, oapiCodegenParamsPkg.ParameterOptions{Style: "form", ParamLocation: oapiCodegenParamsPkg.ParamLocationQuery, Explode: true, Required: false, Type: "string", Format: "", AllowReserved: false}); err != nil {
-				return nil, err
-			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-				return nil, err
-			} else {
-				for k, v := range parsed {
-					for _, v2 := range v {
-						queryValues.Add(k, v2)
-					}
-				}
-			}
-		}
-		reqURL.RawQuery = queryValues.Encode()
-	}
-
-	req, err := http.NewRequest("DELETE", reqURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return req, nil
-}
-
-// NewReactivateMemberRequest creates a PATCH request for /auth/v1/memberships/{user.org_id}/members/{user_id}/reactivate
-func NewReactivateMemberRequest(server string, userOrgId string, userId string, params *ReactivateMemberParams) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-	pathParam0, err = oapiCodegenParamsPkg.StyleParameter("user.org_id", userOrgId, oapiCodegenParamsPkg.ParameterOptions{Style: "simple", ParamLocation: oapiCodegenParamsPkg.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", AllowReserved: false})
-	if err != nil {
-		return nil, err
-	}
-
-	var pathParam1 string
-	pathParam1, err = oapiCodegenParamsPkg.StyleParameter("user_id", userId, oapiCodegenParamsPkg.ParameterOptions{Style: "simple", ParamLocation: oapiCodegenParamsPkg.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", AllowReserved: false})
-	if err != nil {
-		return nil, err
-	}
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/auth/v1/memberships/%s/members/%s/reactivate", pathParam0, pathParam1)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	reqURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	if params != nil {
-		queryValues := reqURL.Query()
-		if params.UserActorId != nil {
-			if queryFrag, err := oapiCodegenParamsPkg.StyleParameter("user.actor_id", *params.UserActorId, oapiCodegenParamsPkg.ParameterOptions{Style: "form", ParamLocation: oapiCodegenParamsPkg.ParamLocationQuery, Explode: true, Required: false, Type: "string", Format: "", AllowReserved: false}); err != nil {
-				return nil, err
-			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-				return nil, err
-			} else {
-				for k, v := range parsed {
-					for _, v2 := range v {
-						queryValues.Add(k, v2)
-					}
-				}
-			}
-		}
-		reqURL.RawQuery = queryValues.Encode()
-	}
-
-	req, err := http.NewRequest("PATCH", reqURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return req, nil
-}
-
-// NewUpdateMemberRoleRequest creates a PATCH request for /auth/v1/memberships/{user.org_id}/members/{user_id}/role with application/json body
-func NewUpdateMemberRoleRequest(server string, userOrgId string, userId string, body UpdateMemberRoleJSONRequestBody) (*http.Request, error) {
-	var bodyReader io.Reader
-	buf, err := json.Marshal(body)
-	if err != nil {
-		return nil, err
-	}
-	bodyReader = bytes.NewReader(buf)
-	return NewUpdateMemberRoleRequestWithBody(server, userOrgId, userId, "application/json", bodyReader)
-}
-
-// NewUpdateMemberRoleRequestWithBody creates a PATCH request for /auth/v1/memberships/{user.org_id}/members/{user_id}/role with any body
-func NewUpdateMemberRoleRequestWithBody(server string, userOrgId string, userId string, contentType string, body io.Reader) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-	pathParam0, err = oapiCodegenParamsPkg.StyleParameter("user.org_id", userOrgId, oapiCodegenParamsPkg.ParameterOptions{Style: "simple", ParamLocation: oapiCodegenParamsPkg.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", AllowReserved: false})
-	if err != nil {
-		return nil, err
-	}
-
-	var pathParam1 string
-	pathParam1, err = oapiCodegenParamsPkg.StyleParameter("user_id", userId, oapiCodegenParamsPkg.ParameterOptions{Style: "simple", ParamLocation: oapiCodegenParamsPkg.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", AllowReserved: false})
-	if err != nil {
-		return nil, err
-	}
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/auth/v1/memberships/%s/members/%s/role", pathParam0, pathParam1)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	reqURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest("PATCH", reqURL.String(), body)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Add("Content-Type", contentType)
-
-	return req, nil
-}
-
-// NewSuspendMemberRequest creates a PATCH request for /auth/v1/memberships/{user.org_id}/members/{user_id}/suspend
-func NewSuspendMemberRequest(server string, userOrgId string, userId string, params *SuspendMemberParams) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-	pathParam0, err = oapiCodegenParamsPkg.StyleParameter("user.org_id", userOrgId, oapiCodegenParamsPkg.ParameterOptions{Style: "simple", ParamLocation: oapiCodegenParamsPkg.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", AllowReserved: false})
-	if err != nil {
-		return nil, err
-	}
-
-	var pathParam1 string
-	pathParam1, err = oapiCodegenParamsPkg.StyleParameter("user_id", userId, oapiCodegenParamsPkg.ParameterOptions{Style: "simple", ParamLocation: oapiCodegenParamsPkg.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", AllowReserved: false})
-	if err != nil {
-		return nil, err
-	}
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/auth/v1/memberships/%s/members/%s/suspend", pathParam0, pathParam1)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	reqURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	if params != nil {
-		queryValues := reqURL.Query()
-		if params.UserActorId != nil {
-			if queryFrag, err := oapiCodegenParamsPkg.StyleParameter("user.actor_id", *params.UserActorId, oapiCodegenParamsPkg.ParameterOptions{Style: "form", ParamLocation: oapiCodegenParamsPkg.ParamLocationQuery, Explode: true, Required: false, Type: "string", Format: "", AllowReserved: false}); err != nil {
-				return nil, err
-			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-				return nil, err
-			} else {
-				for k, v := range parsed {
-					for _, v2 := range v {
-						queryValues.Add(k, v2)
-					}
-				}
-			}
-		}
-		reqURL.RawQuery = queryValues.Encode()
-	}
-
-	req, err := http.NewRequest("PATCH", reqURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return req, nil
-}
-
-// NewUpdateOrgNameRequest creates a PATCH request for /auth/v1/memberships/{user.org_id}/name with application/json body
-func NewUpdateOrgNameRequest(server string, userOrgId string, body UpdateOrgNameJSONRequestBody) (*http.Request, error) {
-	var bodyReader io.Reader
-	buf, err := json.Marshal(body)
-	if err != nil {
-		return nil, err
-	}
-	bodyReader = bytes.NewReader(buf)
-	return NewUpdateOrgNameRequestWithBody(server, userOrgId, "application/json", bodyReader)
-}
-
-// NewUpdateOrgNameRequestWithBody creates a PATCH request for /auth/v1/memberships/{user.org_id}/name with any body
-func NewUpdateOrgNameRequestWithBody(server string, userOrgId string, contentType string, body io.Reader) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-	pathParam0, err = oapiCodegenParamsPkg.StyleParameter("user.org_id", userOrgId, oapiCodegenParamsPkg.ParameterOptions{Style: "simple", ParamLocation: oapiCodegenParamsPkg.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", AllowReserved: false})
-	if err != nil {
-		return nil, err
-	}
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/auth/v1/memberships/%s/name", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	reqURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest("PATCH", reqURL.String(), body)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Add("Content-Type", contentType)
-
-	return req, nil
-}
-
-// NewUpdateMembershipStateRequest creates a PATCH request for /auth/v1/memberships/{user.org_id}/state with application/json body
-func NewUpdateMembershipStateRequest(server string, userOrgId string, body UpdateMembershipStateJSONRequestBody) (*http.Request, error) {
-	var bodyReader io.Reader
-	buf, err := json.Marshal(body)
-	if err != nil {
-		return nil, err
-	}
-	bodyReader = bytes.NewReader(buf)
-	return NewUpdateMembershipStateRequestWithBody(server, userOrgId, "application/json", bodyReader)
-}
-
-// NewUpdateMembershipStateRequestWithBody creates a PATCH request for /auth/v1/memberships/{user.org_id}/state with any body
-func NewUpdateMembershipStateRequestWithBody(server string, userOrgId string, contentType string, body io.Reader) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-	pathParam0, err = oapiCodegenParamsPkg.StyleParameter("user.org_id", userOrgId, oapiCodegenParamsPkg.ParameterOptions{Style: "simple", ParamLocation: oapiCodegenParamsPkg.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", AllowReserved: false})
-	if err != nil {
-		return nil, err
-	}
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/auth/v1/memberships/%s/state", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	reqURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest("PATCH", reqURL.String(), body)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Add("Content-Type", contentType)
-
-	return req, nil
-}
-
-// NewUpdateOrgUsernameRequest creates a PATCH request for /auth/v1/memberships/{user.org_id}/username with application/json body
-func NewUpdateOrgUsernameRequest(server string, userOrgId string, body UpdateOrgUsernameJSONRequestBody) (*http.Request, error) {
-	var bodyReader io.Reader
-	buf, err := json.Marshal(body)
-	if err != nil {
-		return nil, err
-	}
-	bodyReader = bytes.NewReader(buf)
-	return NewUpdateOrgUsernameRequestWithBody(server, userOrgId, "application/json", bodyReader)
-}
-
-// NewUpdateOrgUsernameRequestWithBody creates a PATCH request for /auth/v1/memberships/{user.org_id}/username with any body
-func NewUpdateOrgUsernameRequestWithBody(server string, userOrgId string, contentType string, body io.Reader) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-	pathParam0, err = oapiCodegenParamsPkg.StyleParameter("user.org_id", userOrgId, oapiCodegenParamsPkg.ParameterOptions{Style: "simple", ParamLocation: oapiCodegenParamsPkg.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", AllowReserved: false})
-	if err != nil {
-		return nil, err
-	}
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/auth/v1/memberships/%s/username", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	reqURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest("PATCH", reqURL.String(), body)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Add("Content-Type", contentType)
 
 	return req, nil
 }
@@ -1858,139 +1327,7 @@ func (c *SimpleClient) RespondToMembershipApplication(ctx context.Context, orgId
 	}
 }
 
-// ListMemberships makes a GET request to /auth/v1/memberships and returns the parsed response.
-// ListMemberships
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
-func (c *SimpleClient) ListMemberships(ctx context.Context, params *ListMembershipsParams, reqEditors ...RequestEditorFn) (models.AuthV1ListMembershipsResponse, error) {
-	var result models.AuthV1ListMembershipsResponse
-	resp, err := c.Client.ListMemberships(ctx, params, reqEditors...)
-	if err != nil {
-		return result, err
-	}
-	defer resp.Body.Close()
-
-	rawBody, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return result, err
-	}
-
-	if resp.StatusCode >= 200 && resp.StatusCode < 300 {
-		if err := json.Unmarshal(rawBody, &result); err != nil {
-			return result, err
-		}
-		return result, nil
-	}
-
-	// Parse error response
-	var errBody models.GoogleRPCStatus
-	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
-	return result, &ClientHttpError[models.GoogleRPCStatus]{
-		StatusCode: resp.StatusCode,
-		Body:       errBody,
-		RawBody:    rawBody,
-	}
-}
-
-// UpdateActiveMembership makes a PATCH request to /auth/v1/memberships/active and returns the parsed response.
-// UpdateActiveMembership
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
-func (c *SimpleClient) UpdateActiveMembership(ctx context.Context, body UpdateActiveMembershipJSONRequestBody, reqEditors ...RequestEditorFn) (models.AuthV1MembershipMutation, error) {
-	var result models.AuthV1MembershipMutation
-	resp, err := c.Client.UpdateActiveMembership(ctx, body, reqEditors...)
-	if err != nil {
-		return result, err
-	}
-	defer resp.Body.Close()
-
-	rawBody, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return result, err
-	}
-
-	if resp.StatusCode >= 200 && resp.StatusCode < 300 {
-		if err := json.Unmarshal(rawBody, &result); err != nil {
-			return result, err
-		}
-		return result, nil
-	}
-
-	// Parse error response
-	var errBody models.GoogleRPCStatus
-	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
-	return result, &ClientHttpError[models.GoogleRPCStatus]{
-		StatusCode: resp.StatusCode,
-		Body:       errBody,
-		RawBody:    rawBody,
-	}
-}
-
-// CheckMembership makes a GET request to /auth/v1/memberships/{org_id}/check and returns the parsed response.
-// CheckMembership
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
-func (c *SimpleClient) CheckMembership(ctx context.Context, orgId string, params *CheckMembershipParams, reqEditors ...RequestEditorFn) (models.AuthV1CheckMembershipResponse, error) {
-	var result models.AuthV1CheckMembershipResponse
-	resp, err := c.Client.CheckMembership(ctx, orgId, params, reqEditors...)
-	if err != nil {
-		return result, err
-	}
-	defer resp.Body.Close()
-
-	rawBody, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return result, err
-	}
-
-	if resp.StatusCode >= 200 && resp.StatusCode < 300 {
-		if err := json.Unmarshal(rawBody, &result); err != nil {
-			return result, err
-		}
-		return result, nil
-	}
-
-	// Parse error response
-	var errBody models.GoogleRPCStatus
-	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
-	return result, &ClientHttpError[models.GoogleRPCStatus]{
-		StatusCode: resp.StatusCode,
-		Body:       errBody,
-		RawBody:    rawBody,
-	}
-}
-
-// GetInternalMembershipInfo makes a GET request to /auth/v1/memberships/{org_id}/info and returns the parsed response.
-// GetInternalMembershipInfo
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
-func (c *SimpleClient) GetInternalMembershipInfo(ctx context.Context, orgId string, params *GetInternalMembershipInfoParams, reqEditors ...RequestEditorFn) (models.AuthV1GetInternalMembershipInfoResponse, error) {
-	var result models.AuthV1GetInternalMembershipInfoResponse
-	resp, err := c.Client.GetInternalMembershipInfo(ctx, orgId, params, reqEditors...)
-	if err != nil {
-		return result, err
-	}
-	defer resp.Body.Close()
-
-	rawBody, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return result, err
-	}
-
-	if resp.StatusCode >= 200 && resp.StatusCode < 300 {
-		if err := json.Unmarshal(rawBody, &result); err != nil {
-			return result, err
-		}
-		return result, nil
-	}
-
-	// Parse error response
-	var errBody models.GoogleRPCStatus
-	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
-	return result, &ClientHttpError[models.GoogleRPCStatus]{
-		StatusCode: resp.StatusCode,
-		Body:       errBody,
-		RawBody:    rawBody,
-	}
-}
-
-// LeaveOrganization makes a POST request to /auth/v1/memberships/{org_id}/leave and returns the parsed response.
+// LeaveOrganization makes a DELETE request to /auth/v1/organizations/{org_id}/members/current and returns the parsed response.
 // LeaveOrganization
 // On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) LeaveOrganization(ctx context.Context, orgId string, params *LeaveOrganizationParams, reqEditors ...RequestEditorFn) (models.GoogleProtobufEmpty, error) {
@@ -2023,7 +1360,106 @@ func (c *SimpleClient) LeaveOrganization(ctx context.Context, orgId string, para
 	}
 }
 
-// InviteMember makes a POST request to /auth/v1/memberships/{user.org_id}/invite and returns the parsed response.
+// CheckCurrentMembership makes a GET request to /auth/v1/organizations/{org_id}/members/current/check and returns the parsed response.
+// CheckCurrentMembership
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
+func (c *SimpleClient) CheckCurrentMembership(ctx context.Context, orgId string, reqEditors ...RequestEditorFn) (models.AuthV1CheckMembershipResponse, error) {
+	var result models.AuthV1CheckMembershipResponse
+	resp, err := c.Client.CheckCurrentMembership(ctx, orgId, reqEditors...)
+	if err != nil {
+		return result, err
+	}
+	defer resp.Body.Close()
+
+	rawBody, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return result, err
+	}
+
+	if resp.StatusCode >= 200 && resp.StatusCode < 300 {
+		if err := json.Unmarshal(rawBody, &result); err != nil {
+			return result, err
+		}
+		return result, nil
+	}
+
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
+		StatusCode: resp.StatusCode,
+		Body:       errBody,
+		RawBody:    rawBody,
+	}
+}
+
+// RemoveMember makes a DELETE request to /auth/v1/organizations/{org_id}/members/{user_id} and returns the parsed response.
+// RemoveMember
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
+func (c *SimpleClient) RemoveMember(ctx context.Context, orgId string, userId string, reqEditors ...RequestEditorFn) (models.GoogleProtobufEmpty, error) {
+	var result models.GoogleProtobufEmpty
+	resp, err := c.Client.RemoveMember(ctx, orgId, userId, reqEditors...)
+	if err != nil {
+		return result, err
+	}
+	defer resp.Body.Close()
+
+	rawBody, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return result, err
+	}
+
+	if resp.StatusCode >= 200 && resp.StatusCode < 300 {
+		if err := json.Unmarshal(rawBody, &result); err != nil {
+			return result, err
+		}
+		return result, nil
+	}
+
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
+		StatusCode: resp.StatusCode,
+		Body:       errBody,
+		RawBody:    rawBody,
+	}
+}
+
+// UpdateMember makes a PATCH request to /auth/v1/organizations/{org_id}/members/{user_id} and returns the parsed response.
+// UpdateMember
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
+func (c *SimpleClient) UpdateMember(ctx context.Context, orgId string, userId string, body UpdateMemberJSONRequestBody, reqEditors ...RequestEditorFn) (models.AuthV1MembershipMutation, error) {
+	var result models.AuthV1MembershipMutation
+	resp, err := c.Client.UpdateMember(ctx, orgId, userId, body, reqEditors...)
+	if err != nil {
+		return result, err
+	}
+	defer resp.Body.Close()
+
+	rawBody, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return result, err
+	}
+
+	if resp.StatusCode >= 200 && resp.StatusCode < 300 {
+		if err := json.Unmarshal(rawBody, &result); err != nil {
+			return result, err
+		}
+		return result, nil
+	}
+
+	// Parse error response
+	var errBody models.GoogleRPCStatus
+	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
+	return result, &ClientHttpError[models.GoogleRPCStatus]{
+		StatusCode: resp.StatusCode,
+		Body:       errBody,
+		RawBody:    rawBody,
+	}
+}
+
+// InviteMember makes a POST request to /auth/v1/organizations/{user.org_id}/invite and returns the parsed response.
 // InviteMember
 // On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) InviteMember(ctx context.Context, userOrgId string, body InviteMemberJSONRequestBody, reqEditors ...RequestEditorFn) (models.AuthV1MembershipApplication, error) {
@@ -2056,7 +1492,7 @@ func (c *SimpleClient) InviteMember(ctx context.Context, userOrgId string, body 
 	}
 }
 
-// ResendInvitation makes a POST request to /auth/v1/memberships/{user.org_id}/invite/resend and returns the parsed response.
+// ResendInvitation makes a POST request to /auth/v1/organizations/{user.org_id}/invite/resend and returns the parsed response.
 // ResendInvitation
 // On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) ResendInvitation(ctx context.Context, userOrgId string, body ResendInvitationJSONRequestBody, reqEditors ...RequestEditorFn) (models.GoogleProtobufEmpty, error) {
@@ -2089,7 +1525,7 @@ func (c *SimpleClient) ResendInvitation(ctx context.Context, userOrgId string, b
 	}
 }
 
-// CancelInvitation makes a DELETE request to /auth/v1/memberships/{user.org_id}/invite/{user_id} and returns the parsed response.
+// CancelInvitation makes a DELETE request to /auth/v1/organizations/{user.org_id}/invite/{user_id} and returns the parsed response.
 // CancelInvitation
 // On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) CancelInvitation(ctx context.Context, userOrgId string, userId string, params *CancelInvitationParams, reqEditors ...RequestEditorFn) (models.GoogleProtobufEmpty, error) {
@@ -2122,7 +1558,7 @@ func (c *SimpleClient) CancelInvitation(ctx context.Context, userOrgId string, u
 	}
 }
 
-// ListOrganizationMembers makes a GET request to /auth/v1/memberships/{user.org_id}/members and returns the parsed response.
+// ListOrganizationMembers makes a GET request to /auth/v1/organizations/{user.org_id}/members and returns the parsed response.
 // ListOrganizationMembers
 // On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
 func (c *SimpleClient) ListOrganizationMembers(ctx context.Context, userOrgId string, params *ListOrganizationMembersParams, reqEditors ...RequestEditorFn) (models.AuthV1ListOrgMembersResponse, error) {
@@ -2155,177 +1591,12 @@ func (c *SimpleClient) ListOrganizationMembers(ctx context.Context, userOrgId st
 	}
 }
 
-// RemoveMember makes a DELETE request to /auth/v1/memberships/{user.org_id}/members/{user_id} and returns the parsed response.
-// RemoveMember
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
-func (c *SimpleClient) RemoveMember(ctx context.Context, userOrgId string, userId string, params *RemoveMemberParams, reqEditors ...RequestEditorFn) (models.GoogleProtobufEmpty, error) {
-	var result models.GoogleProtobufEmpty
-	resp, err := c.Client.RemoveMember(ctx, userOrgId, userId, params, reqEditors...)
-	if err != nil {
-		return result, err
-	}
-	defer resp.Body.Close()
-
-	rawBody, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return result, err
-	}
-
-	if resp.StatusCode >= 200 && resp.StatusCode < 300 {
-		if err := json.Unmarshal(rawBody, &result); err != nil {
-			return result, err
-		}
-		return result, nil
-	}
-
-	// Parse error response
-	var errBody models.GoogleRPCStatus
-	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
-	return result, &ClientHttpError[models.GoogleRPCStatus]{
-		StatusCode: resp.StatusCode,
-		Body:       errBody,
-		RawBody:    rawBody,
-	}
-}
-
-// ReactivateMember makes a PATCH request to /auth/v1/memberships/{user.org_id}/members/{user_id}/reactivate and returns the parsed response.
-// ReactivateMember
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
-func (c *SimpleClient) ReactivateMember(ctx context.Context, userOrgId string, userId string, params *ReactivateMemberParams, reqEditors ...RequestEditorFn) (models.AuthV1MembershipMutation, error) {
-	var result models.AuthV1MembershipMutation
-	resp, err := c.Client.ReactivateMember(ctx, userOrgId, userId, params, reqEditors...)
-	if err != nil {
-		return result, err
-	}
-	defer resp.Body.Close()
-
-	rawBody, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return result, err
-	}
-
-	if resp.StatusCode >= 200 && resp.StatusCode < 300 {
-		if err := json.Unmarshal(rawBody, &result); err != nil {
-			return result, err
-		}
-		return result, nil
-	}
-
-	// Parse error response
-	var errBody models.GoogleRPCStatus
-	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
-	return result, &ClientHttpError[models.GoogleRPCStatus]{
-		StatusCode: resp.StatusCode,
-		Body:       errBody,
-		RawBody:    rawBody,
-	}
-}
-
-// UpdateMemberRole makes a PATCH request to /auth/v1/memberships/{user.org_id}/members/{user_id}/role and returns the parsed response.
-// UpdateMemberRole
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
-func (c *SimpleClient) UpdateMemberRole(ctx context.Context, userOrgId string, userId string, body UpdateMemberRoleJSONRequestBody, reqEditors ...RequestEditorFn) (models.AuthV1MembershipMutation, error) {
-	var result models.AuthV1MembershipMutation
-	resp, err := c.Client.UpdateMemberRole(ctx, userOrgId, userId, body, reqEditors...)
-	if err != nil {
-		return result, err
-	}
-	defer resp.Body.Close()
-
-	rawBody, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return result, err
-	}
-
-	if resp.StatusCode >= 200 && resp.StatusCode < 300 {
-		if err := json.Unmarshal(rawBody, &result); err != nil {
-			return result, err
-		}
-		return result, nil
-	}
-
-	// Parse error response
-	var errBody models.GoogleRPCStatus
-	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
-	return result, &ClientHttpError[models.GoogleRPCStatus]{
-		StatusCode: resp.StatusCode,
-		Body:       errBody,
-		RawBody:    rawBody,
-	}
-}
-
-// SuspendMember makes a PATCH request to /auth/v1/memberships/{user.org_id}/members/{user_id}/suspend and returns the parsed response.
-// SuspendMember
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
-func (c *SimpleClient) SuspendMember(ctx context.Context, userOrgId string, userId string, params *SuspendMemberParams, reqEditors ...RequestEditorFn) (models.AuthV1MembershipMutation, error) {
-	var result models.AuthV1MembershipMutation
-	resp, err := c.Client.SuspendMember(ctx, userOrgId, userId, params, reqEditors...)
-	if err != nil {
-		return result, err
-	}
-	defer resp.Body.Close()
-
-	rawBody, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return result, err
-	}
-
-	if resp.StatusCode >= 200 && resp.StatusCode < 300 {
-		if err := json.Unmarshal(rawBody, &result); err != nil {
-			return result, err
-		}
-		return result, nil
-	}
-
-	// Parse error response
-	var errBody models.GoogleRPCStatus
-	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
-	return result, &ClientHttpError[models.GoogleRPCStatus]{
-		StatusCode: resp.StatusCode,
-		Body:       errBody,
-		RawBody:    rawBody,
-	}
-}
-
-// UpdateOrgName makes a PATCH request to /auth/v1/memberships/{user.org_id}/name and returns the parsed response.
-// UpdateOrgName
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
-func (c *SimpleClient) UpdateOrgName(ctx context.Context, userOrgId string, body UpdateOrgNameJSONRequestBody, reqEditors ...RequestEditorFn) (models.AuthV1UpdateOrgNameResponse, error) {
-	var result models.AuthV1UpdateOrgNameResponse
-	resp, err := c.Client.UpdateOrgName(ctx, userOrgId, body, reqEditors...)
-	if err != nil {
-		return result, err
-	}
-	defer resp.Body.Close()
-
-	rawBody, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return result, err
-	}
-
-	if resp.StatusCode >= 200 && resp.StatusCode < 300 {
-		if err := json.Unmarshal(rawBody, &result); err != nil {
-			return result, err
-		}
-		return result, nil
-	}
-
-	// Parse error response
-	var errBody models.GoogleRPCStatus
-	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
-	return result, &ClientHttpError[models.GoogleRPCStatus]{
-		StatusCode: resp.StatusCode,
-		Body:       errBody,
-		RawBody:    rawBody,
-	}
-}
-
-// UpdateMembershipState makes a PATCH request to /auth/v1/memberships/{user.org_id}/state and returns the parsed response.
+// UpdateMembershipState makes a PATCH request to /auth/v1/organizations/{user.org_id}/membership-applications/{user_id} and returns the parsed response.
 // UpdateMembershipState
 // On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
-func (c *SimpleClient) UpdateMembershipState(ctx context.Context, userOrgId string, body UpdateMembershipStateJSONRequestBody, reqEditors ...RequestEditorFn) (models.AuthV1MembershipMutation, error) {
+func (c *SimpleClient) UpdateMembershipState(ctx context.Context, userOrgId string, userId string, body UpdateMembershipStateJSONRequestBody, reqEditors ...RequestEditorFn) (models.AuthV1MembershipMutation, error) {
 	var result models.AuthV1MembershipMutation
-	resp, err := c.Client.UpdateMembershipState(ctx, userOrgId, body, reqEditors...)
+	resp, err := c.Client.UpdateMembershipState(ctx, userOrgId, userId, body, reqEditors...)
 	if err != nil {
 		return result, err
 	}
@@ -2353,12 +1624,12 @@ func (c *SimpleClient) UpdateMembershipState(ctx context.Context, userOrgId stri
 	}
 }
 
-// UpdateOrgUsername makes a PATCH request to /auth/v1/memberships/{user.org_id}/username and returns the parsed response.
-// UpdateOrgUsername
+// ListMemberships makes a GET request to /auth/v1/users/current/memberships and returns the parsed response.
+// ListMemberships
 // On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
-func (c *SimpleClient) UpdateOrgUsername(ctx context.Context, userOrgId string, body UpdateOrgUsernameJSONRequestBody, reqEditors ...RequestEditorFn) (models.AuthV1UpdateOrgUsernameResponse, error) {
-	var result models.AuthV1UpdateOrgUsernameResponse
-	resp, err := c.Client.UpdateOrgUsername(ctx, userOrgId, body, reqEditors...)
+func (c *SimpleClient) ListMemberships(ctx context.Context, params *ListMembershipsParams, reqEditors ...RequestEditorFn) (models.AuthV1ListMembershipsResponse, error) {
+	var result models.AuthV1ListMembershipsResponse
+	resp, err := c.Client.ListMemberships(ctx, params, reqEditors...)
 	if err != nil {
 		return result, err
 	}
