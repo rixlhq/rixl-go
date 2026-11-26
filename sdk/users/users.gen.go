@@ -20,8 +20,6 @@ type UpdateUserAvatarJSONRequestBody = models.AuthV1UpdateUserAvatarRequest
 
 type UpdateNameJSONRequestBody = models.AuthV1UpdateNameRequest
 
-type UpdateUsernameJSONRequestBody = models.AuthV1UpdateUsernameRequest
-
 // RequestEditorFn is the function signature for the RequestEditor callback function.
 type RequestEditorFn func(ctx context.Context, req *http.Request) error
 
@@ -132,9 +130,6 @@ type ClientInterface interface {
 	// UpdateNameWithBody makes a PATCH request to /auth/v1/users/current/name
 	UpdateNameWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 	UpdateName(ctx context.Context, body UpdateNameJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
-	// UpdateUsernameWithBody makes a PATCH request to /auth/v1/users/current/username
-	UpdateUsernameWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
-	UpdateUsername(ctx context.Context, body UpdateUsernameJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 }
 
 // GetUserInfoParams defines parameters for GetUserInfo.
@@ -263,33 +258,6 @@ func (c *Client) UpdateNameWithBody(ctx context.Context, contentType string, bod
 // UpdateName makes a PATCH request to /auth/v1/users/current/name with application/json body
 func (c *Client) UpdateName(ctx context.Context, body UpdateNameJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewUpdateNameRequest(c.Server, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-// UpdateUsernameWithBody makes a PATCH request to /auth/v1/users/current/username
-// UpdateUsername
-func (c *Client) UpdateUsernameWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewUpdateUsernameRequestWithBody(c.Server, contentType, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-// UpdateUsername makes a PATCH request to /auth/v1/users/current/username with application/json body
-func (c *Client) UpdateUsername(ctx context.Context, body UpdateUsernameJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewUpdateUsernameRequest(c.Server, body)
 	if err != nil {
 		return nil, err
 	}
@@ -573,46 +541,6 @@ func NewUpdateNameRequestWithBody(server string, contentType string, body io.Rea
 	return req, nil
 }
 
-// NewUpdateUsernameRequest creates a PATCH request for /auth/v1/users/current/username with application/json body
-func NewUpdateUsernameRequest(server string, body UpdateUsernameJSONRequestBody) (*http.Request, error) {
-	var bodyReader io.Reader
-	buf, err := json.Marshal(body)
-	if err != nil {
-		return nil, err
-	}
-	bodyReader = bytes.NewReader(buf)
-	return NewUpdateUsernameRequestWithBody(server, "application/json", bodyReader)
-}
-
-// NewUpdateUsernameRequestWithBody creates a PATCH request for /auth/v1/users/current/username with any body
-func NewUpdateUsernameRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
-	var err error
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/auth/v1/users/current/username")
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	reqURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest("PATCH", reqURL.String(), body)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Add("Content-Type", contentType)
-
-	return req, nil
-}
-
 // ClientHttpError represents an HTTP error response.
 // The type parameter E is the type of the parsed error body.
 type ClientHttpError[E any] struct {
@@ -812,39 +740,6 @@ func (c *SimpleClient) GetUserDeletionPreview(ctx context.Context, params *GetUs
 func (c *SimpleClient) UpdateName(ctx context.Context, body UpdateNameJSONRequestBody, reqEditors ...RequestEditorFn) (models.AuthV1UpdateNameResponse, error) {
 	var result models.AuthV1UpdateNameResponse
 	resp, err := c.Client.UpdateName(ctx, body, reqEditors...)
-	if err != nil {
-		return result, err
-	}
-	defer resp.Body.Close()
-
-	rawBody, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return result, err
-	}
-
-	if resp.StatusCode >= 200 && resp.StatusCode < 300 {
-		if err := json.Unmarshal(rawBody, &result); err != nil {
-			return result, err
-		}
-		return result, nil
-	}
-
-	// Parse error response
-	var errBody models.Error
-	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
-	return result, &ClientHttpError[models.Error]{
-		StatusCode: resp.StatusCode,
-		Body:       errBody,
-		RawBody:    rawBody,
-	}
-}
-
-// UpdateUsername makes a PATCH request to /auth/v1/users/current/username and returns the parsed response.
-// UpdateUsername
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.Error].
-func (c *SimpleClient) UpdateUsername(ctx context.Context, body UpdateUsernameJSONRequestBody, reqEditors ...RequestEditorFn) (models.AuthV1UpdateUsernameResponse, error) {
-	var result models.AuthV1UpdateUsernameResponse
-	resp, err := c.Client.UpdateUsername(ctx, body, reqEditors...)
 	if err != nil {
 		return result, err
 	}
