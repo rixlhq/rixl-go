@@ -643,7 +643,7 @@ func NewSimpleClient(server string, opts ...ClientOption) (*SimpleClient, error)
 
 // GetUserInfo makes a GET request to /auth/v1/userinfo and returns the parsed response.
 // GetUserInfo
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.Error].
 func (c *SimpleClient) GetUserInfo(ctx context.Context, params *GetUserInfoParams, reqEditors ...RequestEditorFn) (models.AuthV1UserInfo, error) {
 	var result models.AuthV1UserInfo
 	resp, err := c.Client.GetUserInfo(ctx, params, reqEditors...)
@@ -665,9 +665,9 @@ func (c *SimpleClient) GetUserInfo(ctx context.Context, params *GetUserInfoParam
 	}
 
 	// Parse error response
-	var errBody models.GoogleRPCStatus
+	var errBody models.Error
 	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
-	return result, &ClientHttpError[models.GoogleRPCStatus]{
+	return result, &ClientHttpError[models.Error]{
 		StatusCode: resp.StatusCode,
 		Body:       errBody,
 		RawBody:    rawBody,
@@ -676,7 +676,7 @@ func (c *SimpleClient) GetUserInfo(ctx context.Context, params *GetUserInfoParam
 
 // GetUser makes a GET request to /auth/v1/users/current and returns the parsed response.
 // GetUser
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.Error].
 func (c *SimpleClient) GetUser(ctx context.Context, params *GetUserParams, reqEditors ...RequestEditorFn) (models.AuthV1GetUserResponse, error) {
 	var result models.AuthV1GetUserResponse
 	resp, err := c.Client.GetUser(ctx, params, reqEditors...)
@@ -698,9 +698,9 @@ func (c *SimpleClient) GetUser(ctx context.Context, params *GetUserParams, reqEd
 	}
 
 	// Parse error response
-	var errBody models.GoogleRPCStatus
+	var errBody models.Error
 	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
-	return result, &ClientHttpError[models.GoogleRPCStatus]{
+	return result, &ClientHttpError[models.Error]{
 		StatusCode: resp.StatusCode,
 		Body:       errBody,
 		RawBody:    rawBody,
@@ -709,7 +709,7 @@ func (c *SimpleClient) GetUser(ctx context.Context, params *GetUserParams, reqEd
 
 // UpdateUserAvatar makes a PATCH request to /auth/v1/users/current/avatar and returns the parsed response.
 // UpdateUserAvatar
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.Error].
 func (c *SimpleClient) UpdateUserAvatar(ctx context.Context, body UpdateUserAvatarJSONRequestBody, reqEditors ...RequestEditorFn) (models.AuthV1UpdateUserAvatarResponse, error) {
 	var result models.AuthV1UpdateUserAvatarResponse
 	resp, err := c.Client.UpdateUserAvatar(ctx, body, reqEditors...)
@@ -731,9 +731,9 @@ func (c *SimpleClient) UpdateUserAvatar(ctx context.Context, body UpdateUserAvat
 	}
 
 	// Parse error response
-	var errBody models.GoogleRPCStatus
+	var errBody models.Error
 	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
-	return result, &ClientHttpError[models.GoogleRPCStatus]{
+	return result, &ClientHttpError[models.Error]{
 		StatusCode: resp.StatusCode,
 		Body:       errBody,
 		RawBody:    rawBody,
@@ -742,7 +742,7 @@ func (c *SimpleClient) UpdateUserAvatar(ctx context.Context, body UpdateUserAvat
 
 // CreateAvatarUpload makes a POST request to /auth/v1/users/current/avatar/upload and returns the parsed response.
 // CreateAvatarUpload
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.Error].
 func (c *SimpleClient) CreateAvatarUpload(ctx context.Context, params *CreateAvatarUploadParams, reqEditors ...RequestEditorFn) (models.AuthV1CreateAvatarUploadResponse, error) {
 	var result models.AuthV1CreateAvatarUploadResponse
 	resp, err := c.Client.CreateAvatarUpload(ctx, params, reqEditors...)
@@ -764,9 +764,9 @@ func (c *SimpleClient) CreateAvatarUpload(ctx context.Context, params *CreateAva
 	}
 
 	// Parse error response
-	var errBody models.GoogleRPCStatus
+	var errBody models.Error
 	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
-	return result, &ClientHttpError[models.GoogleRPCStatus]{
+	return result, &ClientHttpError[models.Error]{
 		StatusCode: resp.StatusCode,
 		Body:       errBody,
 		RawBody:    rawBody,
@@ -775,7 +775,7 @@ func (c *SimpleClient) CreateAvatarUpload(ctx context.Context, params *CreateAva
 
 // GetUserDeletionPreview makes a GET request to /auth/v1/users/current/deletion-preview and returns the parsed response.
 // GetUserDeletionPreview
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.Error].
 func (c *SimpleClient) GetUserDeletionPreview(ctx context.Context, params *GetUserDeletionPreviewParams, reqEditors ...RequestEditorFn) (models.AuthV1GetUserDeletionPreviewResponse, error) {
 	var result models.AuthV1GetUserDeletionPreviewResponse
 	resp, err := c.Client.GetUserDeletionPreview(ctx, params, reqEditors...)
@@ -797,9 +797,9 @@ func (c *SimpleClient) GetUserDeletionPreview(ctx context.Context, params *GetUs
 	}
 
 	// Parse error response
-	var errBody models.GoogleRPCStatus
+	var errBody models.Error
 	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
-	return result, &ClientHttpError[models.GoogleRPCStatus]{
+	return result, &ClientHttpError[models.Error]{
 		StatusCode: resp.StatusCode,
 		Body:       errBody,
 		RawBody:    rawBody,
@@ -808,7 +808,7 @@ func (c *SimpleClient) GetUserDeletionPreview(ctx context.Context, params *GetUs
 
 // UpdateName makes a PATCH request to /auth/v1/users/current/name and returns the parsed response.
 // UpdateName
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.Error].
 func (c *SimpleClient) UpdateName(ctx context.Context, body UpdateNameJSONRequestBody, reqEditors ...RequestEditorFn) (models.AuthV1UpdateNameResponse, error) {
 	var result models.AuthV1UpdateNameResponse
 	resp, err := c.Client.UpdateName(ctx, body, reqEditors...)
@@ -830,9 +830,9 @@ func (c *SimpleClient) UpdateName(ctx context.Context, body UpdateNameJSONReques
 	}
 
 	// Parse error response
-	var errBody models.GoogleRPCStatus
+	var errBody models.Error
 	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
-	return result, &ClientHttpError[models.GoogleRPCStatus]{
+	return result, &ClientHttpError[models.Error]{
 		StatusCode: resp.StatusCode,
 		Body:       errBody,
 		RawBody:    rawBody,
@@ -841,7 +841,7 @@ func (c *SimpleClient) UpdateName(ctx context.Context, body UpdateNameJSONReques
 
 // UpdateUsername makes a PATCH request to /auth/v1/users/current/username and returns the parsed response.
 // UpdateUsername
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.Error].
 func (c *SimpleClient) UpdateUsername(ctx context.Context, body UpdateUsernameJSONRequestBody, reqEditors ...RequestEditorFn) (models.AuthV1UpdateUsernameResponse, error) {
 	var result models.AuthV1UpdateUsernameResponse
 	resp, err := c.Client.UpdateUsername(ctx, body, reqEditors...)
@@ -863,9 +863,9 @@ func (c *SimpleClient) UpdateUsername(ctx context.Context, body UpdateUsernameJS
 	}
 
 	// Parse error response
-	var errBody models.GoogleRPCStatus
+	var errBody models.Error
 	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
-	return result, &ClientHttpError[models.GoogleRPCStatus]{
+	return result, &ClientHttpError[models.Error]{
 		StatusCode: resp.StatusCode,
 		Body:       errBody,
 		RawBody:    rawBody,

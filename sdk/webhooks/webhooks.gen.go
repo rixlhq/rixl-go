@@ -857,7 +857,7 @@ func NewSimpleClient(server string, opts ...ClientOption) (*SimpleClient, error)
 
 // ListEndpoints makes a GET request to /webhooks/v1/projects/{project_id}/endpoints and returns the parsed response.
 // ListEndpoints
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.Error].
 func (c *SimpleClient) ListEndpoints(ctx context.Context, projectId string, params *ListEndpointsParams, reqEditors ...RequestEditorFn) (models.WebhooksV1ListEndpointsResponse, error) {
 	var result models.WebhooksV1ListEndpointsResponse
 	resp, err := c.Client.ListEndpoints(ctx, projectId, params, reqEditors...)
@@ -879,9 +879,9 @@ func (c *SimpleClient) ListEndpoints(ctx context.Context, projectId string, para
 	}
 
 	// Parse error response
-	var errBody models.GoogleRPCStatus
+	var errBody models.Error
 	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
-	return result, &ClientHttpError[models.GoogleRPCStatus]{
+	return result, &ClientHttpError[models.Error]{
 		StatusCode: resp.StatusCode,
 		Body:       errBody,
 		RawBody:    rawBody,
@@ -890,7 +890,7 @@ func (c *SimpleClient) ListEndpoints(ctx context.Context, projectId string, para
 
 // CreateEndpoint makes a POST request to /webhooks/v1/projects/{project_id}/endpoints and returns the parsed response.
 // CreateEndpoint
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.Error].
 func (c *SimpleClient) CreateEndpoint(ctx context.Context, projectId string, body CreateEndpointJSONRequestBody, reqEditors ...RequestEditorFn) (models.WebhooksV1CreateEndpointResponse, error) {
 	var result models.WebhooksV1CreateEndpointResponse
 	resp, err := c.Client.CreateEndpoint(ctx, projectId, body, reqEditors...)
@@ -912,9 +912,9 @@ func (c *SimpleClient) CreateEndpoint(ctx context.Context, projectId string, bod
 	}
 
 	// Parse error response
-	var errBody models.GoogleRPCStatus
+	var errBody models.Error
 	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
-	return result, &ClientHttpError[models.GoogleRPCStatus]{
+	return result, &ClientHttpError[models.Error]{
 		StatusCode: resp.StatusCode,
 		Body:       errBody,
 		RawBody:    rawBody,
@@ -923,7 +923,7 @@ func (c *SimpleClient) CreateEndpoint(ctx context.Context, projectId string, bod
 
 // DeleteEndpoint makes a DELETE request to /webhooks/v1/projects/{project_id}/endpoints/{endpoint_id} and returns the parsed response.
 // DeleteEndpoint
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.Error].
 func (c *SimpleClient) DeleteEndpoint(ctx context.Context, projectId string, endpointId string, reqEditors ...RequestEditorFn) (models.GoogleProtobufEmpty, error) {
 	var result models.GoogleProtobufEmpty
 	resp, err := c.Client.DeleteEndpoint(ctx, projectId, endpointId, reqEditors...)
@@ -945,9 +945,9 @@ func (c *SimpleClient) DeleteEndpoint(ctx context.Context, projectId string, end
 	}
 
 	// Parse error response
-	var errBody models.GoogleRPCStatus
+	var errBody models.Error
 	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
-	return result, &ClientHttpError[models.GoogleRPCStatus]{
+	return result, &ClientHttpError[models.Error]{
 		StatusCode: resp.StatusCode,
 		Body:       errBody,
 		RawBody:    rawBody,
@@ -956,7 +956,7 @@ func (c *SimpleClient) DeleteEndpoint(ctx context.Context, projectId string, end
 
 // GetEndpoint makes a GET request to /webhooks/v1/projects/{project_id}/endpoints/{endpoint_id} and returns the parsed response.
 // GetEndpoint
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.Error].
 func (c *SimpleClient) GetEndpoint(ctx context.Context, projectId string, endpointId string, reqEditors ...RequestEditorFn) (models.WebhooksV1GetEndpointResponse, error) {
 	var result models.WebhooksV1GetEndpointResponse
 	resp, err := c.Client.GetEndpoint(ctx, projectId, endpointId, reqEditors...)
@@ -978,9 +978,9 @@ func (c *SimpleClient) GetEndpoint(ctx context.Context, projectId string, endpoi
 	}
 
 	// Parse error response
-	var errBody models.GoogleRPCStatus
+	var errBody models.Error
 	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
-	return result, &ClientHttpError[models.GoogleRPCStatus]{
+	return result, &ClientHttpError[models.Error]{
 		StatusCode: resp.StatusCode,
 		Body:       errBody,
 		RawBody:    rawBody,
@@ -989,7 +989,7 @@ func (c *SimpleClient) GetEndpoint(ctx context.Context, projectId string, endpoi
 
 // UpdateEndpoint makes a PATCH request to /webhooks/v1/projects/{project_id}/endpoints/{endpoint_id} and returns the parsed response.
 // UpdateEndpoint
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.Error].
 func (c *SimpleClient) UpdateEndpoint(ctx context.Context, projectId string, endpointId string, body UpdateEndpointJSONRequestBody, reqEditors ...RequestEditorFn) (models.WebhooksV1UpdateEndpointResponse, error) {
 	var result models.WebhooksV1UpdateEndpointResponse
 	resp, err := c.Client.UpdateEndpoint(ctx, projectId, endpointId, body, reqEditors...)
@@ -1011,9 +1011,9 @@ func (c *SimpleClient) UpdateEndpoint(ctx context.Context, projectId string, end
 	}
 
 	// Parse error response
-	var errBody models.GoogleRPCStatus
+	var errBody models.Error
 	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
-	return result, &ClientHttpError[models.GoogleRPCStatus]{
+	return result, &ClientHttpError[models.Error]{
 		StatusCode: resp.StatusCode,
 		Body:       errBody,
 		RawBody:    rawBody,
@@ -1022,7 +1022,7 @@ func (c *SimpleClient) UpdateEndpoint(ctx context.Context, projectId string, end
 
 // ListEndpointAttempts makes a GET request to /webhooks/v1/projects/{project_id}/endpoints/{endpoint_id}/attempts and returns the parsed response.
 // ListEndpointAttempts
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.Error].
 func (c *SimpleClient) ListEndpointAttempts(ctx context.Context, projectId string, endpointId string, params *ListEndpointAttemptsParams, reqEditors ...RequestEditorFn) (models.WebhooksV1ListEndpointAttemptsResponse, error) {
 	var result models.WebhooksV1ListEndpointAttemptsResponse
 	resp, err := c.Client.ListEndpointAttempts(ctx, projectId, endpointId, params, reqEditors...)
@@ -1044,9 +1044,9 @@ func (c *SimpleClient) ListEndpointAttempts(ctx context.Context, projectId strin
 	}
 
 	// Parse error response
-	var errBody models.GoogleRPCStatus
+	var errBody models.Error
 	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
-	return result, &ClientHttpError[models.GoogleRPCStatus]{
+	return result, &ClientHttpError[models.Error]{
 		StatusCode: resp.StatusCode,
 		Body:       errBody,
 		RawBody:    rawBody,
@@ -1055,7 +1055,7 @@ func (c *SimpleClient) ListEndpointAttempts(ctx context.Context, projectId strin
 
 // ReplayEvent makes a POST request to /webhooks/v1/projects/{project_id}/endpoints/{endpoint_id}/events/{event_id}/replay and returns the parsed response.
 // ReplayEvent
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.Error].
 func (c *SimpleClient) ReplayEvent(ctx context.Context, projectId string, endpointId string, eventId string, reqEditors ...RequestEditorFn) (models.GoogleProtobufEmpty, error) {
 	var result models.GoogleProtobufEmpty
 	resp, err := c.Client.ReplayEvent(ctx, projectId, endpointId, eventId, reqEditors...)
@@ -1077,9 +1077,9 @@ func (c *SimpleClient) ReplayEvent(ctx context.Context, projectId string, endpoi
 	}
 
 	// Parse error response
-	var errBody models.GoogleRPCStatus
+	var errBody models.Error
 	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
-	return result, &ClientHttpError[models.GoogleRPCStatus]{
+	return result, &ClientHttpError[models.Error]{
 		StatusCode: resp.StatusCode,
 		Body:       errBody,
 		RawBody:    rawBody,
@@ -1088,7 +1088,7 @@ func (c *SimpleClient) ReplayEvent(ctx context.Context, projectId string, endpoi
 
 // RotateEndpointSecret makes a POST request to /webhooks/v1/projects/{project_id}/endpoints/{endpoint_id}/rotate-secret and returns the parsed response.
 // RotateEndpointSecret
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.Error].
 func (c *SimpleClient) RotateEndpointSecret(ctx context.Context, projectId string, endpointId string, reqEditors ...RequestEditorFn) (models.WebhooksV1RotateEndpointSecretResponse, error) {
 	var result models.WebhooksV1RotateEndpointSecretResponse
 	resp, err := c.Client.RotateEndpointSecret(ctx, projectId, endpointId, reqEditors...)
@@ -1110,9 +1110,9 @@ func (c *SimpleClient) RotateEndpointSecret(ctx context.Context, projectId strin
 	}
 
 	// Parse error response
-	var errBody models.GoogleRPCStatus
+	var errBody models.Error
 	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
-	return result, &ClientHttpError[models.GoogleRPCStatus]{
+	return result, &ClientHttpError[models.Error]{
 		StatusCode: resp.StatusCode,
 		Body:       errBody,
 		RawBody:    rawBody,
@@ -1121,7 +1121,7 @@ func (c *SimpleClient) RotateEndpointSecret(ctx context.Context, projectId strin
 
 // SendTestEvent makes a POST request to /webhooks/v1/projects/{project_id}/endpoints/{endpoint_id}/test and returns the parsed response.
 // SendTestEvent
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.Error].
 func (c *SimpleClient) SendTestEvent(ctx context.Context, projectId string, endpointId string, reqEditors ...RequestEditorFn) (models.WebhooksV1SendTestEventResponse, error) {
 	var result models.WebhooksV1SendTestEventResponse
 	resp, err := c.Client.SendTestEvent(ctx, projectId, endpointId, reqEditors...)
@@ -1143,9 +1143,9 @@ func (c *SimpleClient) SendTestEvent(ctx context.Context, projectId string, endp
 	}
 
 	// Parse error response
-	var errBody models.GoogleRPCStatus
+	var errBody models.Error
 	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
-	return result, &ClientHttpError[models.GoogleRPCStatus]{
+	return result, &ClientHttpError[models.Error]{
 		StatusCode: resp.StatusCode,
 		Body:       errBody,
 		RawBody:    rawBody,
@@ -1154,7 +1154,7 @@ func (c *SimpleClient) SendTestEvent(ctx context.Context, projectId string, endp
 
 // ListEvents makes a GET request to /webhooks/v1/projects/{project_id}/events and returns the parsed response.
 // ListEvents
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.Error].
 func (c *SimpleClient) ListEvents(ctx context.Context, projectId string, params *ListEventsParams, reqEditors ...RequestEditorFn) (models.WebhooksV1ListEventsResponse, error) {
 	var result models.WebhooksV1ListEventsResponse
 	resp, err := c.Client.ListEvents(ctx, projectId, params, reqEditors...)
@@ -1176,9 +1176,9 @@ func (c *SimpleClient) ListEvents(ctx context.Context, projectId string, params 
 	}
 
 	// Parse error response
-	var errBody models.GoogleRPCStatus
+	var errBody models.Error
 	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
-	return result, &ClientHttpError[models.GoogleRPCStatus]{
+	return result, &ClientHttpError[models.Error]{
 		StatusCode: resp.StatusCode,
 		Body:       errBody,
 		RawBody:    rawBody,

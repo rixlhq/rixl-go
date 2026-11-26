@@ -287,7 +287,7 @@ func NewSimpleClient(server string, opts ...ClientOption) (*SimpleClient, error)
 
 // RefreshPlatformToken makes a POST request to /platform/auth/v1/refresh and returns the parsed response.
 // RefreshPlatformToken
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.Error].
 func (c *SimpleClient) RefreshPlatformToken(ctx context.Context, body RefreshPlatformTokenJSONRequestBody, reqEditors ...RequestEditorFn) (models.PlatformauthV1TokenResponse, error) {
 	var result models.PlatformauthV1TokenResponse
 	resp, err := c.Client.RefreshPlatformToken(ctx, body, reqEditors...)
@@ -309,9 +309,9 @@ func (c *SimpleClient) RefreshPlatformToken(ctx context.Context, body RefreshPla
 	}
 
 	// Parse error response
-	var errBody models.GoogleRPCStatus
+	var errBody models.Error
 	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
-	return result, &ClientHttpError[models.GoogleRPCStatus]{
+	return result, &ClientHttpError[models.Error]{
 		StatusCode: resp.StatusCode,
 		Body:       errBody,
 		RawBody:    rawBody,
@@ -320,7 +320,7 @@ func (c *SimpleClient) RefreshPlatformToken(ctx context.Context, body RefreshPla
 
 // ExchangeAPIKey makes a POST request to /platform/auth/v1/token and returns the parsed response.
 // ExchangeAPIKey
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.Error].
 func (c *SimpleClient) ExchangeAPIKey(ctx context.Context, body ExchangeAPIKeyJSONRequestBody, reqEditors ...RequestEditorFn) (models.PlatformauthV1TokenResponse, error) {
 	var result models.PlatformauthV1TokenResponse
 	resp, err := c.Client.ExchangeAPIKey(ctx, body, reqEditors...)
@@ -342,9 +342,9 @@ func (c *SimpleClient) ExchangeAPIKey(ctx context.Context, body ExchangeAPIKeyJS
 	}
 
 	// Parse error response
-	var errBody models.GoogleRPCStatus
+	var errBody models.Error
 	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
-	return result, &ClientHttpError[models.GoogleRPCStatus]{
+	return result, &ClientHttpError[models.Error]{
 		StatusCode: resp.StatusCode,
 		Body:       errBody,
 		RawBody:    rawBody,

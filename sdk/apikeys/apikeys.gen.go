@@ -504,7 +504,7 @@ func NewSimpleClient(server string, opts ...ClientOption) (*SimpleClient, error)
 
 // ListApiKeys makes a GET request to /organizations/{org_id}/api-keys/v1 and returns the parsed response.
 // ListApiKeys
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.Error].
 func (c *SimpleClient) ListApiKeys(ctx context.Context, orgId string, params *ListApiKeysParams, reqEditors ...RequestEditorFn) (models.ApikeysV1ListAPIKeysResponse, error) {
 	var result models.ApikeysV1ListAPIKeysResponse
 	resp, err := c.Client.ListApiKeys(ctx, orgId, params, reqEditors...)
@@ -526,9 +526,9 @@ func (c *SimpleClient) ListApiKeys(ctx context.Context, orgId string, params *Li
 	}
 
 	// Parse error response
-	var errBody models.GoogleRPCStatus
+	var errBody models.Error
 	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
-	return result, &ClientHttpError[models.GoogleRPCStatus]{
+	return result, &ClientHttpError[models.Error]{
 		StatusCode: resp.StatusCode,
 		Body:       errBody,
 		RawBody:    rawBody,
@@ -537,7 +537,7 @@ func (c *SimpleClient) ListApiKeys(ctx context.Context, orgId string, params *Li
 
 // CreateApiKey makes a POST request to /organizations/{org_id}/api-keys/v1 and returns the parsed response.
 // CreateApiKey
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.Error].
 func (c *SimpleClient) CreateApiKey(ctx context.Context, orgId string, body CreateApiKeyJSONRequestBody, reqEditors ...RequestEditorFn) (models.ApikeysV1CreateAPIKeyResponse, error) {
 	var result models.ApikeysV1CreateAPIKeyResponse
 	resp, err := c.Client.CreateApiKey(ctx, orgId, body, reqEditors...)
@@ -559,9 +559,9 @@ func (c *SimpleClient) CreateApiKey(ctx context.Context, orgId string, body Crea
 	}
 
 	// Parse error response
-	var errBody models.GoogleRPCStatus
+	var errBody models.Error
 	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
-	return result, &ClientHttpError[models.GoogleRPCStatus]{
+	return result, &ClientHttpError[models.Error]{
 		StatusCode: resp.StatusCode,
 		Body:       errBody,
 		RawBody:    rawBody,
@@ -570,7 +570,7 @@ func (c *SimpleClient) CreateApiKey(ctx context.Context, orgId string, body Crea
 
 // DeleteApiKey makes a DELETE request to /organizations/{org_id}/api-keys/v1/{key_id} and returns the parsed response.
 // DeleteApiKey
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.Error].
 func (c *SimpleClient) DeleteApiKey(ctx context.Context, orgId string, keyId string, reqEditors ...RequestEditorFn) (models.GoogleProtobufEmpty, error) {
 	var result models.GoogleProtobufEmpty
 	resp, err := c.Client.DeleteApiKey(ctx, orgId, keyId, reqEditors...)
@@ -592,9 +592,9 @@ func (c *SimpleClient) DeleteApiKey(ctx context.Context, orgId string, keyId str
 	}
 
 	// Parse error response
-	var errBody models.GoogleRPCStatus
+	var errBody models.Error
 	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
-	return result, &ClientHttpError[models.GoogleRPCStatus]{
+	return result, &ClientHttpError[models.Error]{
 		StatusCode: resp.StatusCode,
 		Body:       errBody,
 		RawBody:    rawBody,
@@ -603,7 +603,7 @@ func (c *SimpleClient) DeleteApiKey(ctx context.Context, orgId string, keyId str
 
 // UpdateApiKey makes a PATCH request to /organizations/{org_id}/api-keys/v1/{key_id} and returns the parsed response.
 // UpdateApiKey
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.Error].
 func (c *SimpleClient) UpdateApiKey(ctx context.Context, orgId string, keyId string, body UpdateApiKeyJSONRequestBody, reqEditors ...RequestEditorFn) (models.ApikeysV1UpdateAPIKeyResponse, error) {
 	var result models.ApikeysV1UpdateAPIKeyResponse
 	resp, err := c.Client.UpdateApiKey(ctx, orgId, keyId, body, reqEditors...)
@@ -625,9 +625,9 @@ func (c *SimpleClient) UpdateApiKey(ctx context.Context, orgId string, keyId str
 	}
 
 	// Parse error response
-	var errBody models.GoogleRPCStatus
+	var errBody models.Error
 	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
-	return result, &ClientHttpError[models.GoogleRPCStatus]{
+	return result, &ClientHttpError[models.Error]{
 		StatusCode: resp.StatusCode,
 		Body:       errBody,
 		RawBody:    rawBody,
@@ -636,7 +636,7 @@ func (c *SimpleClient) UpdateApiKey(ctx context.Context, orgId string, keyId str
 
 // RotateApiKey makes a POST request to /organizations/{org_id}/api-keys/v1/{key_id}/rotate and returns the parsed response.
 // RotateApiKey
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.Error].
 func (c *SimpleClient) RotateApiKey(ctx context.Context, orgId string, keyId string, reqEditors ...RequestEditorFn) (models.ApikeysV1RotateAPIKeyResponse, error) {
 	var result models.ApikeysV1RotateAPIKeyResponse
 	resp, err := c.Client.RotateApiKey(ctx, orgId, keyId, reqEditors...)
@@ -658,9 +658,9 @@ func (c *SimpleClient) RotateApiKey(ctx context.Context, orgId string, keyId str
 	}
 
 	// Parse error response
-	var errBody models.GoogleRPCStatus
+	var errBody models.Error
 	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
-	return result, &ClientHttpError[models.GoogleRPCStatus]{
+	return result, &ClientHttpError[models.Error]{
 		StatusCode: resp.StatusCode,
 		Body:       errBody,
 		RawBody:    rawBody,

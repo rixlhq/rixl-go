@@ -454,7 +454,7 @@ func NewSimpleClient(server string, opts ...ClientOption) (*SimpleClient, error)
 
 // DeleteAllAudioTracks makes a DELETE request to /media/v1/projects/{project_id}/videos/{video_id}/audio-tracks and returns the parsed response.
 // DeleteAllAudioTracks
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.Error].
 func (c *SimpleClient) DeleteAllAudioTracks(ctx context.Context, projectId string, videoId string, reqEditors ...RequestEditorFn) (models.GoogleProtobufEmpty, error) {
 	var result models.GoogleProtobufEmpty
 	resp, err := c.Client.DeleteAllAudioTracks(ctx, projectId, videoId, reqEditors...)
@@ -476,9 +476,9 @@ func (c *SimpleClient) DeleteAllAudioTracks(ctx context.Context, projectId strin
 	}
 
 	// Parse error response
-	var errBody models.GoogleRPCStatus
+	var errBody models.Error
 	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
-	return result, &ClientHttpError[models.GoogleRPCStatus]{
+	return result, &ClientHttpError[models.Error]{
 		StatusCode: resp.StatusCode,
 		Body:       errBody,
 		RawBody:    rawBody,
@@ -487,7 +487,7 @@ func (c *SimpleClient) DeleteAllAudioTracks(ctx context.Context, projectId strin
 
 // DeleteAudioTracksByLanguage makes a DELETE request to /media/v1/projects/{project_id}/videos/{video_id}/audio-tracks/language/{language_code} and returns the parsed response.
 // DeleteAudioTracksByLanguage
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.Error].
 func (c *SimpleClient) DeleteAudioTracksByLanguage(ctx context.Context, projectId string, videoId string, languageCode string, reqEditors ...RequestEditorFn) (models.GoogleProtobufEmpty, error) {
 	var result models.GoogleProtobufEmpty
 	resp, err := c.Client.DeleteAudioTracksByLanguage(ctx, projectId, videoId, languageCode, reqEditors...)
@@ -509,9 +509,9 @@ func (c *SimpleClient) DeleteAudioTracksByLanguage(ctx context.Context, projectI
 	}
 
 	// Parse error response
-	var errBody models.GoogleRPCStatus
+	var errBody models.Error
 	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
-	return result, &ClientHttpError[models.GoogleRPCStatus]{
+	return result, &ClientHttpError[models.Error]{
 		StatusCode: resp.StatusCode,
 		Body:       errBody,
 		RawBody:    rawBody,
@@ -520,7 +520,7 @@ func (c *SimpleClient) DeleteAudioTracksByLanguage(ctx context.Context, projectI
 
 // CreateAudioTrackUpload makes a POST request to /media/v1/projects/{project_id}/videos/{video_id}/audio-tracks/upload and returns the parsed response.
 // CreateAudioTrackUpload
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.Error].
 func (c *SimpleClient) CreateAudioTrackUpload(ctx context.Context, projectId string, videoId string, body CreateAudioTrackUploadJSONRequestBody, reqEditors ...RequestEditorFn) (models.VideosV1TrackUpload, error) {
 	var result models.VideosV1TrackUpload
 	resp, err := c.Client.CreateAudioTrackUpload(ctx, projectId, videoId, body, reqEditors...)
@@ -542,9 +542,9 @@ func (c *SimpleClient) CreateAudioTrackUpload(ctx context.Context, projectId str
 	}
 
 	// Parse error response
-	var errBody models.GoogleRPCStatus
+	var errBody models.Error
 	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
-	return result, &ClientHttpError[models.GoogleRPCStatus]{
+	return result, &ClientHttpError[models.Error]{
 		StatusCode: resp.StatusCode,
 		Body:       errBody,
 		RawBody:    rawBody,
@@ -553,7 +553,7 @@ func (c *SimpleClient) CreateAudioTrackUpload(ctx context.Context, projectId str
 
 // DeleteAudioTrack makes a DELETE request to /media/v1/projects/{project_id}/videos/{video_id}/audio-tracks/{track_id} and returns the parsed response.
 // DeleteAudioTrack
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.Error].
 func (c *SimpleClient) DeleteAudioTrack(ctx context.Context, projectId string, videoId string, trackId string, reqEditors ...RequestEditorFn) (models.GoogleProtobufEmpty, error) {
 	var result models.GoogleProtobufEmpty
 	resp, err := c.Client.DeleteAudioTrack(ctx, projectId, videoId, trackId, reqEditors...)
@@ -575,9 +575,9 @@ func (c *SimpleClient) DeleteAudioTrack(ctx context.Context, projectId string, v
 	}
 
 	// Parse error response
-	var errBody models.GoogleRPCStatus
+	var errBody models.Error
 	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
-	return result, &ClientHttpError[models.GoogleRPCStatus]{
+	return result, &ClientHttpError[models.Error]{
 		StatusCode: resp.StatusCode,
 		Body:       errBody,
 		RawBody:    rawBody,
@@ -586,7 +586,7 @@ func (c *SimpleClient) DeleteAudioTrack(ctx context.Context, projectId string, v
 
 // ListAudioTracks makes a GET request to /media/v1/videos/{video_id}/audio-tracks and returns the parsed response.
 // ListAudioTracks
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.Error].
 func (c *SimpleClient) ListAudioTracks(ctx context.Context, videoId string, reqEditors ...RequestEditorFn) (models.VideosV1ListAudioTracksResponse, error) {
 	var result models.VideosV1ListAudioTracksResponse
 	resp, err := c.Client.ListAudioTracks(ctx, videoId, reqEditors...)
@@ -608,9 +608,9 @@ func (c *SimpleClient) ListAudioTracks(ctx context.Context, videoId string, reqE
 	}
 
 	// Parse error response
-	var errBody models.GoogleRPCStatus
+	var errBody models.Error
 	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
-	return result, &ClientHttpError[models.GoogleRPCStatus]{
+	return result, &ClientHttpError[models.Error]{
 		StatusCode: resp.StatusCode,
 		Body:       errBody,
 		RawBody:    rawBody,

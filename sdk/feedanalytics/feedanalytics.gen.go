@@ -328,7 +328,7 @@ func NewSimpleClient(server string, opts ...ClientOption) (*SimpleClient, error)
 
 // GetFeedStats makes a GET request to /analytics/v1/feeds/{feed_id}/stats and returns the parsed response.
 // GetFeedStats
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.Error].
 func (c *SimpleClient) GetFeedStats(ctx context.Context, feedId string, params *GetFeedStatsParams, reqEditors ...RequestEditorFn) (models.AnalyticsV1FeedStats, error) {
 	var result models.AnalyticsV1FeedStats
 	resp, err := c.Client.GetFeedStats(ctx, feedId, params, reqEditors...)
@@ -350,9 +350,9 @@ func (c *SimpleClient) GetFeedStats(ctx context.Context, feedId string, params *
 	}
 
 	// Parse error response
-	var errBody models.GoogleRPCStatus
+	var errBody models.Error
 	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
-	return result, &ClientHttpError[models.GoogleRPCStatus]{
+	return result, &ClientHttpError[models.Error]{
 		StatusCode: resp.StatusCode,
 		Body:       errBody,
 		RawBody:    rawBody,
@@ -361,7 +361,7 @@ func (c *SimpleClient) GetFeedStats(ctx context.Context, feedId string, params *
 
 // GetTopFeeds makes a GET request to /analytics/v1/top/feeds and returns the parsed response.
 // GetTopFeeds
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.Error].
 func (c *SimpleClient) GetTopFeeds(ctx context.Context, params *GetTopFeedsParams, reqEditors ...RequestEditorFn) (models.AnalyticsV1TopFeedsResponse, error) {
 	var result models.AnalyticsV1TopFeedsResponse
 	resp, err := c.Client.GetTopFeeds(ctx, params, reqEditors...)
@@ -383,9 +383,9 @@ func (c *SimpleClient) GetTopFeeds(ctx context.Context, params *GetTopFeedsParam
 	}
 
 	// Parse error response
-	var errBody models.GoogleRPCStatus
+	var errBody models.Error
 	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
-	return result, &ClientHttpError[models.GoogleRPCStatus]{
+	return result, &ClientHttpError[models.Error]{
 		StatusCode: resp.StatusCode,
 		Body:       errBody,
 		RawBody:    rawBody,

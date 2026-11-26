@@ -687,7 +687,7 @@ func NewSimpleClient(server string, opts ...ClientOption) (*SimpleClient, error)
 
 // ListCategories makes a GET request to /support/v1/categories and returns the parsed response.
 // ListCategories
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.Error].
 func (c *SimpleClient) ListCategories(ctx context.Context, reqEditors ...RequestEditorFn) (models.SupportV1ListCategoriesResponse, error) {
 	var result models.SupportV1ListCategoriesResponse
 	resp, err := c.Client.ListCategories(ctx, reqEditors...)
@@ -709,9 +709,9 @@ func (c *SimpleClient) ListCategories(ctx context.Context, reqEditors ...Request
 	}
 
 	// Parse error response
-	var errBody models.GoogleRPCStatus
+	var errBody models.Error
 	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
-	return result, &ClientHttpError[models.GoogleRPCStatus]{
+	return result, &ClientHttpError[models.Error]{
 		StatusCode: resp.StatusCode,
 		Body:       errBody,
 		RawBody:    rawBody,
@@ -720,7 +720,7 @@ func (c *SimpleClient) ListCategories(ctx context.Context, reqEditors ...Request
 
 // ListTopics2 makes a GET request to /support/v1/categories/{category_id}/topics and returns the parsed response.
 // ListTopics
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.Error].
 func (c *SimpleClient) ListTopics2(ctx context.Context, categoryId string, params *ListTopics2Params, reqEditors ...RequestEditorFn) (models.SupportV1ListTopicsResponse, error) {
 	var result models.SupportV1ListTopicsResponse
 	resp, err := c.Client.ListTopics2(ctx, categoryId, params, reqEditors...)
@@ -742,9 +742,9 @@ func (c *SimpleClient) ListTopics2(ctx context.Context, categoryId string, param
 	}
 
 	// Parse error response
-	var errBody models.GoogleRPCStatus
+	var errBody models.Error
 	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
-	return result, &ClientHttpError[models.GoogleRPCStatus]{
+	return result, &ClientHttpError[models.Error]{
 		StatusCode: resp.StatusCode,
 		Body:       errBody,
 		RawBody:    rawBody,
@@ -753,7 +753,7 @@ func (c *SimpleClient) ListTopics2(ctx context.Context, categoryId string, param
 
 // ListTickets makes a GET request to /support/v1/tickets and returns the parsed response.
 // ListTickets
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.Error].
 func (c *SimpleClient) ListTickets(ctx context.Context, params *ListTicketsParams, reqEditors ...RequestEditorFn) (models.SupportV1ListTicketsResponse, error) {
 	var result models.SupportV1ListTicketsResponse
 	resp, err := c.Client.ListTickets(ctx, params, reqEditors...)
@@ -775,9 +775,9 @@ func (c *SimpleClient) ListTickets(ctx context.Context, params *ListTicketsParam
 	}
 
 	// Parse error response
-	var errBody models.GoogleRPCStatus
+	var errBody models.Error
 	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
-	return result, &ClientHttpError[models.GoogleRPCStatus]{
+	return result, &ClientHttpError[models.Error]{
 		StatusCode: resp.StatusCode,
 		Body:       errBody,
 		RawBody:    rawBody,
@@ -786,7 +786,7 @@ func (c *SimpleClient) ListTickets(ctx context.Context, params *ListTicketsParam
 
 // CreateTicket makes a POST request to /support/v1/tickets and returns the parsed response.
 // CreateTicket
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.Error].
 func (c *SimpleClient) CreateTicket(ctx context.Context, body CreateTicketJSONRequestBody, reqEditors ...RequestEditorFn) (models.SupportV1CreateTicketResponse, error) {
 	var result models.SupportV1CreateTicketResponse
 	resp, err := c.Client.CreateTicket(ctx, body, reqEditors...)
@@ -808,9 +808,9 @@ func (c *SimpleClient) CreateTicket(ctx context.Context, body CreateTicketJSONRe
 	}
 
 	// Parse error response
-	var errBody models.GoogleRPCStatus
+	var errBody models.Error
 	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
-	return result, &ClientHttpError[models.GoogleRPCStatus]{
+	return result, &ClientHttpError[models.Error]{
 		StatusCode: resp.StatusCode,
 		Body:       errBody,
 		RawBody:    rawBody,
@@ -819,7 +819,7 @@ func (c *SimpleClient) CreateTicket(ctx context.Context, body CreateTicketJSONRe
 
 // GetTicket makes a GET request to /support/v1/tickets/{ticket_id} and returns the parsed response.
 // GetTicket
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.Error].
 func (c *SimpleClient) GetTicket(ctx context.Context, ticketId string, reqEditors ...RequestEditorFn) (models.SupportV1GetTicketResponse, error) {
 	var result models.SupportV1GetTicketResponse
 	resp, err := c.Client.GetTicket(ctx, ticketId, reqEditors...)
@@ -841,9 +841,9 @@ func (c *SimpleClient) GetTicket(ctx context.Context, ticketId string, reqEditor
 	}
 
 	// Parse error response
-	var errBody models.GoogleRPCStatus
+	var errBody models.Error
 	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
-	return result, &ClientHttpError[models.GoogleRPCStatus]{
+	return result, &ClientHttpError[models.Error]{
 		StatusCode: resp.StatusCode,
 		Body:       errBody,
 		RawBody:    rawBody,
@@ -852,7 +852,7 @@ func (c *SimpleClient) GetTicket(ctx context.Context, ticketId string, reqEditor
 
 // CloseTicket makes a POST request to /support/v1/tickets/{ticket_id}/close and returns the parsed response.
 // CloseTicket
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.Error].
 func (c *SimpleClient) CloseTicket(ctx context.Context, ticketId string, reqEditors ...RequestEditorFn) (models.SupportV1CloseTicketResponse, error) {
 	var result models.SupportV1CloseTicketResponse
 	resp, err := c.Client.CloseTicket(ctx, ticketId, reqEditors...)
@@ -874,9 +874,9 @@ func (c *SimpleClient) CloseTicket(ctx context.Context, ticketId string, reqEdit
 	}
 
 	// Parse error response
-	var errBody models.GoogleRPCStatus
+	var errBody models.Error
 	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
-	return result, &ClientHttpError[models.GoogleRPCStatus]{
+	return result, &ClientHttpError[models.Error]{
 		StatusCode: resp.StatusCode,
 		Body:       errBody,
 		RawBody:    rawBody,
@@ -885,7 +885,7 @@ func (c *SimpleClient) CloseTicket(ctx context.Context, ticketId string, reqEdit
 
 // AddTicketMessage makes a POST request to /support/v1/tickets/{ticket_id}/messages and returns the parsed response.
 // AddTicketMessage
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.Error].
 func (c *SimpleClient) AddTicketMessage(ctx context.Context, ticketId string, body AddTicketMessageJSONRequestBody, reqEditors ...RequestEditorFn) (models.SupportV1AddTicketMessageResponse, error) {
 	var result models.SupportV1AddTicketMessageResponse
 	resp, err := c.Client.AddTicketMessage(ctx, ticketId, body, reqEditors...)
@@ -907,9 +907,9 @@ func (c *SimpleClient) AddTicketMessage(ctx context.Context, ticketId string, bo
 	}
 
 	// Parse error response
-	var errBody models.GoogleRPCStatus
+	var errBody models.Error
 	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
-	return result, &ClientHttpError[models.GoogleRPCStatus]{
+	return result, &ClientHttpError[models.Error]{
 		StatusCode: resp.StatusCode,
 		Body:       errBody,
 		RawBody:    rawBody,
@@ -918,7 +918,7 @@ func (c *SimpleClient) AddTicketMessage(ctx context.Context, ticketId string, bo
 
 // ListTopics makes a GET request to /support/v1/topics and returns the parsed response.
 // ListTopics
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.Error].
 func (c *SimpleClient) ListTopics(ctx context.Context, params *ListTopicsParams, reqEditors ...RequestEditorFn) (models.SupportV1ListTopicsResponse, error) {
 	var result models.SupportV1ListTopicsResponse
 	resp, err := c.Client.ListTopics(ctx, params, reqEditors...)
@@ -940,9 +940,9 @@ func (c *SimpleClient) ListTopics(ctx context.Context, params *ListTopicsParams,
 	}
 
 	// Parse error response
-	var errBody models.GoogleRPCStatus
+	var errBody models.Error
 	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
-	return result, &ClientHttpError[models.GoogleRPCStatus]{
+	return result, &ClientHttpError[models.Error]{
 		StatusCode: resp.StatusCode,
 		Body:       errBody,
 		RawBody:    rawBody,

@@ -185,7 +185,7 @@ func NewSimpleClient(server string, opts ...ClientOption) (*SimpleClient, error)
 
 // ListLanguages makes a GET request to /media/v1/languages and returns the parsed response.
 // ListLanguages
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.Error].
 func (c *SimpleClient) ListLanguages(ctx context.Context, reqEditors ...RequestEditorFn) (models.VideosV1ListLanguagesResponse, error) {
 	var result models.VideosV1ListLanguagesResponse
 	resp, err := c.Client.ListLanguages(ctx, reqEditors...)
@@ -207,9 +207,9 @@ func (c *SimpleClient) ListLanguages(ctx context.Context, reqEditors ...RequestE
 	}
 
 	// Parse error response
-	var errBody models.GoogleRPCStatus
+	var errBody models.Error
 	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
-	return result, &ClientHttpError[models.GoogleRPCStatus]{
+	return result, &ClientHttpError[models.Error]{
 		StatusCode: resp.StatusCode,
 		Body:       errBody,
 		RawBody:    rawBody,

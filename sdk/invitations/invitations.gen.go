@@ -733,7 +733,7 @@ func NewSimpleClient(server string, opts ...ClientOption) (*SimpleClient, error)
 
 // AcceptInvitation makes a POST request to /auth/v1/invitations/accept and returns the parsed response.
 // AcceptInvitation
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.Error].
 func (c *SimpleClient) AcceptInvitation(ctx context.Context, body AcceptInvitationJSONRequestBody, reqEditors ...RequestEditorFn) (models.AuthV1Membership, error) {
 	var result models.AuthV1Membership
 	resp, err := c.Client.AcceptInvitation(ctx, body, reqEditors...)
@@ -755,9 +755,9 @@ func (c *SimpleClient) AcceptInvitation(ctx context.Context, body AcceptInvitati
 	}
 
 	// Parse error response
-	var errBody models.GoogleRPCStatus
+	var errBody models.Error
 	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
-	return result, &ClientHttpError[models.GoogleRPCStatus]{
+	return result, &ClientHttpError[models.Error]{
 		StatusCode: resp.StatusCode,
 		Body:       errBody,
 		RawBody:    rawBody,
@@ -766,7 +766,7 @@ func (c *SimpleClient) AcceptInvitation(ctx context.Context, body AcceptInvitati
 
 // DeclineInvitation makes a POST request to /auth/v1/invitations/decline and returns the parsed response.
 // DeclineInvitation
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.Error].
 func (c *SimpleClient) DeclineInvitation(ctx context.Context, body DeclineInvitationJSONRequestBody, reqEditors ...RequestEditorFn) (models.GoogleProtobufEmpty, error) {
 	var result models.GoogleProtobufEmpty
 	resp, err := c.Client.DeclineInvitation(ctx, body, reqEditors...)
@@ -788,9 +788,9 @@ func (c *SimpleClient) DeclineInvitation(ctx context.Context, body DeclineInvita
 	}
 
 	// Parse error response
-	var errBody models.GoogleRPCStatus
+	var errBody models.Error
 	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
-	return result, &ClientHttpError[models.GoogleRPCStatus]{
+	return result, &ClientHttpError[models.Error]{
 		StatusCode: resp.StatusCode,
 		Body:       errBody,
 		RawBody:    rawBody,
@@ -799,7 +799,7 @@ func (c *SimpleClient) DeclineInvitation(ctx context.Context, body DeclineInvita
 
 // LookupInvitation makes a POST request to /auth/v1/invitations/lookup and returns the parsed response.
 // LookupInvitation
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.Error].
 func (c *SimpleClient) LookupInvitation(ctx context.Context, body LookupInvitationJSONRequestBody, reqEditors ...RequestEditorFn) (models.AuthV1LookupInvitationResponse, error) {
 	var result models.AuthV1LookupInvitationResponse
 	resp, err := c.Client.LookupInvitation(ctx, body, reqEditors...)
@@ -821,9 +821,9 @@ func (c *SimpleClient) LookupInvitation(ctx context.Context, body LookupInvitati
 	}
 
 	// Parse error response
-	var errBody models.GoogleRPCStatus
+	var errBody models.Error
 	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
-	return result, &ClientHttpError[models.GoogleRPCStatus]{
+	return result, &ClientHttpError[models.Error]{
 		StatusCode: resp.StatusCode,
 		Body:       errBody,
 		RawBody:    rawBody,
@@ -832,7 +832,7 @@ func (c *SimpleClient) LookupInvitation(ctx context.Context, body LookupInvitati
 
 // ListOrganizationInvitations makes a GET request to /auth/v1/organizations/{org_id}/invitations and returns the parsed response.
 // ListOrganizationInvitations
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.Error].
 func (c *SimpleClient) ListOrganizationInvitations(ctx context.Context, orgId string, params *ListOrganizationInvitationsParams, reqEditors ...RequestEditorFn) (models.AuthV1ListOrganizationInvitationsResponse, error) {
 	var result models.AuthV1ListOrganizationInvitationsResponse
 	resp, err := c.Client.ListOrganizationInvitations(ctx, orgId, params, reqEditors...)
@@ -854,9 +854,9 @@ func (c *SimpleClient) ListOrganizationInvitations(ctx context.Context, orgId st
 	}
 
 	// Parse error response
-	var errBody models.GoogleRPCStatus
+	var errBody models.Error
 	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
-	return result, &ClientHttpError[models.GoogleRPCStatus]{
+	return result, &ClientHttpError[models.Error]{
 		StatusCode: resp.StatusCode,
 		Body:       errBody,
 		RawBody:    rawBody,
@@ -865,7 +865,7 @@ func (c *SimpleClient) ListOrganizationInvitations(ctx context.Context, orgId st
 
 // CreateInvitation makes a POST request to /auth/v1/organizations/{org_id}/invitations and returns the parsed response.
 // CreateInvitation
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.Error].
 func (c *SimpleClient) CreateInvitation(ctx context.Context, orgId string, body CreateInvitationJSONRequestBody, reqEditors ...RequestEditorFn) (models.AuthV1Invitation, error) {
 	var result models.AuthV1Invitation
 	resp, err := c.Client.CreateInvitation(ctx, orgId, body, reqEditors...)
@@ -887,9 +887,9 @@ func (c *SimpleClient) CreateInvitation(ctx context.Context, orgId string, body 
 	}
 
 	// Parse error response
-	var errBody models.GoogleRPCStatus
+	var errBody models.Error
 	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
-	return result, &ClientHttpError[models.GoogleRPCStatus]{
+	return result, &ClientHttpError[models.Error]{
 		StatusCode: resp.StatusCode,
 		Body:       errBody,
 		RawBody:    rawBody,
@@ -898,7 +898,7 @@ func (c *SimpleClient) CreateInvitation(ctx context.Context, orgId string, body 
 
 // RevokeInvitation makes a DELETE request to /auth/v1/organizations/{org_id}/invitations/{invitation_id} and returns the parsed response.
 // RevokeInvitation
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.Error].
 func (c *SimpleClient) RevokeInvitation(ctx context.Context, orgId string, invitationId string, reqEditors ...RequestEditorFn) (models.GoogleProtobufEmpty, error) {
 	var result models.GoogleProtobufEmpty
 	resp, err := c.Client.RevokeInvitation(ctx, orgId, invitationId, reqEditors...)
@@ -920,9 +920,9 @@ func (c *SimpleClient) RevokeInvitation(ctx context.Context, orgId string, invit
 	}
 
 	// Parse error response
-	var errBody models.GoogleRPCStatus
+	var errBody models.Error
 	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
-	return result, &ClientHttpError[models.GoogleRPCStatus]{
+	return result, &ClientHttpError[models.Error]{
 		StatusCode: resp.StatusCode,
 		Body:       errBody,
 		RawBody:    rawBody,
@@ -931,7 +931,7 @@ func (c *SimpleClient) RevokeInvitation(ctx context.Context, orgId string, invit
 
 // ResendInvitation makes a POST request to /auth/v1/organizations/{org_id}/invitations/{invitation_id}/resend and returns the parsed response.
 // ResendInvitation
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.Error].
 func (c *SimpleClient) ResendInvitation(ctx context.Context, orgId string, invitationId string, reqEditors ...RequestEditorFn) (models.AuthV1Invitation, error) {
 	var result models.AuthV1Invitation
 	resp, err := c.Client.ResendInvitation(ctx, orgId, invitationId, reqEditors...)
@@ -953,9 +953,9 @@ func (c *SimpleClient) ResendInvitation(ctx context.Context, orgId string, invit
 	}
 
 	// Parse error response
-	var errBody models.GoogleRPCStatus
+	var errBody models.Error
 	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
-	return result, &ClientHttpError[models.GoogleRPCStatus]{
+	return result, &ClientHttpError[models.Error]{
 		StatusCode: resp.StatusCode,
 		Body:       errBody,
 		RawBody:    rawBody,
@@ -964,7 +964,7 @@ func (c *SimpleClient) ResendInvitation(ctx context.Context, orgId string, invit
 
 // ListMyInvitations makes a GET request to /auth/v1/users/current/invitations and returns the parsed response.
 // ListMyInvitations
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.Error].
 func (c *SimpleClient) ListMyInvitations(ctx context.Context, params *ListMyInvitationsParams, reqEditors ...RequestEditorFn) (models.AuthV1ListMyInvitationsResponse, error) {
 	var result models.AuthV1ListMyInvitationsResponse
 	resp, err := c.Client.ListMyInvitations(ctx, params, reqEditors...)
@@ -986,9 +986,9 @@ func (c *SimpleClient) ListMyInvitations(ctx context.Context, params *ListMyInvi
 	}
 
 	// Parse error response
-	var errBody models.GoogleRPCStatus
+	var errBody models.Error
 	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
-	return result, &ClientHttpError[models.GoogleRPCStatus]{
+	return result, &ClientHttpError[models.Error]{
 		StatusCode: resp.StatusCode,
 		Body:       errBody,
 		RawBody:    rawBody,

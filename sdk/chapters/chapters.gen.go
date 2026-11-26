@@ -438,7 +438,7 @@ func NewSimpleClient(server string, opts ...ClientOption) (*SimpleClient, error)
 
 // UpdateVideoChapters2 makes a DELETE request to /media/v1/projects/{project_id}/videos/{video_id}/chapters and returns the parsed response.
 // UpdateVideoChapters
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.Error].
 func (c *SimpleClient) UpdateVideoChapters2(ctx context.Context, projectId string, videoId string, params *UpdateVideoChapters2Params, reqEditors ...RequestEditorFn) (models.VideosV1VideoChapters, error) {
 	var result models.VideosV1VideoChapters
 	resp, err := c.Client.UpdateVideoChapters2(ctx, projectId, videoId, params, reqEditors...)
@@ -460,9 +460,9 @@ func (c *SimpleClient) UpdateVideoChapters2(ctx context.Context, projectId strin
 	}
 
 	// Parse error response
-	var errBody models.GoogleRPCStatus
+	var errBody models.Error
 	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
-	return result, &ClientHttpError[models.GoogleRPCStatus]{
+	return result, &ClientHttpError[models.Error]{
 		StatusCode: resp.StatusCode,
 		Body:       errBody,
 		RawBody:    rawBody,
@@ -471,7 +471,7 @@ func (c *SimpleClient) UpdateVideoChapters2(ctx context.Context, projectId strin
 
 // GetVideoChapters makes a GET request to /media/v1/projects/{project_id}/videos/{video_id}/chapters and returns the parsed response.
 // GetVideoChapters
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.Error].
 func (c *SimpleClient) GetVideoChapters(ctx context.Context, projectId string, videoId string, reqEditors ...RequestEditorFn) (models.VideosV1VideoChapters, error) {
 	var result models.VideosV1VideoChapters
 	resp, err := c.Client.GetVideoChapters(ctx, projectId, videoId, reqEditors...)
@@ -493,9 +493,9 @@ func (c *SimpleClient) GetVideoChapters(ctx context.Context, projectId string, v
 	}
 
 	// Parse error response
-	var errBody models.GoogleRPCStatus
+	var errBody models.Error
 	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
-	return result, &ClientHttpError[models.GoogleRPCStatus]{
+	return result, &ClientHttpError[models.Error]{
 		StatusCode: resp.StatusCode,
 		Body:       errBody,
 		RawBody:    rawBody,
@@ -504,7 +504,7 @@ func (c *SimpleClient) GetVideoChapters(ctx context.Context, projectId string, v
 
 // UpdateVideoChapters makes a PUT request to /media/v1/projects/{project_id}/videos/{video_id}/chapters and returns the parsed response.
 // UpdateVideoChapters
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.Error].
 func (c *SimpleClient) UpdateVideoChapters(ctx context.Context, projectId string, videoId string, body UpdateVideoChaptersJSONRequestBody, reqEditors ...RequestEditorFn) (models.VideosV1VideoChapters, error) {
 	var result models.VideosV1VideoChapters
 	resp, err := c.Client.UpdateVideoChapters(ctx, projectId, videoId, body, reqEditors...)
@@ -526,9 +526,9 @@ func (c *SimpleClient) UpdateVideoChapters(ctx context.Context, projectId string
 	}
 
 	// Parse error response
-	var errBody models.GoogleRPCStatus
+	var errBody models.Error
 	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
-	return result, &ClientHttpError[models.GoogleRPCStatus]{
+	return result, &ClientHttpError[models.Error]{
 		StatusCode: resp.StatusCode,
 		Body:       errBody,
 		RawBody:    rawBody,
@@ -537,7 +537,7 @@ func (c *SimpleClient) UpdateVideoChapters(ctx context.Context, projectId string
 
 // DeleteVideoChapter makes a DELETE request to /media/v1/projects/{project_id}/videos/{video_id}/chapters/{start_time_sec} and returns the parsed response.
 // DeleteVideoChapter
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.Error].
 func (c *SimpleClient) DeleteVideoChapter(ctx context.Context, projectId string, videoId string, startTimeSec string, reqEditors ...RequestEditorFn) (models.VideosV1VideoChapters, error) {
 	var result models.VideosV1VideoChapters
 	resp, err := c.Client.DeleteVideoChapter(ctx, projectId, videoId, startTimeSec, reqEditors...)
@@ -559,9 +559,9 @@ func (c *SimpleClient) DeleteVideoChapter(ctx context.Context, projectId string,
 	}
 
 	// Parse error response
-	var errBody models.GoogleRPCStatus
+	var errBody models.Error
 	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
-	return result, &ClientHttpError[models.GoogleRPCStatus]{
+	return result, &ClientHttpError[models.Error]{
 		StatusCode: resp.StatusCode,
 		Body:       errBody,
 		RawBody:    rawBody,

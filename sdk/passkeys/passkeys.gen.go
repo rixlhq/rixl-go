@@ -722,7 +722,7 @@ func NewSimpleClient(server string, opts ...ClientOption) (*SimpleClient, error)
 
 // PasskeyLoginBegin makes a POST request to /auth/v1/passkey/login/begin and returns the parsed response.
 // PasskeyLoginBegin
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.Error].
 func (c *SimpleClient) PasskeyLoginBegin(ctx context.Context, body PasskeyLoginBeginJSONRequestBody, reqEditors ...RequestEditorFn) (models.AuthV1PasskeyBeginResponse, error) {
 	var result models.AuthV1PasskeyBeginResponse
 	resp, err := c.Client.PasskeyLoginBegin(ctx, body, reqEditors...)
@@ -744,9 +744,9 @@ func (c *SimpleClient) PasskeyLoginBegin(ctx context.Context, body PasskeyLoginB
 	}
 
 	// Parse error response
-	var errBody models.GoogleRPCStatus
+	var errBody models.Error
 	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
-	return result, &ClientHttpError[models.GoogleRPCStatus]{
+	return result, &ClientHttpError[models.Error]{
 		StatusCode: resp.StatusCode,
 		Body:       errBody,
 		RawBody:    rawBody,
@@ -755,7 +755,7 @@ func (c *SimpleClient) PasskeyLoginBegin(ctx context.Context, body PasskeyLoginB
 
 // PasskeyLoginFinish makes a POST request to /auth/v1/passkey/login/finish and returns the parsed response.
 // PasskeyLoginFinish
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.Error].
 func (c *SimpleClient) PasskeyLoginFinish(ctx context.Context, body PasskeyLoginFinishJSONRequestBody, reqEditors ...RequestEditorFn) (models.AuthV1TokenResponse, error) {
 	var result models.AuthV1TokenResponse
 	resp, err := c.Client.PasskeyLoginFinish(ctx, body, reqEditors...)
@@ -777,9 +777,9 @@ func (c *SimpleClient) PasskeyLoginFinish(ctx context.Context, body PasskeyLogin
 	}
 
 	// Parse error response
-	var errBody models.GoogleRPCStatus
+	var errBody models.Error
 	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
-	return result, &ClientHttpError[models.GoogleRPCStatus]{
+	return result, &ClientHttpError[models.Error]{
 		StatusCode: resp.StatusCode,
 		Body:       errBody,
 		RawBody:    rawBody,
@@ -788,7 +788,7 @@ func (c *SimpleClient) PasskeyLoginFinish(ctx context.Context, body PasskeyLogin
 
 // ListPasskeys makes a GET request to /auth/v1/users/current/passkeys and returns the parsed response.
 // ListPasskeys
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.Error].
 func (c *SimpleClient) ListPasskeys(ctx context.Context, params *ListPasskeysParams, reqEditors ...RequestEditorFn) (models.AuthV1ListPasskeysResponse, error) {
 	var result models.AuthV1ListPasskeysResponse
 	resp, err := c.Client.ListPasskeys(ctx, params, reqEditors...)
@@ -810,9 +810,9 @@ func (c *SimpleClient) ListPasskeys(ctx context.Context, params *ListPasskeysPar
 	}
 
 	// Parse error response
-	var errBody models.GoogleRPCStatus
+	var errBody models.Error
 	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
-	return result, &ClientHttpError[models.GoogleRPCStatus]{
+	return result, &ClientHttpError[models.Error]{
 		StatusCode: resp.StatusCode,
 		Body:       errBody,
 		RawBody:    rawBody,
@@ -821,7 +821,7 @@ func (c *SimpleClient) ListPasskeys(ctx context.Context, params *ListPasskeysPar
 
 // PasskeyRegisterBegin makes a POST request to /auth/v1/users/current/passkeys/register/begin and returns the parsed response.
 // PasskeyRegisterBegin
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.Error].
 func (c *SimpleClient) PasskeyRegisterBegin(ctx context.Context, body PasskeyRegisterBeginJSONRequestBody, reqEditors ...RequestEditorFn) (models.AuthV1PasskeyBeginResponse, error) {
 	var result models.AuthV1PasskeyBeginResponse
 	resp, err := c.Client.PasskeyRegisterBegin(ctx, body, reqEditors...)
@@ -843,9 +843,9 @@ func (c *SimpleClient) PasskeyRegisterBegin(ctx context.Context, body PasskeyReg
 	}
 
 	// Parse error response
-	var errBody models.GoogleRPCStatus
+	var errBody models.Error
 	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
-	return result, &ClientHttpError[models.GoogleRPCStatus]{
+	return result, &ClientHttpError[models.Error]{
 		StatusCode: resp.StatusCode,
 		Body:       errBody,
 		RawBody:    rawBody,
@@ -854,7 +854,7 @@ func (c *SimpleClient) PasskeyRegisterBegin(ctx context.Context, body PasskeyReg
 
 // PasskeyRegisterFinish makes a POST request to /auth/v1/users/current/passkeys/register/finish and returns the parsed response.
 // PasskeyRegisterFinish
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.Error].
 func (c *SimpleClient) PasskeyRegisterFinish(ctx context.Context, body PasskeyRegisterFinishJSONRequestBody, reqEditors ...RequestEditorFn) (models.AuthV1PasskeyRegisterFinishResponse, error) {
 	var result models.AuthV1PasskeyRegisterFinishResponse
 	resp, err := c.Client.PasskeyRegisterFinish(ctx, body, reqEditors...)
@@ -876,9 +876,9 @@ func (c *SimpleClient) PasskeyRegisterFinish(ctx context.Context, body PasskeyRe
 	}
 
 	// Parse error response
-	var errBody models.GoogleRPCStatus
+	var errBody models.Error
 	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
-	return result, &ClientHttpError[models.GoogleRPCStatus]{
+	return result, &ClientHttpError[models.Error]{
 		StatusCode: resp.StatusCode,
 		Body:       errBody,
 		RawBody:    rawBody,
@@ -887,7 +887,7 @@ func (c *SimpleClient) PasskeyRegisterFinish(ctx context.Context, body PasskeyRe
 
 // DeletePasskey makes a DELETE request to /auth/v1/users/current/passkeys/{id} and returns the parsed response.
 // DeletePasskey
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.Error].
 func (c *SimpleClient) DeletePasskey(ctx context.Context, id string, params *DeletePasskeyParams, reqEditors ...RequestEditorFn) (models.GoogleProtobufEmpty, error) {
 	var result models.GoogleProtobufEmpty
 	resp, err := c.Client.DeletePasskey(ctx, id, params, reqEditors...)
@@ -909,9 +909,9 @@ func (c *SimpleClient) DeletePasskey(ctx context.Context, id string, params *Del
 	}
 
 	// Parse error response
-	var errBody models.GoogleRPCStatus
+	var errBody models.Error
 	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
-	return result, &ClientHttpError[models.GoogleRPCStatus]{
+	return result, &ClientHttpError[models.Error]{
 		StatusCode: resp.StatusCode,
 		Body:       errBody,
 		RawBody:    rawBody,
@@ -920,7 +920,7 @@ func (c *SimpleClient) DeletePasskey(ctx context.Context, id string, params *Del
 
 // RenamePasskey makes a PATCH request to /auth/v1/users/current/passkeys/{id} and returns the parsed response.
 // RenamePasskey
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.Error].
 func (c *SimpleClient) RenamePasskey(ctx context.Context, id string, body RenamePasskeyJSONRequestBody, reqEditors ...RequestEditorFn) (models.GoogleProtobufEmpty, error) {
 	var result models.GoogleProtobufEmpty
 	resp, err := c.Client.RenamePasskey(ctx, id, body, reqEditors...)
@@ -942,9 +942,9 @@ func (c *SimpleClient) RenamePasskey(ctx context.Context, id string, body Rename
 	}
 
 	// Parse error response
-	var errBody models.GoogleRPCStatus
+	var errBody models.Error
 	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
-	return result, &ClientHttpError[models.GoogleRPCStatus]{
+	return result, &ClientHttpError[models.Error]{
 		StatusCode: resp.StatusCode,
 		Body:       errBody,
 		RawBody:    rawBody,
@@ -953,7 +953,7 @@ func (c *SimpleClient) RenamePasskey(ctx context.Context, id string, body Rename
 
 // VerifyPasskeyForLogin makes a POST request to /auth/v1/verify-passkey and returns the parsed response.
 // VerifyPasskeyForLogin
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.Error].
 func (c *SimpleClient) VerifyPasskeyForLogin(ctx context.Context, body VerifyPasskeyForLoginJSONRequestBody, reqEditors ...RequestEditorFn) (models.AuthV1TokenResponse, error) {
 	var result models.AuthV1TokenResponse
 	resp, err := c.Client.VerifyPasskeyForLogin(ctx, body, reqEditors...)
@@ -975,9 +975,9 @@ func (c *SimpleClient) VerifyPasskeyForLogin(ctx context.Context, body VerifyPas
 	}
 
 	// Parse error response
-	var errBody models.GoogleRPCStatus
+	var errBody models.Error
 	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
-	return result, &ClientHttpError[models.GoogleRPCStatus]{
+	return result, &ClientHttpError[models.Error]{
 		StatusCode: resp.StatusCode,
 		Body:       errBody,
 		RawBody:    rawBody,

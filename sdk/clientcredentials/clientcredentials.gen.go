@@ -458,7 +458,7 @@ func NewSimpleClient(server string, opts ...ClientOption) (*SimpleClient, error)
 
 // ListClientCredentials makes a GET request to /platform/clientauth/v1/credentials and returns the parsed response.
 // ListClientCredentials
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.Error].
 func (c *SimpleClient) ListClientCredentials(ctx context.Context, params *ListClientCredentialsParams, reqEditors ...RequestEditorFn) (models.ClientauthV1ListClientCredentialsResponse, error) {
 	var result models.ClientauthV1ListClientCredentialsResponse
 	resp, err := c.Client.ListClientCredentials(ctx, params, reqEditors...)
@@ -480,9 +480,9 @@ func (c *SimpleClient) ListClientCredentials(ctx context.Context, params *ListCl
 	}
 
 	// Parse error response
-	var errBody models.GoogleRPCStatus
+	var errBody models.Error
 	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
-	return result, &ClientHttpError[models.GoogleRPCStatus]{
+	return result, &ClientHttpError[models.Error]{
 		StatusCode: resp.StatusCode,
 		Body:       errBody,
 		RawBody:    rawBody,
@@ -491,7 +491,7 @@ func (c *SimpleClient) ListClientCredentials(ctx context.Context, params *ListCl
 
 // CreateClientCredential makes a POST request to /platform/clientauth/v1/credentials and returns the parsed response.
 // CreateClientCredential
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.Error].
 func (c *SimpleClient) CreateClientCredential(ctx context.Context, body CreateClientCredentialJSONRequestBody, reqEditors ...RequestEditorFn) (models.ClientauthV1CreateClientCredentialResponse, error) {
 	var result models.ClientauthV1CreateClientCredentialResponse
 	resp, err := c.Client.CreateClientCredential(ctx, body, reqEditors...)
@@ -513,9 +513,9 @@ func (c *SimpleClient) CreateClientCredential(ctx context.Context, body CreateCl
 	}
 
 	// Parse error response
-	var errBody models.GoogleRPCStatus
+	var errBody models.Error
 	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
-	return result, &ClientHttpError[models.GoogleRPCStatus]{
+	return result, &ClientHttpError[models.Error]{
 		StatusCode: resp.StatusCode,
 		Body:       errBody,
 		RawBody:    rawBody,
@@ -524,7 +524,7 @@ func (c *SimpleClient) CreateClientCredential(ctx context.Context, body CreateCl
 
 // RevokeClientCredential makes a POST request to /platform/clientauth/v1/credentials/{credential_id}/revoke and returns the parsed response.
 // RevokeClientCredential
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.Error].
 func (c *SimpleClient) RevokeClientCredential(ctx context.Context, credentialId string, params *RevokeClientCredentialParams, reqEditors ...RequestEditorFn) (models.GoogleProtobufEmpty, error) {
 	var result models.GoogleProtobufEmpty
 	resp, err := c.Client.RevokeClientCredential(ctx, credentialId, params, reqEditors...)
@@ -546,9 +546,9 @@ func (c *SimpleClient) RevokeClientCredential(ctx context.Context, credentialId 
 	}
 
 	// Parse error response
-	var errBody models.GoogleRPCStatus
+	var errBody models.Error
 	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
-	return result, &ClientHttpError[models.GoogleRPCStatus]{
+	return result, &ClientHttpError[models.Error]{
 		StatusCode: resp.StatusCode,
 		Body:       errBody,
 		RawBody:    rawBody,
@@ -557,7 +557,7 @@ func (c *SimpleClient) RevokeClientCredential(ctx context.Context, credentialId 
 
 // MintClientToken makes a POST request to /platform/clientauth/v1/token and returns the parsed response.
 // MintClientToken
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.Error].
 func (c *SimpleClient) MintClientToken(ctx context.Context, body MintClientTokenJSONRequestBody, reqEditors ...RequestEditorFn) (models.ClientauthV1MintClientTokenResponse, error) {
 	var result models.ClientauthV1MintClientTokenResponse
 	resp, err := c.Client.MintClientToken(ctx, body, reqEditors...)
@@ -579,9 +579,9 @@ func (c *SimpleClient) MintClientToken(ctx context.Context, body MintClientToken
 	}
 
 	// Parse error response
-	var errBody models.GoogleRPCStatus
+	var errBody models.Error
 	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
-	return result, &ClientHttpError[models.GoogleRPCStatus]{
+	return result, &ClientHttpError[models.Error]{
 		StatusCode: resp.StatusCode,
 		Body:       errBody,
 		RawBody:    rawBody,

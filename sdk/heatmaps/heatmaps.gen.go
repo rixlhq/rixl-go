@@ -334,7 +334,7 @@ func NewSimpleClient(server string, opts ...ClientOption) (*SimpleClient, error)
 
 // GetVideoHeatmap makes a GET request to /analytics/v1/videos/{video_id}/heatmap and returns the parsed response.
 // GetVideoHeatmap
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.Error].
 func (c *SimpleClient) GetVideoHeatmap(ctx context.Context, videoId string, params *GetVideoHeatmapParams, reqEditors ...RequestEditorFn) (models.AnalyticsV1VideoHeatmap, error) {
 	var result models.AnalyticsV1VideoHeatmap
 	resp, err := c.Client.GetVideoHeatmap(ctx, videoId, params, reqEditors...)
@@ -356,9 +356,9 @@ func (c *SimpleClient) GetVideoHeatmap(ctx context.Context, videoId string, para
 	}
 
 	// Parse error response
-	var errBody models.GoogleRPCStatus
+	var errBody models.Error
 	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
-	return result, &ClientHttpError[models.GoogleRPCStatus]{
+	return result, &ClientHttpError[models.Error]{
 		StatusCode: resp.StatusCode,
 		Body:       errBody,
 		RawBody:    rawBody,
@@ -367,7 +367,7 @@ func (c *SimpleClient) GetVideoHeatmap(ctx context.Context, videoId string, para
 
 // GetHotSegments makes a GET request to /analytics/v1/videos/{video_id}/hot-segments and returns the parsed response.
 // GetHotSegments
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.Error].
 func (c *SimpleClient) GetHotSegments(ctx context.Context, videoId string, params *GetHotSegmentsParams, reqEditors ...RequestEditorFn) (models.AnalyticsV1HotSegmentsResponse, error) {
 	var result models.AnalyticsV1HotSegmentsResponse
 	resp, err := c.Client.GetHotSegments(ctx, videoId, params, reqEditors...)
@@ -389,9 +389,9 @@ func (c *SimpleClient) GetHotSegments(ctx context.Context, videoId string, param
 	}
 
 	// Parse error response
-	var errBody models.GoogleRPCStatus
+	var errBody models.Error
 	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
-	return result, &ClientHttpError[models.GoogleRPCStatus]{
+	return result, &ClientHttpError[models.Error]{
 		StatusCode: resp.StatusCode,
 		Body:       errBody,
 		RawBody:    rawBody,

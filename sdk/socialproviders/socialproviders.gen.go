@@ -356,7 +356,7 @@ func NewSimpleClient(server string, opts ...ClientOption) (*SimpleClient, error)
 
 // ListProviders makes a GET request to /auth/v1/providers and returns the parsed response.
 // ListProviders
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.Error].
 func (c *SimpleClient) ListProviders(ctx context.Context, params *ListProvidersParams, reqEditors ...RequestEditorFn) (models.AuthV1ListProvidersResponse, error) {
 	var result models.AuthV1ListProvidersResponse
 	resp, err := c.Client.ListProviders(ctx, params, reqEditors...)
@@ -378,9 +378,9 @@ func (c *SimpleClient) ListProviders(ctx context.Context, params *ListProvidersP
 	}
 
 	// Parse error response
-	var errBody models.GoogleRPCStatus
+	var errBody models.Error
 	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
-	return result, &ClientHttpError[models.GoogleRPCStatus]{
+	return result, &ClientHttpError[models.Error]{
 		StatusCode: resp.StatusCode,
 		Body:       errBody,
 		RawBody:    rawBody,
@@ -389,7 +389,7 @@ func (c *SimpleClient) ListProviders(ctx context.Context, params *ListProvidersP
 
 // ConnectProvider makes a POST request to /auth/v1/providers/connect and returns the parsed response.
 // ConnectProvider
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.Error].
 func (c *SimpleClient) ConnectProvider(ctx context.Context, body ConnectProviderJSONRequestBody, reqEditors ...RequestEditorFn) (models.AuthV1TokenResponse, error) {
 	var result models.AuthV1TokenResponse
 	resp, err := c.Client.ConnectProvider(ctx, body, reqEditors...)
@@ -411,9 +411,9 @@ func (c *SimpleClient) ConnectProvider(ctx context.Context, body ConnectProvider
 	}
 
 	// Parse error response
-	var errBody models.GoogleRPCStatus
+	var errBody models.Error
 	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
-	return result, &ClientHttpError[models.GoogleRPCStatus]{
+	return result, &ClientHttpError[models.Error]{
 		StatusCode: resp.StatusCode,
 		Body:       errBody,
 		RawBody:    rawBody,
@@ -422,7 +422,7 @@ func (c *SimpleClient) ConnectProvider(ctx context.Context, body ConnectProvider
 
 // DisconnectProvider makes a DELETE request to /auth/v1/providers/{provider} and returns the parsed response.
 // DisconnectProvider
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.Error].
 func (c *SimpleClient) DisconnectProvider(ctx context.Context, provider AuthV1ExternalAccountProvider, params *DisconnectProviderParams, reqEditors ...RequestEditorFn) (models.GoogleProtobufEmpty, error) {
 	var result models.GoogleProtobufEmpty
 	resp, err := c.Client.DisconnectProvider(ctx, provider, params, reqEditors...)
@@ -444,9 +444,9 @@ func (c *SimpleClient) DisconnectProvider(ctx context.Context, provider AuthV1Ex
 	}
 
 	// Parse error response
-	var errBody models.GoogleRPCStatus
+	var errBody models.Error
 	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
-	return result, &ClientHttpError[models.GoogleRPCStatus]{
+	return result, &ClientHttpError[models.Error]{
 		StatusCode: resp.StatusCode,
 		Body:       errBody,
 		RawBody:    rawBody,

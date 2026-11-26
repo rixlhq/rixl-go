@@ -295,7 +295,7 @@ func NewSimpleClient(server string, opts ...ClientOption) (*SimpleClient, error)
 
 // GetNotificationPreferences makes a GET request to /auth/v1/notifications/{org_id}/preferences and returns the parsed response.
 // GetNotificationPreferences
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.Error].
 func (c *SimpleClient) GetNotificationPreferences(ctx context.Context, orgId string, params *GetNotificationPreferencesParams, reqEditors ...RequestEditorFn) (models.AuthV1NotificationPreferences, error) {
 	var result models.AuthV1NotificationPreferences
 	resp, err := c.Client.GetNotificationPreferences(ctx, orgId, params, reqEditors...)
@@ -317,9 +317,9 @@ func (c *SimpleClient) GetNotificationPreferences(ctx context.Context, orgId str
 	}
 
 	// Parse error response
-	var errBody models.GoogleRPCStatus
+	var errBody models.Error
 	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
-	return result, &ClientHttpError[models.GoogleRPCStatus]{
+	return result, &ClientHttpError[models.Error]{
 		StatusCode: resp.StatusCode,
 		Body:       errBody,
 		RawBody:    rawBody,
@@ -328,7 +328,7 @@ func (c *SimpleClient) GetNotificationPreferences(ctx context.Context, orgId str
 
 // UpdateNotificationPreference makes a PATCH request to /auth/v1/notifications/{org_id}/preferences and returns the parsed response.
 // UpdateNotificationPreference
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.Error].
 func (c *SimpleClient) UpdateNotificationPreference(ctx context.Context, orgId string, body UpdateNotificationPreferenceJSONRequestBody, reqEditors ...RequestEditorFn) (models.AuthV1NotificationPreference, error) {
 	var result models.AuthV1NotificationPreference
 	resp, err := c.Client.UpdateNotificationPreference(ctx, orgId, body, reqEditors...)
@@ -350,9 +350,9 @@ func (c *SimpleClient) UpdateNotificationPreference(ctx context.Context, orgId s
 	}
 
 	// Parse error response
-	var errBody models.GoogleRPCStatus
+	var errBody models.Error
 	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
-	return result, &ClientHttpError[models.GoogleRPCStatus]{
+	return result, &ClientHttpError[models.Error]{
 		StatusCode: resp.StatusCode,
 		Body:       errBody,
 		RawBody:    rawBody,

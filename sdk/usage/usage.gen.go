@@ -575,7 +575,7 @@ func NewSimpleClient(server string, opts ...ClientOption) (*SimpleClient, error)
 
 // GetBandwidthUsage makes a GET request to /billing/v1/bandwidth-usage and returns the parsed response.
 // GetBandwidthUsage
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.Error].
 func (c *SimpleClient) GetBandwidthUsage(ctx context.Context, params *GetBandwidthUsageParams, reqEditors ...RequestEditorFn) (models.BillingV1BandwidthUsage, error) {
 	var result models.BillingV1BandwidthUsage
 	resp, err := c.Client.GetBandwidthUsage(ctx, params, reqEditors...)
@@ -597,9 +597,9 @@ func (c *SimpleClient) GetBandwidthUsage(ctx context.Context, params *GetBandwid
 	}
 
 	// Parse error response
-	var errBody models.GoogleRPCStatus
+	var errBody models.Error
 	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
-	return result, &ClientHttpError[models.GoogleRPCStatus]{
+	return result, &ClientHttpError[models.Error]{
 		StatusCode: resp.StatusCode,
 		Body:       errBody,
 		RawBody:    rawBody,
@@ -608,7 +608,7 @@ func (c *SimpleClient) GetBandwidthUsage(ctx context.Context, params *GetBandwid
 
 // GetBandwidthUsageHistory makes a GET request to /billing/v1/bandwidth-usage/history and returns the parsed response.
 // GetBandwidthUsageHistory
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.Error].
 func (c *SimpleClient) GetBandwidthUsageHistory(ctx context.Context, params *GetBandwidthUsageHistoryParams, reqEditors ...RequestEditorFn) (models.BillingV1GetBandwidthUsageHistoryResponse, error) {
 	var result models.BillingV1GetBandwidthUsageHistoryResponse
 	resp, err := c.Client.GetBandwidthUsageHistory(ctx, params, reqEditors...)
@@ -630,9 +630,9 @@ func (c *SimpleClient) GetBandwidthUsageHistory(ctx context.Context, params *Get
 	}
 
 	// Parse error response
-	var errBody models.GoogleRPCStatus
+	var errBody models.Error
 	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
-	return result, &ClientHttpError[models.GoogleRPCStatus]{
+	return result, &ClientHttpError[models.Error]{
 		StatusCode: resp.StatusCode,
 		Body:       errBody,
 		RawBody:    rawBody,
@@ -641,7 +641,7 @@ func (c *SimpleClient) GetBandwidthUsageHistory(ctx context.Context, params *Get
 
 // RefreshBandwidthUsage makes a POST request to /billing/v1/bandwidth-usage/refresh and returns the parsed response.
 // RefreshBandwidthUsage
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.Error].
 func (c *SimpleClient) RefreshBandwidthUsage(ctx context.Context, params *RefreshBandwidthUsageParams, reqEditors ...RequestEditorFn) (models.BillingV1BandwidthUsage, error) {
 	var result models.BillingV1BandwidthUsage
 	resp, err := c.Client.RefreshBandwidthUsage(ctx, params, reqEditors...)
@@ -663,9 +663,9 @@ func (c *SimpleClient) RefreshBandwidthUsage(ctx context.Context, params *Refres
 	}
 
 	// Parse error response
-	var errBody models.GoogleRPCStatus
+	var errBody models.Error
 	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
-	return result, &ClientHttpError[models.GoogleRPCStatus]{
+	return result, &ClientHttpError[models.Error]{
 		StatusCode: resp.StatusCode,
 		Body:       errBody,
 		RawBody:    rawBody,
@@ -674,7 +674,7 @@ func (c *SimpleClient) RefreshBandwidthUsage(ctx context.Context, params *Refres
 
 // GetStorageUsage makes a GET request to /billing/v1/storage-usage and returns the parsed response.
 // GetStorageUsage
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.Error].
 func (c *SimpleClient) GetStorageUsage(ctx context.Context, params *GetStorageUsageParams, reqEditors ...RequestEditorFn) (models.BillingV1StorageUsage, error) {
 	var result models.BillingV1StorageUsage
 	resp, err := c.Client.GetStorageUsage(ctx, params, reqEditors...)
@@ -696,9 +696,9 @@ func (c *SimpleClient) GetStorageUsage(ctx context.Context, params *GetStorageUs
 	}
 
 	// Parse error response
-	var errBody models.GoogleRPCStatus
+	var errBody models.Error
 	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
-	return result, &ClientHttpError[models.GoogleRPCStatus]{
+	return result, &ClientHttpError[models.Error]{
 		StatusCode: resp.StatusCode,
 		Body:       errBody,
 		RawBody:    rawBody,
@@ -707,7 +707,7 @@ func (c *SimpleClient) GetStorageUsage(ctx context.Context, params *GetStorageUs
 
 // GetStorageUsageHistory makes a GET request to /billing/v1/storage-usage/history and returns the parsed response.
 // GetStorageUsageHistory
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.Error].
 func (c *SimpleClient) GetStorageUsageHistory(ctx context.Context, params *GetStorageUsageHistoryParams, reqEditors ...RequestEditorFn) (models.BillingV1GetStorageUsageHistoryResponse, error) {
 	var result models.BillingV1GetStorageUsageHistoryResponse
 	resp, err := c.Client.GetStorageUsageHistory(ctx, params, reqEditors...)
@@ -729,9 +729,9 @@ func (c *SimpleClient) GetStorageUsageHistory(ctx context.Context, params *GetSt
 	}
 
 	// Parse error response
-	var errBody models.GoogleRPCStatus
+	var errBody models.Error
 	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
-	return result, &ClientHttpError[models.GoogleRPCStatus]{
+	return result, &ClientHttpError[models.Error]{
 		StatusCode: resp.StatusCode,
 		Body:       errBody,
 		RawBody:    rawBody,
@@ -740,7 +740,7 @@ func (c *SimpleClient) GetStorageUsageHistory(ctx context.Context, params *GetSt
 
 // RefreshStorageUsage makes a POST request to /billing/v1/storage-usage/refresh and returns the parsed response.
 // RefreshStorageUsage
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.Error].
 func (c *SimpleClient) RefreshStorageUsage(ctx context.Context, params *RefreshStorageUsageParams, reqEditors ...RequestEditorFn) (models.BillingV1StorageUsage, error) {
 	var result models.BillingV1StorageUsage
 	resp, err := c.Client.RefreshStorageUsage(ctx, params, reqEditors...)
@@ -762,9 +762,9 @@ func (c *SimpleClient) RefreshStorageUsage(ctx context.Context, params *RefreshS
 	}
 
 	// Parse error response
-	var errBody models.GoogleRPCStatus
+	var errBody models.Error
 	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
-	return result, &ClientHttpError[models.GoogleRPCStatus]{
+	return result, &ClientHttpError[models.Error]{
 		StatusCode: resp.StatusCode,
 		Body:       errBody,
 		RawBody:    rawBody,

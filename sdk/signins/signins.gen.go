@@ -466,7 +466,7 @@ func NewSimpleClient(server string, opts ...ClientOption) (*SimpleClient, error)
 
 // Logout makes a POST request to /auth/v1/logout and returns the parsed response.
 // Logout
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.Error].
 func (c *SimpleClient) Logout(ctx context.Context, body LogoutJSONRequestBody, reqEditors ...RequestEditorFn) (models.GoogleProtobufEmpty, error) {
 	var result models.GoogleProtobufEmpty
 	resp, err := c.Client.Logout(ctx, body, reqEditors...)
@@ -488,9 +488,9 @@ func (c *SimpleClient) Logout(ctx context.Context, body LogoutJSONRequestBody, r
 	}
 
 	// Parse error response
-	var errBody models.GoogleRPCStatus
+	var errBody models.Error
 	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
-	return result, &ClientHttpError[models.GoogleRPCStatus]{
+	return result, &ClientHttpError[models.Error]{
 		StatusCode: resp.StatusCode,
 		Body:       errBody,
 		RawBody:    rawBody,
@@ -499,7 +499,7 @@ func (c *SimpleClient) Logout(ctx context.Context, body LogoutJSONRequestBody, r
 
 // LogoutAll makes a POST request to /auth/v1/logout/all and returns the parsed response.
 // LogoutAll
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.Error].
 func (c *SimpleClient) LogoutAll(ctx context.Context, reqEditors ...RequestEditorFn) (models.GoogleProtobufEmpty, error) {
 	var result models.GoogleProtobufEmpty
 	resp, err := c.Client.LogoutAll(ctx, reqEditors...)
@@ -521,9 +521,9 @@ func (c *SimpleClient) LogoutAll(ctx context.Context, reqEditors ...RequestEdito
 	}
 
 	// Parse error response
-	var errBody models.GoogleRPCStatus
+	var errBody models.Error
 	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
-	return result, &ClientHttpError[models.GoogleRPCStatus]{
+	return result, &ClientHttpError[models.Error]{
 		StatusCode: resp.StatusCode,
 		Body:       errBody,
 		RawBody:    rawBody,
@@ -532,7 +532,7 @@ func (c *SimpleClient) LogoutAll(ctx context.Context, reqEditors ...RequestEdito
 
 // ListSignIns makes a GET request to /auth/v1/sign-ins and returns the parsed response.
 // ListSignIns
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.Error].
 func (c *SimpleClient) ListSignIns(ctx context.Context, reqEditors ...RequestEditorFn) (models.AuthV1ListSignInsResponse, error) {
 	var result models.AuthV1ListSignInsResponse
 	resp, err := c.Client.ListSignIns(ctx, reqEditors...)
@@ -554,9 +554,9 @@ func (c *SimpleClient) ListSignIns(ctx context.Context, reqEditors ...RequestEdi
 	}
 
 	// Parse error response
-	var errBody models.GoogleRPCStatus
+	var errBody models.Error
 	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
-	return result, &ClientHttpError[models.GoogleRPCStatus]{
+	return result, &ClientHttpError[models.Error]{
 		StatusCode: resp.StatusCode,
 		Body:       errBody,
 		RawBody:    rawBody,
@@ -565,7 +565,7 @@ func (c *SimpleClient) ListSignIns(ctx context.Context, reqEditors ...RequestEdi
 
 // RevokeOtherSignIns makes a POST request to /auth/v1/sign-ins/revoke-others and returns the parsed response.
 // RevokeOtherSignIns
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.Error].
 func (c *SimpleClient) RevokeOtherSignIns(ctx context.Context, reqEditors ...RequestEditorFn) (models.GoogleProtobufEmpty, error) {
 	var result models.GoogleProtobufEmpty
 	resp, err := c.Client.RevokeOtherSignIns(ctx, reqEditors...)
@@ -587,9 +587,9 @@ func (c *SimpleClient) RevokeOtherSignIns(ctx context.Context, reqEditors ...Req
 	}
 
 	// Parse error response
-	var errBody models.GoogleRPCStatus
+	var errBody models.Error
 	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
-	return result, &ClientHttpError[models.GoogleRPCStatus]{
+	return result, &ClientHttpError[models.Error]{
 		StatusCode: resp.StatusCode,
 		Body:       errBody,
 		RawBody:    rawBody,
@@ -598,7 +598,7 @@ func (c *SimpleClient) RevokeOtherSignIns(ctx context.Context, reqEditors ...Req
 
 // RevokeSignIn makes a DELETE request to /auth/v1/sign-ins/{sign_in_id} and returns the parsed response.
 // RevokeSignIn
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.Error].
 func (c *SimpleClient) RevokeSignIn(ctx context.Context, signInId string, reqEditors ...RequestEditorFn) (models.GoogleProtobufEmpty, error) {
 	var result models.GoogleProtobufEmpty
 	resp, err := c.Client.RevokeSignIn(ctx, signInId, reqEditors...)
@@ -620,9 +620,9 @@ func (c *SimpleClient) RevokeSignIn(ctx context.Context, signInId string, reqEdi
 	}
 
 	// Parse error response
-	var errBody models.GoogleRPCStatus
+	var errBody models.Error
 	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
-	return result, &ClientHttpError[models.GoogleRPCStatus]{
+	return result, &ClientHttpError[models.Error]{
 		StatusCode: resp.StatusCode,
 		Body:       errBody,
 		RawBody:    rawBody,
@@ -631,7 +631,7 @@ func (c *SimpleClient) RevokeSignIn(ctx context.Context, signInId string, reqEdi
 
 // RefreshToken makes a POST request to /auth/v1/token and returns the parsed response.
 // RefreshToken
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.Error].
 func (c *SimpleClient) RefreshToken(ctx context.Context, body RefreshTokenJSONRequestBody, reqEditors ...RequestEditorFn) (models.AuthV1TokenResponse, error) {
 	var result models.AuthV1TokenResponse
 	resp, err := c.Client.RefreshToken(ctx, body, reqEditors...)
@@ -653,9 +653,9 @@ func (c *SimpleClient) RefreshToken(ctx context.Context, body RefreshTokenJSONRe
 	}
 
 	// Parse error response
-	var errBody models.GoogleRPCStatus
+	var errBody models.Error
 	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
-	return result, &ClientHttpError[models.GoogleRPCStatus]{
+	return result, &ClientHttpError[models.Error]{
 		StatusCode: resp.StatusCode,
 		Body:       errBody,
 		RawBody:    rawBody,

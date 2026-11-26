@@ -704,7 +704,7 @@ func NewSimpleClient(server string, opts ...ClientOption) (*SimpleClient, error)
 
 // ListOrganizations makes a GET request to /auth/v1/organizations and returns the parsed response.
 // ListOrganizations
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.Error].
 func (c *SimpleClient) ListOrganizations(ctx context.Context, params *ListOrganizationsParams, reqEditors ...RequestEditorFn) (models.AuthV1ListOrganizationsResponse, error) {
 	var result models.AuthV1ListOrganizationsResponse
 	resp, err := c.Client.ListOrganizations(ctx, params, reqEditors...)
@@ -726,9 +726,9 @@ func (c *SimpleClient) ListOrganizations(ctx context.Context, params *ListOrgani
 	}
 
 	// Parse error response
-	var errBody models.GoogleRPCStatus
+	var errBody models.Error
 	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
-	return result, &ClientHttpError[models.GoogleRPCStatus]{
+	return result, &ClientHttpError[models.Error]{
 		StatusCode: resp.StatusCode,
 		Body:       errBody,
 		RawBody:    rawBody,
@@ -737,7 +737,7 @@ func (c *SimpleClient) ListOrganizations(ctx context.Context, params *ListOrgani
 
 // CreateOrganization makes a POST request to /auth/v1/organizations and returns the parsed response.
 // CreateOrganization
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.Error].
 func (c *SimpleClient) CreateOrganization(ctx context.Context, body CreateOrganizationJSONRequestBody, reqEditors ...RequestEditorFn) (models.AuthV1Organization, error) {
 	var result models.AuthV1Organization
 	resp, err := c.Client.CreateOrganization(ctx, body, reqEditors...)
@@ -759,9 +759,9 @@ func (c *SimpleClient) CreateOrganization(ctx context.Context, body CreateOrgani
 	}
 
 	// Parse error response
-	var errBody models.GoogleRPCStatus
+	var errBody models.Error
 	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
-	return result, &ClientHttpError[models.GoogleRPCStatus]{
+	return result, &ClientHttpError[models.Error]{
 		StatusCode: resp.StatusCode,
 		Body:       errBody,
 		RawBody:    rawBody,
@@ -770,7 +770,7 @@ func (c *SimpleClient) CreateOrganization(ctx context.Context, body CreateOrgani
 
 // GetOrganization makes a GET request to /auth/v1/organizations/{org_id} and returns the parsed response.
 // GetOrganization
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.Error].
 func (c *SimpleClient) GetOrganization(ctx context.Context, orgId string, reqEditors ...RequestEditorFn) (models.AuthV1Organization, error) {
 	var result models.AuthV1Organization
 	resp, err := c.Client.GetOrganization(ctx, orgId, reqEditors...)
@@ -792,9 +792,9 @@ func (c *SimpleClient) GetOrganization(ctx context.Context, orgId string, reqEdi
 	}
 
 	// Parse error response
-	var errBody models.GoogleRPCStatus
+	var errBody models.Error
 	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
-	return result, &ClientHttpError[models.GoogleRPCStatus]{
+	return result, &ClientHttpError[models.Error]{
 		StatusCode: resp.StatusCode,
 		Body:       errBody,
 		RawBody:    rawBody,
@@ -803,7 +803,7 @@ func (c *SimpleClient) GetOrganization(ctx context.Context, orgId string, reqEdi
 
 // UpdateOrganization makes a PATCH request to /auth/v1/organizations/{org_id} and returns the parsed response.
 // UpdateOrganization
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.Error].
 func (c *SimpleClient) UpdateOrganization(ctx context.Context, orgId string, body UpdateOrganizationJSONRequestBody, reqEditors ...RequestEditorFn) (models.AuthV1Organization, error) {
 	var result models.AuthV1Organization
 	resp, err := c.Client.UpdateOrganization(ctx, orgId, body, reqEditors...)
@@ -825,9 +825,9 @@ func (c *SimpleClient) UpdateOrganization(ctx context.Context, orgId string, bod
 	}
 
 	// Parse error response
-	var errBody models.GoogleRPCStatus
+	var errBody models.Error
 	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
-	return result, &ClientHttpError[models.GoogleRPCStatus]{
+	return result, &ClientHttpError[models.Error]{
 		StatusCode: resp.StatusCode,
 		Body:       errBody,
 		RawBody:    rawBody,
@@ -836,7 +836,7 @@ func (c *SimpleClient) UpdateOrganization(ctx context.Context, orgId string, bod
 
 // ListOrganizationAuditEvents makes a GET request to /auth/v1/organizations/{org_id}/audit-events and returns the parsed response.
 // ListOrganizationAuditEvents
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.Error].
 func (c *SimpleClient) ListOrganizationAuditEvents(ctx context.Context, orgId string, params *ListOrganizationAuditEventsParams, reqEditors ...RequestEditorFn) (models.AuthV1ListOrganizationAuditEventsResponse, error) {
 	var result models.AuthV1ListOrganizationAuditEventsResponse
 	resp, err := c.Client.ListOrganizationAuditEvents(ctx, orgId, params, reqEditors...)
@@ -858,9 +858,9 @@ func (c *SimpleClient) ListOrganizationAuditEvents(ctx context.Context, orgId st
 	}
 
 	// Parse error response
-	var errBody models.GoogleRPCStatus
+	var errBody models.Error
 	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
-	return result, &ClientHttpError[models.GoogleRPCStatus]{
+	return result, &ClientHttpError[models.Error]{
 		StatusCode: resp.StatusCode,
 		Body:       errBody,
 		RawBody:    rawBody,
@@ -869,7 +869,7 @@ func (c *SimpleClient) ListOrganizationAuditEvents(ctx context.Context, orgId st
 
 // CreateOrganizationAvatarUpload makes a POST request to /auth/v1/organizations/{org_id}/avatar/upload and returns the parsed response.
 // CreateOrganizationAvatarUpload
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.Error].
 func (c *SimpleClient) CreateOrganizationAvatarUpload(ctx context.Context, orgId string, reqEditors ...RequestEditorFn) (models.AuthV1CreateAvatarUploadResponse, error) {
 	var result models.AuthV1CreateAvatarUploadResponse
 	resp, err := c.Client.CreateOrganizationAvatarUpload(ctx, orgId, reqEditors...)
@@ -891,9 +891,9 @@ func (c *SimpleClient) CreateOrganizationAvatarUpload(ctx context.Context, orgId
 	}
 
 	// Parse error response
-	var errBody models.GoogleRPCStatus
+	var errBody models.Error
 	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
-	return result, &ClientHttpError[models.GoogleRPCStatus]{
+	return result, &ClientHttpError[models.Error]{
 		StatusCode: resp.StatusCode,
 		Body:       errBody,
 		RawBody:    rawBody,
@@ -902,7 +902,7 @@ func (c *SimpleClient) CreateOrganizationAvatarUpload(ctx context.Context, orgId
 
 // ConvertToTeamOrganization makes a POST request to /auth/v1/organizations/{org_id}/convert-to-team and returns the parsed response.
 // ConvertToTeamOrganization
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.Error].
 func (c *SimpleClient) ConvertToTeamOrganization(ctx context.Context, orgId string, reqEditors ...RequestEditorFn) (models.AuthV1ConvertToTeamOrganizationResponse, error) {
 	var result models.AuthV1ConvertToTeamOrganizationResponse
 	resp, err := c.Client.ConvertToTeamOrganization(ctx, orgId, reqEditors...)
@@ -924,9 +924,9 @@ func (c *SimpleClient) ConvertToTeamOrganization(ctx context.Context, orgId stri
 	}
 
 	// Parse error response
-	var errBody models.GoogleRPCStatus
+	var errBody models.Error
 	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
-	return result, &ClientHttpError[models.GoogleRPCStatus]{
+	return result, &ClientHttpError[models.Error]{
 		StatusCode: resp.StatusCode,
 		Body:       errBody,
 		RawBody:    rawBody,
@@ -935,7 +935,7 @@ func (c *SimpleClient) ConvertToTeamOrganization(ctx context.Context, orgId stri
 
 // TransferOwnership makes a POST request to /auth/v1/organizations/{org_id}/transfer-ownership and returns the parsed response.
 // TransferOwnership
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.Error].
 func (c *SimpleClient) TransferOwnership(ctx context.Context, orgId string, body TransferOwnershipJSONRequestBody, reqEditors ...RequestEditorFn) (models.AuthV1Organization, error) {
 	var result models.AuthV1Organization
 	resp, err := c.Client.TransferOwnership(ctx, orgId, body, reqEditors...)
@@ -957,9 +957,9 @@ func (c *SimpleClient) TransferOwnership(ctx context.Context, orgId string, body
 	}
 
 	// Parse error response
-	var errBody models.GoogleRPCStatus
+	var errBody models.Error
 	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
-	return result, &ClientHttpError[models.GoogleRPCStatus]{
+	return result, &ClientHttpError[models.Error]{
 		StatusCode: resp.StatusCode,
 		Body:       errBody,
 		RawBody:    rawBody,

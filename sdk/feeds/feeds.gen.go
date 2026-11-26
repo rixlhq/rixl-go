@@ -504,7 +504,7 @@ func NewSimpleClient(server string, opts ...ClientOption) (*SimpleClient, error)
 
 // ListFeeds makes a GET request to /feeds/v1/projects/{project_id}/feeds and returns the parsed response.
 // ListFeeds
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.Error].
 func (c *SimpleClient) ListFeeds(ctx context.Context, projectId string, params *ListFeedsParams, reqEditors ...RequestEditorFn) (models.FeedsV1ListFeedsResponse, error) {
 	var result models.FeedsV1ListFeedsResponse
 	resp, err := c.Client.ListFeeds(ctx, projectId, params, reqEditors...)
@@ -526,9 +526,9 @@ func (c *SimpleClient) ListFeeds(ctx context.Context, projectId string, params *
 	}
 
 	// Parse error response
-	var errBody models.GoogleRPCStatus
+	var errBody models.Error
 	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
-	return result, &ClientHttpError[models.GoogleRPCStatus]{
+	return result, &ClientHttpError[models.Error]{
 		StatusCode: resp.StatusCode,
 		Body:       errBody,
 		RawBody:    rawBody,
@@ -537,7 +537,7 @@ func (c *SimpleClient) ListFeeds(ctx context.Context, projectId string, params *
 
 // CreateFeed makes a POST request to /feeds/v1/projects/{project_id}/feeds and returns the parsed response.
 // CreateFeed
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.Error].
 func (c *SimpleClient) CreateFeed(ctx context.Context, projectId string, body CreateFeedJSONRequestBody, reqEditors ...RequestEditorFn) (models.FeedsV1Feed, error) {
 	var result models.FeedsV1Feed
 	resp, err := c.Client.CreateFeed(ctx, projectId, body, reqEditors...)
@@ -559,9 +559,9 @@ func (c *SimpleClient) CreateFeed(ctx context.Context, projectId string, body Cr
 	}
 
 	// Parse error response
-	var errBody models.GoogleRPCStatus
+	var errBody models.Error
 	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
-	return result, &ClientHttpError[models.GoogleRPCStatus]{
+	return result, &ClientHttpError[models.Error]{
 		StatusCode: resp.StatusCode,
 		Body:       errBody,
 		RawBody:    rawBody,
@@ -570,7 +570,7 @@ func (c *SimpleClient) CreateFeed(ctx context.Context, projectId string, body Cr
 
 // DeleteFeed makes a DELETE request to /feeds/v1/projects/{project_id}/feeds/{feed_id} and returns the parsed response.
 // DeleteFeed
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.Error].
 func (c *SimpleClient) DeleteFeed(ctx context.Context, projectId string, feedId string, reqEditors ...RequestEditorFn) (models.GoogleProtobufEmpty, error) {
 	var result models.GoogleProtobufEmpty
 	resp, err := c.Client.DeleteFeed(ctx, projectId, feedId, reqEditors...)
@@ -592,9 +592,9 @@ func (c *SimpleClient) DeleteFeed(ctx context.Context, projectId string, feedId 
 	}
 
 	// Parse error response
-	var errBody models.GoogleRPCStatus
+	var errBody models.Error
 	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
-	return result, &ClientHttpError[models.GoogleRPCStatus]{
+	return result, &ClientHttpError[models.Error]{
 		StatusCode: resp.StatusCode,
 		Body:       errBody,
 		RawBody:    rawBody,
@@ -603,7 +603,7 @@ func (c *SimpleClient) DeleteFeed(ctx context.Context, projectId string, feedId 
 
 // GetFeed makes a GET request to /feeds/v1/projects/{project_id}/feeds/{feed_id} and returns the parsed response.
 // GetFeed
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.Error].
 func (c *SimpleClient) GetFeed(ctx context.Context, projectId string, feedId string, reqEditors ...RequestEditorFn) (models.FeedsV1Feed, error) {
 	var result models.FeedsV1Feed
 	resp, err := c.Client.GetFeed(ctx, projectId, feedId, reqEditors...)
@@ -625,9 +625,9 @@ func (c *SimpleClient) GetFeed(ctx context.Context, projectId string, feedId str
 	}
 
 	// Parse error response
-	var errBody models.GoogleRPCStatus
+	var errBody models.Error
 	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
-	return result, &ClientHttpError[models.GoogleRPCStatus]{
+	return result, &ClientHttpError[models.Error]{
 		StatusCode: resp.StatusCode,
 		Body:       errBody,
 		RawBody:    rawBody,
@@ -636,7 +636,7 @@ func (c *SimpleClient) GetFeed(ctx context.Context, projectId string, feedId str
 
 // UpdateFeed makes a PUT request to /feeds/v1/projects/{project_id}/feeds/{feed_id} and returns the parsed response.
 // UpdateFeed
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.Error].
 func (c *SimpleClient) UpdateFeed(ctx context.Context, projectId string, feedId string, body UpdateFeedJSONRequestBody, reqEditors ...RequestEditorFn) (models.FeedsV1Feed, error) {
 	var result models.FeedsV1Feed
 	resp, err := c.Client.UpdateFeed(ctx, projectId, feedId, body, reqEditors...)
@@ -658,9 +658,9 @@ func (c *SimpleClient) UpdateFeed(ctx context.Context, projectId string, feedId 
 	}
 
 	// Parse error response
-	var errBody models.GoogleRPCStatus
+	var errBody models.Error
 	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
-	return result, &ClientHttpError[models.GoogleRPCStatus]{
+	return result, &ClientHttpError[models.Error]{
 		StatusCode: resp.StatusCode,
 		Body:       errBody,
 		RawBody:    rawBody,

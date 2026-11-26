@@ -185,7 +185,7 @@ func NewSimpleClient(server string, opts ...ClientOption) (*SimpleClient, error)
 
 // GetRealtimeStats makes a GET request to /analytics/v1/realtime and returns the parsed response.
 // GetRealtimeStats
-// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.GoogleRPCStatus].
+// On success, returns the response body. On HTTP error, returns *ClientHttpError[models.Error].
 func (c *SimpleClient) GetRealtimeStats(ctx context.Context, reqEditors ...RequestEditorFn) (models.AnalyticsV1RealtimeStats, error) {
 	var result models.AnalyticsV1RealtimeStats
 	resp, err := c.Client.GetRealtimeStats(ctx, reqEditors...)
@@ -207,9 +207,9 @@ func (c *SimpleClient) GetRealtimeStats(ctx context.Context, reqEditors ...Reque
 	}
 
 	// Parse error response
-	var errBody models.GoogleRPCStatus
+	var errBody models.Error
 	_ = json.Unmarshal(rawBody, &errBody) // Best effort parse
-	return result, &ClientHttpError[models.GoogleRPCStatus]{
+	return result, &ClientHttpError[models.Error]{
 		StatusCode: resp.StatusCode,
 		Body:       errBody,
 		RawBody:    rawBody,
