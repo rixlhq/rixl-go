@@ -1,5 +1,31 @@
 # Changelog
 
+## [0.10.0](https://github.com/rixlhq/rixl-go/compare/v0.9.0...v0.10.0) (2026-11-26)
+
+
+### Features
+
+* **sdk:** regenerate based on latest OpenAPI spec ([259a6a7](https://github.com/rixlhq/rixl-go/commit/259a6a7da70221bd91620e5a3294fa29d6a6240e))
+* **sdk:** regenerate based on latest OpenAPI spec ([da6c2c5](https://github.com/rixlhq/rixl-go/commit/da6c2c5c8375ec9ea0829cd18f56c7903334e0ed))
+* **sdk:** regenerate based on latest OpenAPI spec ([9da0e49](https://github.com/rixlhq/rixl-go/commit/9da0e49a9d39213fd84a64a4881c6e7e760cfaa1))
+* **sdk:** regenerate based on latest OpenAPI spec ([8c3642b](https://github.com/rixlhq/rixl-go/commit/8c3642bf3c11bc12f7bb8ec5706b5f791d109c25))
+* **sdk:** regenerate based on latest OpenAPI spec ([5815206](https://github.com/rixlhq/rixl-go/commit/58152063ac168d1ecbb7a5f4a0ccd3d8c2cc6439))
+* **sdk:** regenerate based on latest OpenAPI spec ([d4df011](https://github.com/rixlhq/rixl-go/commit/d4df0115682735ade4ae0f49aef5b4d590002848))
+* **sdk:** regenerate based on latest OpenAPI spec ([4c38d0b](https://github.com/rixlhq/rixl-go/commit/4c38d0bdbdfde1662c0cce48266021d2d98d5c3a))
+* **sdk:** regenerate based on latest OpenAPI spec ([853fa6a](https://github.com/rixlhq/rixl-go/commit/853fa6a5691bb4f0adee0facf2f708135c5f7fb1))
+* **sdk:** regenerate based on latest OpenAPI spec ([aa9b307](https://github.com/rixlhq/rixl-go/commit/aa9b307d29c8285302876e6dd6cb291b17c05168))
+* **sdk:** regenerate based on latest OpenAPI spec ([558dfe3](https://github.com/rixlhq/rixl-go/commit/558dfe36a707c9b211a7aa19bca2e4a79c3265f7))
+* **sdk:** regenerate based on latest OpenAPI spec ([858c7c1](https://github.com/rixlhq/rixl-go/commit/858c7c1459e30d6bcfa745bdc95b100fceda2561))
+* **sdk:** regenerate based on latest OpenAPI spec ([5eddbdf](https://github.com/rixlhq/rixl-go/commit/5eddbdf9d2a2aa6a5dec42cde962c3a1fd2aa26f))
+* **sdk:** regenerate based on latest OpenAPI spec ([979449b](https://github.com/rixlhq/rixl-go/commit/979449b9e2a399724475c382ccca73637b9c10f0))
+* **sdk:** regenerate based on latest OpenAPI spec ([b59bbed](https://github.com/rixlhq/rixl-go/commit/b59bbed311ee762592db234d3bfbd54a24e63432))
+
+
+### Bug Fixes
+
+* **branding:** canonical company name, domain and address ([4de67a0](https://github.com/rixlhq/rixl-go/commit/4de67a0d8ce0acf221c6a5c28ef4631ad4bcc60d))
+* **branding:** use canonical company name Rixl Inc., rixl.com and Wilmington DE address ([3ed7793](https://github.com/rixlhq/rixl-go/commit/3ed779370299650299fcadca5bdeef242cb0ab2e))
+
 ## [0.9.0](https://github.com/rixlhq/rixl-go/compare/v0.8.0...v0.9.0) (2026-10-10)
 
 
