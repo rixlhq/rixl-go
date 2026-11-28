@@ -5,6 +5,7 @@
 package sdk
 
 import (
+	"cmp"
 	"context"
 	"net/http"
 )
@@ -18,7 +19,10 @@ type Client struct {
 
 	Credentials *CredentialsClient
 
-	httpClient *http.Client
+	httpClient  *http.Client
+	editors     []editorFn
+	tusEndpoint string
+	resumeStore ResumeStore
 }
 
 func New(apiKey string, opts ...Option) (*Client, error) {
@@ -47,6 +51,9 @@ func New(apiKey string, opts ...Option) (*Client, error) {
 		resources:   res,
 		Credentials: &CredentialsClient{baseURL: baseURL, httpClient: httpClient, editors: cfg.editors},
 		httpClient:  httpClient,
+		editors:     cfg.editors,
+		tusEndpoint: cmp.Or(cfg.tusEndpoint, defaultTusEndpoint),
+		resumeStore: NewMemoryResumeStore(),
 	}, nil
 }
 
@@ -70,9 +77,10 @@ func WithRequestEditor(fn func(ctx context.Context, req *http.Request) error) Op
 type editorFn = func(ctx context.Context, req *http.Request) error
 
 type config struct {
-	httpClient *http.Client
-	editors    []editorFn
-	creds      *ClientCredentials
+	httpClient  *http.Client
+	editors     []editorFn
+	creds       *ClientCredentials
+	tusEndpoint string
 }
 
 func headerEditor(name, value string) editorFn {

@@ -252,6 +252,44 @@ file, use `client.Upload` with a reader and its exact size.
 There is no "finish" call to make. Storage tells Rixl when the object lands and
 the image or video becomes available on its own.
 
+### Resumable uploads
+
+A presigned `PUT` is one shot: a dropped connection near the end of a large
+video means starting again. `UploadFileResumable` sends the file over
+[tus](https://tus.io) in chunks instead, and picks up from the bytes the server
+already holds after a network error, a server error or a cancelled context:
+
+```go
+upload, err := client.UploadFileResumable(ctx, sdk.ResumableUploadParams{
+    ProjectID: projectID,
+    Kind:      sdk.UploadKindVideo,
+}, "clip.mp4",
+    sdk.WithProgress(func(uploaded, total int64) {
+        log.Printf("%d / %d", uploaded, total)
+    }),
+)
+// upload.FileID is the new video's id.
+```
+
+Skip `CreateImageUpload` / `CreateVideoUpload` here: the upload service creates
+the record itself. `FileName` defaults to the file's base name. To upload from
+memory or another source, use `client.UploadResumable` with an `io.ReaderAt`
+and its size.
+
+| Option | Default |
+| --- | --- |
+| `sdk.WithChunkSize(n)` | 50 MiB per `PATCH` |
+| `sdk.WithRetries(max, backoff)` | 5 consecutive retries, starting at 500ms and doubling up to 30s |
+| `sdk.WithProgress(fn)` | none |
+| `sdk.WithResumeStore(store)` | in-memory, one per client |
+| `sdk.WithFingerprint(key)` | params and size, plus path and mtime for files |
+
+Calling again with the same fingerprint resumes the earlier upload. The default
+store lives only as long as the client, so implement `sdk.ResumeStore` on disk or
+in a database to resume after a restart. `client.TerminateUpload` deletes an
+unfinished upload, and `sdk.WithUploadEndpoint` on `New` points the client at a
+different upload service.
+
 ## Pagination
 
 List calls take a limit and an offset, and tell you the total:
@@ -351,6 +389,7 @@ Runnable programs live in [examples/](./examples):
 export RIXL_API_KEY=<key> RIXL_PROJECT_ID=<project>
 go run ./examples/basic/images
 go run ./examples/advanced/videos
+go run ./examples/advanced/resumable clip.mp4
 ```
 
 ## Versioning

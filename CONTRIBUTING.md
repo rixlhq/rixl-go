@@ -20,7 +20,8 @@ sdk/
 ├── clientauth.go     hand-written: client credentials and token refresh
 ├── credentials.go    hand-written: credential lifecycle
 ├── scopes.go         hand-written: scope constants
-└── upload.go         hand-written: presigned uploads
+├── upload.go         hand-written: presigned uploads
+└── tus.go            hand-written: resumable uploads over tus
 ```
 
 Everything under `sdk/` except the hand-written files is regenerated from
